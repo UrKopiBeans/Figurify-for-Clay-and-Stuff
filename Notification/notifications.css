@@ -1,0 +1,126 @@
+/* Notifications page — Figurify redesign (navbar & footer live in Shared/) */
+
+:root {
+    --primary: #c2325f;
+    --primary-dark: #a62a50;
+    --plum: #4a1d3b;
+    --blush: #ffedf2;
+    --cream: #fff8f6;
+    --ink-soft: #7a5a6c;
+    --line: #f3dde5;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    
+    color: var(--plum);
+    
+    line-height: 1.6;
+}
+
+.page-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+
+/* page hero (same band sa Terms / Privacy) */
+.page-hero {
+    padding: 44px 0 26px;
+    background: linear-gradient(100deg, #fff4f6 0%, #ffe9ef 100%);
+}
+
+.page-eyebrow {
+    display: inline-block;
+    
+    font-style: italic;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .3px;
+    color: var(--primary);
+    margin-bottom: 2px;
+}
+
+.page-hero h1 {
+    
+    font-weight: 700;
+    font-size: clamp(34px, 4vw, 48px);
+    line-height: 1.1;
+    color: var(--plum);
+}
+
+.page-hero p {
+    margin-top: 10px;
+    max-width: 640px;
+    font-size: 16px;
+    color: var(--ink-soft);
+}
+
+/* list */
+.notif-page {
+    width: min(750px, 100% - 40px);
+    margin: 48px auto 0;
+    min-height: 320px;
+}
+
+/* sariling scroll ang listahan - hindi ang buong browser page ang gumagalaw */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: calc(100vh - 420px);
+    min-height: 260px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px 6px 6px 2px;
+    margin-right: -6px;
+    scrollbar-width: thin;
+    scrollbar-color: #f0c3d2 transparent;
+}
+.notification-list::-webkit-scrollbar { width: 6px; }
+.notification-list::-webkit-scrollbar-thumb { background: #f0c3d2; border-radius: 10px; }
+
+.notification-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 24px 26px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.notification-card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -16px rgba(74,29,59,.28); }
+
+/* unread = may primary na guhit sa kaliwa */
+.notification-card.unread { box-shadow: inset 4px 0 0 var(--primary); }
+.notification-card.unread:hover { box-shadow: inset 4px 0 0 var(--primary), 0 14px 28px -16px rgba(74,29,59,.28); }
+
+.notification-body p {
+    font-size: 15.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--plum);
+}
+
+.notification-time {
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+}
+
+/* empty state */
+.notif-empty-state {
+    padding: 28px 20px;
+    text-align: center;
+    border: 1.5px dashed #ecc9d6;
+    border-radius: 18px;
+    color: var(--ink-soft);
+    font-size: 15px;
+}
+.notif-empty-state a { color: var(--primary); font-weight: 700; text-decoration: none; margin-left: 4px; }
+.notif-empty-state a:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+    .notification-card { padding: 18px; flex-direction: column; align-items: flex-start; gap: 6px; }
+}

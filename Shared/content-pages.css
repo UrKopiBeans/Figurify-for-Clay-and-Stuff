@@ -1,0 +1,301 @@
+/* ==========================================================
+   Figurify redesign - CONTENT MANAGEMENT (Home Page + Collection)
+   Naka-load pagkatapos ng page styles.
+   Design System: Fraunces (headings) + Plus Jakarta Sans (body)
+   ========================================================== */
+
+/* ---------- tabs (Home Page / Collection) ---------- */
+body .app .cm-tabs { display: flex; gap: 8px; margin: 0 0 18px !important; }
+body .app .cm-tabs .cm-tab {
+    height: 36px;
+    display: inline-flex !important;
+    align-items: center;
+    padding: 0 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: var(--p-plum) !important;
+}
+
+/* ---------- form / cards ---------- */
+body .app .content-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    max-width: none !important;
+}
+body .app .content-form .content-section {
+    margin: 0 !important;
+    padding: 24px 24px 26px !important;
+    background: #ffffff !important;
+    border: 1px solid var(--p-line) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 10px 28px -18px rgba(74, 29, 59, .28) !important;
+}
+
+/* section title */
+body .app .cmx-title,
+body .app .content-form .content-section-header h3 {
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+    
+    font-size: 21px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: var(--p-plum) !important;
+}
+body .app .content-form .content-section-header { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+body .app .content-form .content-section-header p { display: none; }
+
+/* layout rows (Home Page) */
+body .app .cmx-row-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+body .app .cmx-row-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: stretch; }
+body .app .cmx-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+body .app .cmx-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+body .app .cmx-products { margin-top: 16px; }
+body .app .cmx-stack { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+body .app .cmx-sub { font-size: 13.5px; font-weight: 800; color: var(--p-plum); margin-bottom: -6px; }
+body .app .cmx-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+
+@media (max-width: 1200px) {
+    body .app .cmx-row-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    body .app .cmx-row-3 > :last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 1000px) {
+    body .app .cmx-row-2,
+    body .app .cmx-grid-3 { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+    body .app .cmx-row-3,
+    body .app .cmx-grid-2 { grid-template-columns: minmax(0, 1fr); }
+    body .app .cmx-row-3 > :last-child { grid-column: auto; }
+}
+
+/* ---------- fields: label (bold) sa ibabaw, input sa ilalim ---------- */
+body .app .content-form .content-field {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: var(--p-plum) !important;
+}
+body .app .content-form .content-field :is(input[type="text"], input:not([type]), textarea, select),
+body .app .content-form .cmx-pair input {
+    width: 100% !important;
+    min-height: 48px !important;
+    height: auto;
+    margin: 0 !important;
+    padding: 12px 14px !important;
+    border: 1px solid #ecd9e0 !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    
+    font-size: 14.5px !important;
+    font-weight: 500 !important;
+    line-height: 1.45 !important;
+    color: var(--p-plum) !important;
+    outline: none;
+}
+body .app .content-form .content-field input[type="text"],
+body .app .content-form .cmx-pair input { height: 48px !important; padding: 0 14px !important; }
+body .app .content-form .content-field textarea { resize: none; overflow: hidden; }
+body .app .content-form :is(input, textarea, select):focus { border-color: var(--p-primary) !important; }
+body .app .content-form ::placeholder { color: #8f7d86 !important; }
+
+/* ---------- media (larawan / video): maikling blush na kahon, buong lapad ---------- */
+body .app .content-form .content-media-field { margin: 0 !important; width: 100%; }
+body .app .content-form .content-media-preview {
+    position: relative;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+    background: var(--p-blush) !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    cursor: pointer;
+}
+body .app .content-form .cm-ratio-hero { height: 112px !important; }
+body .app .content-form .cm-ratio-square { height: 100px !important; }
+body .app .content-form .cm-ratio-video {
+    height: 64px !important;
+    border: 2px dashed #f1c4d2 !important;
+    background: #fff8fa !important;
+}
+body .app .content-form .content-media-preview :is(img, video) {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    border-radius: 0 !important;
+}
+body .app .content-form .cm-ratio-video video { opacity: .35; }
+
+/* "Click to change" - laging nakikita sa video, hover lang sa larawan */
+body .app .content-form .content-media-upload-overlay {
+    position: absolute !important;
+    inset: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 237, 242, .78) !important;
+    color: var(--p-muted) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+body .app .content-form .content-media-preview:hover .content-media-upload-overlay,
+body .app .content-form .cm-ratio-video .content-media-upload-overlay { opacity: 1; }
+body .app .content-form .cm-ratio-video .content-media-upload-overlay { background: transparent !important; }
+body .app .content-form .cm-ratio-video .content-media-upload-overlay span::before { content: "Video · "; }
+body .app .content-form .content-media-status:empty { display: none; }
+body .app .content-form .content-media-status { margin: 6px 0 0 !important; font-size: 12px !important; font-weight: 500 !important; color: var(--p-muted) !important; }
+body .app .content-form .content-media-status.error { color: var(--p-bad) !important; }
+
+/* ---------- Save Changes ---------- */
+body .app .content-form-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+body .app .content-save-btn {
+    height: 44px !important;
+    padding: 0 22px !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: var(--p-primary) !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+}
+body .app .content-save-btn:hover { background: var(--p-primary-dark) !important; }
+
+/* ==========================================================
+   COLLECTION
+   ========================================================== */
+
+body .app .content-section-header-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: 12px;
+    margin: 0 0 4px !important;
+}
+body .app .cm-add-btn {
+    flex: 0 0 auto;
+    height: 36px !important;
+    padding: 0 14px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: var(--p-blush) !important;
+    box-shadow: none !important;
+    color: var(--p-primary) !important;
+    
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+}
+body .app .cm-add-btn:hover { background: #ffd9e3 !important; }
+
+/* item cards */
+body .app .content-form .cm-compact-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 250px)) !important;
+    gap: 16px !important;
+}
+body .app .content-form .cm-compact-grid > .content-subgroup {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    padding: 16px !important;
+    background: #ffffff !important;
+    border: 1px solid var(--p-line) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 20px -16px rgba(74, 29, 59, .3) !important;
+}
+body .app .content-form .content-subgroup-title {
+    margin: 0 0 -4px !important;
+    padding: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: var(--p-plum) !important;
+}
+/* "Image" na label - hindi na kailangan (kita na ang larawan) */
+body .app .content-form .cm-compact-grid .content-field.content-field-full { font-size: 0 !important; gap: 0 !important; }
+body .app .content-form .cm-compact-grid .content-field.content-field-full > * { font-size: 14px; }
+
+body .app .content-form .cm-compact-grid .content-field { font-size: 12.5px !important; gap: 6px !important; }
+body .app .content-form .cm-compact-grid .content-field input[type="text"],
+body .app .content-form .cm-compact-grid .content-field select { height: 44px !important; min-height: 44px !important; font-size: 14px !important; }
+
+/* Best Seller + Remove */
+body .app .content-form .cm-item-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px;
+    margin: 2px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+body .app .content-form .cm-checkbox-field {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: var(--p-muted) !important;
+    cursor: pointer;
+}
+body .app .content-form .cm-checkbox-field input[type="checkbox"] {
+    width: 15px !important;
+    height: 15px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    accent-color: var(--p-primary);
+}
+body .app .content-form .cm-remove-btn {
+    height: 26px !important;
+    padding: 0 12px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--p-bad-bg) !important;
+    box-shadow: none !important;
+    color: var(--p-bad) !important;
+    
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    cursor: pointer;
+}
+body .app .content-form .cm-remove-btn:hover { background: #f6c7c3 !important; }
+
+/* walang item pa */
+body .app .content-form .cm-compact-grid:empty::before {
+    content: "Wala pang item. Pindutin ang + Add sa kanan.";
+    grid-column: 1 / -1;
+    padding: 16px 0 4px;
+    font-size: 14px;
+    color: var(--p-muted);
+}

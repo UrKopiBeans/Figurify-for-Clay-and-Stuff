@@ -1,0 +1,225 @@
+/* Pay Remaining Balance — Figurify redesign (navbar & footer live in Shared/) */
+
+:root {
+    --primary: #c2325f;
+    --primary-dark: #a62a50;
+    --plum: #4a1d3b;
+    --blush: #ffedf2;
+    --cream: #fff8f6;
+    --ink-soft: #7a5a6c;
+    --line: #f3dde5;
+    --field-line: #f0d3de;
+    --warn-bg: #fdefc4;
+    --warn-text: #9a6408;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    
+    color: var(--plum);
+    
+    line-height: 1.6;
+}
+
+.page-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+
+.page-hero { padding: 44px 0 26px; background: linear-gradient(100deg, #fff4f6 0%, #ffe9ef 100%); }
+.page-eyebrow {
+    display: inline-block;
+    
+    font-style: italic;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .3px;
+    color: var(--primary);
+    margin-bottom: 2px;
+}
+.page-hero h1 {
+    
+    font-weight: 700;
+    font-size: clamp(34px, 4vw, 48px);
+    line-height: 1.1;
+    color: var(--plum);
+}
+.page-hero p { margin-top: 10px; max-width: 760px; font-size: 16px; color: var(--ink-soft); }
+
+/* card */
+.pay-page { width: min(648px, 100% - 32px); margin: 48px auto 24px; }
+
+.pay-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 24px;
+}
+
+.payment-form { display: flex; flex-direction: column; gap: 16px; }
+
+.pay-card-header h2 {
+    
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--plum);
+}
+.pay-card-header p { font-size: 15px; color: var(--ink-soft); margin-top: 2px; }
+
+.payment-total-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 20px 18px;
+    background: var(--blush);
+    border-radius: 14px;
+    font-size: 14.5px;
+    color: var(--plum);
+}
+.payment-total-box strong {
+    
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--primary);
+}
+
+.notice-box {
+    padding: 16px 18px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+.notice-box-warning { background: var(--warn-bg); color: var(--warn-text); }
+
+.payment-form-group { display: flex; flex-direction: column; gap: 8px; }
+.payment-form-group > label { font-size: 13.5px; font-weight: 700; color: var(--plum); }
+
+.payment-form-group input[type="text"] {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px;
+    background: #fff;
+    border: 1px solid var(--field-line);
+    border-radius: 12px;
+    
+    font-size: 15px;
+    color: var(--plum);
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.payment-form-group input[type="text"]::placeholder { color: #bfa3b1; }
+.payment-form-group input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
+
+.payment-form-hint { font-size: 12.5px; color: var(--ink-soft); }
+
+/* QR codes */
+.qr-code-row { display: flex; flex-wrap: wrap; gap: 16px; }
+
+.qr-code-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+.qr-code-img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid var(--field-line);
+    border-radius: 12px;
+    cursor: zoom-in;
+    transition: border-color .15s ease;
+}
+.qr-code-img:hover { border-color: var(--primary); }
+
+.qr-code-caption { font-size: 14px; font-weight: 700; color: var(--plum); }
+
+/* proof upload */
+.payment-proof-upload { position: relative; }
+
+.payment-proof-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+    padding: 20px;
+    background: var(--cream);
+    border: 1.5px dashed #ecc9d6;
+    border-radius: 14px;
+    text-align: center;
+    overflow: hidden;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+.payment-proof-upload:hover .payment-proof-preview { background: var(--blush); border-color: var(--primary); }
+
+.payment-proof-placeholder { display: flex; flex-direction: column; gap: 2px; }
+.payment-proof-title { font-size: 15px; color: var(--plum); }
+.payment-proof-placeholder small { font-size: 12.5px; color: var(--ink-soft); }
+
+.payment-proof-preview img { max-width: 100%; max-height: 240px; border-radius: 10px; object-fit: contain; }
+
+.payment-proof-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* submit */
+.btn-submit {
+    width: 100%;
+    padding: 15px 24px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--primary);
+    color: #fff;
+    
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+.btn-submit:hover { background: var(--primary-dark); }
+.btn-submit:disabled { opacity: .7; cursor: default; }
+
+/* QR lightbox */
+.qr-lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    background: rgba(45, 14, 32, .55);
+    padding: 20px;
+}
+.qr-lightbox-overlay.show { display: flex; }
+
+.qr-lightbox-box {
+    position: relative;
+    width: min(340px, 88vw);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 22px 20px;
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 28px 64px -20px rgba(45, 14, 32, .45);
+}
+.qr-lightbox-box img { display: block; width: 100%; max-width: 280px; max-height: 60vh; height: auto; object-fit: contain; border-radius: 10px; }
+.qr-lightbox-box p { margin: 0; color: var(--plum); font-size: 15px; font-weight: 700; text-align: center; }
+.qr-lightbox-hint { font-size: 12.5px !important; font-weight: 500 !important; color: var(--ink-soft) !important; }
+.qr-lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: var(--blush);
+    color: var(--primary);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+.qr-lightbox-close:hover { background: #ffdde8; }
+
+@media (max-width: 600px) {
+    .page-wrap { width: calc(100% - 32px); }
+    .qr-code-img { width: 130px; height: 130px; }
+}

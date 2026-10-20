@@ -1,0 +1,62 @@
+# =====================================================================
+#  Clay and Stuff - iisang .htaccess para sa buong system
+#  (pinagsama ang dating nasa Admin, Commission at uploads folders)
+#  Kailangan: Apache 2.4 (kasama na sa XAMPP)
+# =====================================================================
+
+# Walang folder listing kahit saan (hindi makikita ang laman ng folder
+# kapag walang index page).
+Options -Indexes
+
+
+# ---------------------------------------------------------------------
+# 1. ADMIN FOLDER
+#    Config, SQL at maintenance scripts lang ito (may mail password at
+#    database schema), kaya bawal buksan sa browser. Hindi apektado ang
+#    require/include ng PHP - gumagana pa rin ang database.php.
+#    Exception: cleanup_orphaned_uploads.php (owner page, may sariling
+#    login check).
+# ---------------------------------------------------------------------
+<If "%{REQUEST_URI} =~ m#/admin[^/]*/#i && %{REQUEST_URI} !~ m#/admin/cleanup_orphaned_uploads\.php$#i">
+    Require all denied
+</If>
+
+
+# ---------------------------------------------------------------------
+# 2. UPLOADS FOLDER
+#    a) Payment proofs, refund proofs at shipping receipts - bawal
+#       direktang buksan. Dumadaan sila sa Shared/proof.php (may login
+#       at ownership check). Lahat ng nasa uploads maliban sa "orders"
+#       folder ay sarado.
+#    b) Larawan lang ang laman ng uploads - bawal patakbuhin ang
+#       kahit anong script dito.
+# ---------------------------------------------------------------------
+<If "%{REQUEST_URI} =~ m#/uploads[^/]*/(?!orders/)#i">
+    Require all denied
+</If>
+
+<If "%{REQUEST_URI} =~ m#/uploads[^/]*/.*\.(php\d?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp|htaccess)$#i">
+    Require all denied
+</If>
+
+
+# ---------------------------------------------------------------------
+# 3. UPLOAD LIMITS (para sa Commission form - maraming figure per
+#    submit, bawat isa may larawan). Para ito sa XAMPP / Apache.
+#    Sa ibang hosting (PHP-FPM), ang Commission/.user.ini ang gumagana.
+# ---------------------------------------------------------------------
+<IfModule mod_php.c>
+    php_value upload_max_filesize 25M
+    php_value post_max_size 30M
+    php_value max_file_uploads 50
+    php_value max_execution_time 120
+    php_value max_input_time 120
+</IfModule>
+
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 25M
+    php_value post_max_size 30M
+    php_value max_file_uploads 50
+    php_value max_execution_time 120
+    php_value max_input_time 120
+</IfModule>

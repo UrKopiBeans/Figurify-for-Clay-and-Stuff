@@ -1,0 +1,483 @@
+/* ==========================================================
+   Clay and Stuff — Figurify redesign
+   Payment & Shipping Details (payment-shipping.php)
+   Standalone: does not need my-orders.css.
+   ========================================================== */
+
+:root{
+    --cs-primary:   #C2325F;
+    --cs-plum:      #4A1D3B;
+    --cs-blush:     #FFEDF2;
+    --cs-cream:     #FFF8F6;
+    --cs-success:   #2F8F67;
+    --cs-warning:   #9A6408;
+    --cs-danger:    #B83227;
+    --cs-line:      #F3DCE3;
+    --cs-line-soft: #F8E8EC;
+    --cs-muted:     #7C6670;
+    --cs-warn-bg:   #FDEFBF;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+    margin: 0;
+    
+    
+    color: var(--cs-plum);
+    line-height: 1.5;
+}
+
+button, input, select, textarea{ font: inherit; }
+
+/* ---------- hero ---------- */
+
+.ps-hero{
+    padding: 44px 24px 38px;
+    background: linear-gradient(120deg, #FFEDF2 0%, var(--cs-cream) 70%);
+}
+
+.ps-hero-inner{
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.ps-eyebrow{
+    display: block;
+    
+    font-style: italic;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--cs-primary);
+}
+
+.ps-hero h1{
+    margin: 4px 0 6px;
+    
+    font-weight: 800;
+    font-size: 46px;
+    line-height: 1.1;
+    color: var(--cs-plum);
+}
+
+.ps-hero p{
+    margin: 0;
+    font-size: 15px;
+    color: var(--cs-muted);
+}
+
+/* ---------- layout ---------- */
+
+.ps-page{
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+}
+
+.ps-layout{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.ps-col{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.ps-card{
+    background: #fff;
+    border: 1px solid var(--cs-line);
+    border-radius: 20px;
+    padding: 28px 24px 26px;
+    box-shadow: 0 1px 2px rgba(74,29,59,.04);
+}
+
+.ps-card h2{
+    margin: 0 0 18px;
+    
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--cs-plum);
+}
+
+.ps-error{
+    max-width: 1280px;
+    margin: 0 auto 16px;
+    padding: 12px 16px;
+    background: #FDE6E3;
+    color: var(--cs-danger);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ---------- fields ---------- */
+
+.payment-form-group{
+    margin-bottom: 18px;
+}
+
+.payment-form-group > label,
+.payment-form-group > .ps-label{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cs-plum);
+}
+
+.payment-form-group input[type="text"],
+.payment-form-group select{
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--cs-line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--cs-plum);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.payment-form-group input::placeholder{ color: #A8949C; }
+
+.payment-form-group input[type="text"]:focus,
+.payment-form-group select:focus{
+    border-color: var(--cs-primary);
+    box-shadow: 0 0 0 3px rgba(194,50,95,.12);
+}
+
+.address-stack{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.courier-note{
+    margin: -2px 0 8px;
+    font-size: 11.5px;
+    color: var(--cs-muted);
+}
+
+.refund-note,
+.payment-form-hint{
+    margin: 0 0 16px;
+    font-size: 12.5px;
+    color: var(--cs-muted);
+}
+
+.payment-form-hint{
+    margin: 8px 0 0;
+    font-size: 11.5px;
+}
+
+.ps-foot-note{
+    margin: 2px 0 0;
+    font-size: 11.5px;
+    color: var(--cs-muted);
+}
+
+.notice-box{
+    margin: 4px 0 18px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: var(--cs-warn-bg);
+    color: var(--cs-warning);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* ---------- payment card ---------- */
+
+.price-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    font-size: 14px;
+    color: var(--cs-plum);
+}
+
+.price-row span:last-child{ font-weight: 700; }
+
+.downpayment-row span:last-child{
+    color: var(--cs-primary);
+}
+
+.price-breakdown-list{ margin-bottom: 14px; }
+
+.qr-code-row{
+    display: flex;
+    gap: 16px;
+}
+
+.qr-code-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.qr-code-img{
+    display: block;
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--cs-line);
+    border-radius: 14px;
+    cursor: zoom-in;
+}
+
+.qr-code-caption{
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cs-plum);
+}
+
+.payment-proof-upload{
+    position: relative;
+}
+
+.payment-proof-preview{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 88px;
+    padding: 14px;
+    background: var(--cs-cream);
+    border: 1.5px dashed #EBBCCB;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--cs-muted);
+    overflow: hidden;
+    transition: border-color .15s, background .15s;
+}
+
+.payment-proof-upload:hover .payment-proof-preview{
+    border-color: var(--cs-primary);
+    background: var(--cs-blush);
+}
+
+.payment-proof-preview img{
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: 10px;
+}
+
+.payment-proof-placeholder{ display: block; }
+
+.payment-proof-upload input[type="file"]{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* ---------- refund method pills ---------- */
+
+.refund-method-options{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.refund-method-option{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: var(--cs-blush);
+    color: var(--cs-primary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.refund-method-option input{
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.refund-method-option:hover{ background: #FFDCE6; }
+
+.refund-method-option.selected{
+    background: var(--cs-primary);
+    color: #fff;
+}
+
+.refund-method-option:focus-within{
+    box-shadow: 0 0 0 3px rgba(194,50,95,.2);
+}
+
+#refundMethodOther{
+    display: none;
+    width: 100%;
+    margin-bottom: 8px;
+    border: 1px solid var(--cs-line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--cs-plum);
+    outline: none;
+}
+
+#refundMethodOther:focus{
+    border-color: var(--cs-primary);
+    box-shadow: 0 0 0 3px rgba(194,50,95,.12);
+}
+
+/* ---------- terms + buttons ---------- */
+
+.payment-terms-group{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 4px 0 18px;
+}
+
+.payment-terms-group input[type="checkbox"]{
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: var(--cs-primary);
+    cursor: pointer;
+}
+
+.payment-terms-group label{
+    font-size: 13px;
+    color: var(--cs-plum);
+    cursor: pointer;
+}
+
+.payment-terms-group a{
+    color: var(--cs-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.payment-terms-group a:hover{ text-decoration: underline; }
+
+.payment-actions-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.payment-submit-btn,
+.payment-cancel-btn{
+    padding: 15px 28px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, color .15s, opacity .15s;
+}
+
+.payment-submit-btn{
+    background: var(--cs-primary);
+    color: #fff;
+    border: 2px solid var(--cs-primary);
+}
+
+.payment-submit-btn:hover{ background: #A92A52; border-color: #A92A52; }
+.payment-submit-btn:disabled{ opacity: .6; cursor: not-allowed; }
+
+.payment-cancel-btn{
+    background: #fff;
+    color: var(--cs-primary);
+    border: 2px solid var(--cs-primary);
+}
+
+.payment-cancel-btn:hover{ background: var(--cs-blush); }
+
+/* ---------- QR lightbox ---------- */
+
+.qr-lightbox-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(74,29,59,.6);
+}
+
+.qr-lightbox-overlay.show{ display: flex; }
+
+.qr-lightbox-box{
+    position: relative;
+    max-width: 420px;
+    width: 100%;
+    padding: 28px 24px 22px;
+    background: #fff;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.qr-lightbox-box img{
+    display: block;
+    width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.qr-lightbox-box p{
+    margin: 12px 0 0;
+    font-weight: 700;
+    color: var(--cs-plum);
+}
+
+.qr-lightbox-box .qr-lightbox-hint{
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--cs-muted);
+}
+
+.qr-lightbox-close{
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--cs-blush);
+    color: var(--cs-primary);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 960px){
+    .ps-layout{ grid-template-columns: minmax(0, 1fr); }
+    .ps-hero{ padding: 32px 14px 28px; }
+    .ps-hero h1{ font-size: 34px; }
+}
+
+@media (max-width: 520px){
+    .ps-page{ padding: 20px 14px 48px; }
+    .ps-card{ padding: 22px 16px 20px; }
+    .qr-code-img{ width: 120px; height: 120px; }
+    .payment-actions-row > button{ flex: 1 1 100%; }
+}

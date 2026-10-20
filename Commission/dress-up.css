@@ -1,0 +1,5325 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+/* DRESS UP - lahat ng styles ng dress-up.php (hinango sa commission.css)
+   Naka-link sa: dress-up.php | logic: dress-up.js
+   Ang shared base (navbar, hero, buttons) ay nasa commission.css */
+
+/* dress up step 03: .dressup-left = 3D viewer + summary, .dressup-right = customization options */
+#dressUpModule .dressup-workspace {
+    display: grid;
+    grid-template-columns: minmax(320px, 420px) 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+#dressUpModule .dressup-left,
+#dressUpModule .dressup-right {
+    min-width: 0;
+    background: white;
+    border-radius: 20px;
+    /* same "sticker" box-shadow used in Image Submission Step 1/2 */
+    border: 3px solid white;
+    box-shadow:
+        0 0 0 1px #e4d5df,
+        6px 8px 0 rgba(216,194,222,.35);
+}
+
+#dressUpModule .dressup-left {
+    padding: 25px;
+    align-self: start;
+    height: fit-content;
+    position: static;
+}@media (max-width: 800px) {
+    #dressUpModule .dressup-workspace {
+            grid-template-columns: 1fr;
+        }
+}
+
+/* final order summary (finalsummary.php) - 3D figure sa kaliwa, order summary card sa kanan */
+#dressUpModule {
+    padding: 40px 0 60px;
+}
+
+/* 3 columns: 3D figure, figure details, box / add-ons */
+#dressUpModule .final-summary-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    gap: 28px;
+    align-items: start;
+    max-width: 1180px;
+    margin: 0 auto;
+}@media (max-width: 1000px) {
+    #dressUpModule .final-summary-layout {
+            grid-template-columns: 1fr;
+        }
+}
+
+#dressUpModule .final-summary-figure,
+#dressUpModule .final-summary-details,
+#dressUpModule .final-summary-box {
+    min-width: 0;
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    /* same "sticker" shadow as Image Submission Step 1/2, applies to all 3 columns */
+    border: 3px solid white;
+    box-shadow:
+        0 0 0 1px #e4d5df,
+        6px 8px 0 rgba(216,194,222,.35);
+}
+
+/* right column skips Order Type/Booking Date, diretso na sa box/add-on items */
+#dressUpModule .final-summary-box #summaryBoxItems {
+    margin-top: 4px;
+}
+
+#dressUpModule .final-summary-navigation.design-step-navigation {
+    margin: 30px auto 0;
+    max-width: 460px;
+    justify-content: center;
+}
+
+/* "Back" is an <a> not a <button>, so center it and remove the default underline */
+#dressUpModule .final-summary-navigation .final-summary-back-btn.step-navigation-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+}
+
+/* dress up styles ported from the old dressup.css, scoped under #dressUpModule so it doesn't leak */
+#dressUpModule .preview-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+#dressUpModule .preview-header h2 {
+
+    font-size: 22px;
+}
+
+#dressUpModule #resetBtn {
+
+    border: none;
+
+    background: #f8d5e8;
+
+    color: #814d69;
+
+    padding: 10px 18px;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+#dressUpModule #resetBtn:hover {
+
+    background: #f2b9d7;
+}
+
+#dressUpModule .figure-area {
+
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 1024 / 748;
+
+    background:
+        radial-gradient(
+            #e4d4df 1px,
+            transparent 1px
+        );
+
+    background-size: 20px 20px;
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    border: 1px solid #f0d5e5;
+}
+
+#dressUpModule .figure-viewer {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: auto;
+
+    background: transparent;
+
+    cursor: grab;
+}
+
+#dressUpModule .figure-viewer:active {
+    cursor: grabbing;
+}
+
+#dressUpModule .preview-summary {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid #efd2e3;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #fff7fb, #f4edff);
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+/* no override here, Dress Up just uses the default .selected-order-box style */
+#dressUpModule .figure-summary-box {
+    margin-top: 8px;
+}
+
+#dressUpModule .option-section {
+
+    margin-bottom: 35px;
+}
+
+#dressUpModule .section-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+#dressUpModule .section-title h2 {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: .3px;
+}
+
+#dressUpModule .section-title span {
+
+    font-size: 11px;
+
+    color: #aaa;
+}
+
+#dressUpModule .section-title > span {
+    display: none;
+}
+
+#dressUpModule .option-grid {
+
+    display: flex;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+}
+
+#dressUpModule .option-card {
+
+    width: 145px;
+
+    min-height: 175px;
+
+    border: 2px solid #f1d5e5;
+
+    background: #fffaff;
+
+    border-radius: 15px;
+
+    padding: 10px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+    text-align: center;
+}
+
+#dressUpModule .option-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: #ec8abd;
+
+}
+
+#dressUpModule .option-card.selected {
+
+    border: 3px solid #df65a6;
+
+    background: #ffe4f2;
+
+    box-shadow:
+        0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .option-image {
+
+    height: 120px;
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: white;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+#dressUpModule .option-image img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+#dressUpModule .option-card span {
+
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+#dressUpModule .option-card small {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #d05c98;
+}
+
+#dressUpModule .top-color-picker {
+
+    margin-top: 18px;
+}
+
+/* coming soon placeholder - for option-sections (e.g. Chibi Top/Bottom/Shoes) with no items yet */
+#dressUpModule .coming-soon-box {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 30px 20px;
+
+    border: 2px dashed #f1d5e5;
+
+    border-radius: 15px;
+
+    background: #fffaff;
+
+    text-align: center;
+}
+
+#dressUpModule .coming-soon-icon {
+
+    font-size: 26px;
+}
+
+#dressUpModule .coming-soon-title {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    color: #d05c98;
+
+    letter-spacing: .3px;
+}
+
+#dressUpModule .coming-soon-text {
+
+    margin: 0;
+
+    max-width: 320px;
+
+    font-size: 12px;
+
+    color: #a98a97;
+}
+
+#dressUpModule .top-color-grid {
+
+    display: flex;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+#dressUpModule .top-color-card {
+
+    width: 108px;
+
+    min-height: 106px;
+
+    border: 2px solid #f1d5e5;
+
+    background: #fffaff;
+
+    border-radius: 15px;
+
+    padding: 12px 10px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+    text-align: center;
+
+    color: #663d55;
+
+    
+}
+
+#dressUpModule .top-color-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: #ec8abd;
+}
+
+#dressUpModule .top-color-card.selected {
+
+    border: 3px solid #df65a6;
+
+    background: #ffe4f2;
+
+    box-shadow:
+        0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .top-color-swatch {
+
+    width: 42px;
+
+    height: 42px;
+
+    display: block;
+
+    margin: 0 auto 8px;
+
+    border-radius: 50%;
+
+    border: 2px solid rgba(102, 61, 85, 0.18);
+
+    box-shadow:
+        inset 0 2px 5px rgba(255, 255, 255, 0.35);
+}
+
+#dressUpModule .top-color-white {
+    background: #FFFFFF;
+}
+
+#dressUpModule .top-color-black {
+    background: #1e1e1e;
+}
+
+#dressUpModule .top-color-red {
+    background: #d94b4b;
+}
+
+#dressUpModule .top-color-blue {
+    background: #4e7df0;
+}
+
+#dressUpModule .top-color-name {
+    display: block;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+#dressUpModule .product-details-panel {
+    margin-top: 28px;
+    padding: 22px;
+    border: 1px dashed #e49ec3;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #fff8fc 0%, #f8efff 100%);
+}
+
+#dressUpModule .figure-details-heading {
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+#dressUpModule .figure-details-heading > h2 {
+    margin: 0 0 14px;
+    font-size: 20px;
+}
+
+#dressUpModule .product-details-panel .section-title {
+    margin-bottom: 18px;
+}
+
+#dressUpModule .details-kicker {
+    color: #bd5c8d;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+/* ID selector para manalo sa ".section-title span" rule na nag-o-override ng kulay */
+#dressUpModule #productDetailsKicker {
+    color: #bd5c8d;
+}
+
+/* box/add-ons step: plain panel lang, walang card bg/border. Sariling .box-mode selector */
+#dressUpModule .product-details-panel.box-mode {
+    padding: 0;
+    border: none;
+    background: none;
+    margin-top: 0;
+}
+
+#dressUpModule .product-details-panel.box-mode .section-title {
+    margin-bottom: 14px;
+}
+
+#dressUpModule .product-details-panel.box-mode .details-kicker {
+    display: block;
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+    line-height: 1.25;
+}
+
+#dressUpModule .product-details-panel.box-mode #productDetailsTitle,
+#dressUpModule .product-details-panel.box-mode #productDetailsDescription {
+    display: none;
+}
+
+#dressUpModule .product-detail-group {
+    margin-top: 18px;
+}
+
+#dressUpModule .detail-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #9b3f72;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#dressUpModule .detail-label small, #dressUpModule .detail-hint {
+    color: #a5748e;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+#dressUpModule .size-choice-grid, #dressUpModule .box-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+#dressUpModule .box-choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* choice cards (size + box) - katulad ng .box-type-option pero scoped dito, magkaiba ang grid classes */
+#dressUpModule .detail-choice-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 68px;
+    padding: 14px 10px;
+    border: 2px solid #ffffff;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #873c63;
+    cursor: pointer;
+    text-align: center;
+    
+    transition: .2s;
+    box-shadow:
+        0 0 0 1px #e3d1df,
+        2px 3px 0 rgba(215, 192, 221, .25);
+}
+
+#dressUpModule .detail-choice-card:hover {
+    transform: translateY(-2px);
+}
+
+#dressUpModule .detail-choice-card.selected {
+    outline: 3px solid #c96b9c;
+    background: #fff0f7;
+    box-shadow: 3px 5px 0 rgba(201, 107, 156, .22);
+}
+
+#dressUpModule .detail-choice-card strong {
+    
+    font-weight: bold;
+    font-size: 13px;
+    color: #873c63;
+}
+
+#dressUpModule .detail-choice-card span {
+    font-size: 11px;
+    font-weight: 900;
+    color: #c96b9c;
+}
+
+#dressUpModule .detail-choice-card .image-check {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    z-index: 3;
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4a4ca;
+    color: #ffffff;
+    font-size: 11px;
+    opacity: 0;
+    transform: scale(.7);
+    transition: .2s;
+}
+
+#dressUpModule .detail-choice-card.selected .image-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* box cards have an image/color swatch up top, so give them a taller edge-to-edge layout */
+#dressUpModule .box-choice-card {
+    padding: 0;
+    overflow: hidden;
+    min-height: 150px;
+    justify-content: flex-start;
+}
+
+#dressUpModule .box-choice-card .detail-card-image,
+#dressUpModule .box-choice-card .detail-card-swatch {
+    width: 100%;
+    height: 90px;
+    flex-shrink: 0;
+    display: block;
+    object-fit: cover;
+}
+
+#dressUpModule .box-choice-card strong {
+    margin-top: 10px;
+    padding: 0 8px;
+}
+
+#dressUpModule .box-choice-card span {
+    margin-bottom: 10px;
+    padding: 0 8px;
+}
+
+#dressUpModule .product-detail-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e8c9db;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .9);
+    color: #75445e;
+    outline: none;
+}
+
+#dressUpModule .product-detail-input:focus {
+    border-color: #df65a6;
+    box-shadow: 0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .product-detail-input:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+#dressUpModule .detail-hint {
+    display: block;
+    margin-top: 5px;
+}
+
+#dressUpModule .box-detail-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+}
+
+#dressUpModule .box-detail-fields label:last-child {
+    grid-column: 1 / -1;
+}
+
+#dressUpModule #hironoAddonGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#dressUpModule #hironoBoxFields label:nth-child(3) {
+    grid-column: 1 / -1;
+}
+
+#dressUpModule #hironoBoxFields label:last-child {
+    grid-column: auto;
+}
+
+#dressUpModule .product-detail-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #ecd6e3;
+    color: #8c3764;
+    font-size: 13px;
+}
+
+/* Hirono month/day magkatabi sa isang row, liliitan para magkasya */
+#dressUpModule .product-detail-date-row {
+    display: flex;
+    gap: 10px;
+}
+
+#dressUpModule .product-detail-date-row label {
+    flex: 1;
+    min-width: 0;
+}
+
+#dressUpModule .product-detail-date-row .product-detail-input {
+    width: 100%;
+    padding: 9px 10px;
+    font-size: 13px;
+}
+
+#dressUpModule .product-detail-total strong {
+    color: #bd5c8d;
+}
+
+#dressUpModule .continue-btn {
+
+    width: 100%;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 30px;
+
+    background: #e889bd;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    margin-top: 5px;
+}
+
+#dressUpModule .continue-btn:hover {
+
+    background: #d56ca5;
+}
+
+#dressUpModule .continue-btn[hidden], #dressUpModule .step-navigation-button[hidden], #dressUpModule .design-step-navigation[hidden] {
+    display: none !important;
+}
+
+#dressUpModule .figure-model-grid {
+
+    display: flex;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+}
+
+#dressUpModule .figure-model-card {
+
+    width: 220px;
+
+    min-height: 110px;
+
+    border: 2px solid #f1d5e5;
+
+    background: linear-gradient(180deg, #fffaff 0%, #fff0f7 100%);
+
+    border-radius: 15px;
+
+    padding: 16px 14px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+    text-align: left;
+
+    color: #663d55;
+
+    
+}
+
+#dressUpModule .figure-model-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: #ec8abd;
+}
+
+#dressUpModule .figure-model-card.selected {
+
+    border: 3px solid #df65a6;
+
+    background: #ffe4f2;
+
+    box-shadow:
+        0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .figure-model-name {
+
+    display: block;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    margin-bottom: 6px;
+}
+
+#dressUpModule .figure-model-card small {
+
+    display: block;
+
+    color: #a05b7f;
+
+    font-size: 12px;
+}
+
+#dressUpModule .figure-style-section {
+
+    padding-bottom: 0;
+
+    margin-bottom: 20px;
+
+    border-bottom: 0;
+}
+
+#dressUpModule .figure-style-kicker {
+
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: .3px;
+
+    color: #9f3d73;
+
+    margin-bottom: 20px;
+}
+
+#dressUpModule .figure-style-navigation {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 20px;
+}
+
+#dressUpModule .figure-style-navigation .step-navigation-button {
+
+    flex: 0 0 auto;
+
+    width: auto;
+
+    min-width: 160px;
+}
+
+#dressUpModule #nextFigureStyle.continue-btn {
+
+    border: none;
+
+    background: #e889bd;
+
+    color: #ffffff;
+}
+
+#dressUpModule #nextFigureStyle.continue-btn:hover {
+
+    background: #d56ca5;
+}
+
+#dressUpModule .figure-style-heading {
+
+    
+
+    font-size: 28px;
+
+    color: #8c3764;
+
+    margin-bottom: 18px;
+}
+
+#dressUpModule .figure-style-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+#dressUpModule .figure-style-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 190px;
+
+    padding: 0;
+
+    border: 2px solid #f1d5e5;
+
+    background: linear-gradient(180deg, #fffaff 0%, #fff0f7 100%);
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+    text-align: left;
+
+    color: #7b4c65;
+
+    
+}
+
+#dressUpModule .figure-style-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color: #ec8abd;
+}
+
+#dressUpModule .figure-style-card.selected {
+
+    border-color: #df65a6;
+
+    box-shadow: 0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .figure-style-card::after {
+
+    content: "✓";
+
+    position: absolute;
+
+    top: 8px;
+
+    right: 8px;
+
+    width: 20px;
+
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #f4a4ca;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    opacity: 0;
+
+    transform: scale(.75);
+
+    transition: .2s;
+}
+
+#dressUpModule .figure-style-card.selected::after {
+
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+#dressUpModule .figure-style-card img {
+
+    width: 100%;
+
+    height: 160px;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+#dressUpModule .figure-style-card span {
+
+    display: block;
+
+    padding: 8px 10px 10px;
+
+    
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #893960;
+}@media (max-width: 640px) {
+    #dressUpModule .figure-style-grid {
+    
+            grid-template-columns: 1fr;
+        }
+}@media (max-width: 500px) {
+    #dressUpModule .option-card {
+    
+            width: calc(50% - 8px);
+        }
+}
+
+#dressUpModule .skin-grid {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 10px 16px;
+    border: 2px solid #f1d5e5;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #fffaff 0%, #fff0f7 100%);
+}
+
+#dressUpModule .skin-card {
+    width: 60px;
+    height: 60px;
+    min-height: 60px;
+
+    border: 2px solid #f1d5e5;
+
+    background: #fffaff;
+
+    border-radius: 50%;
+
+    padding: 4px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+    text-align: center;
+
+    color: #663d55;
+
+    
+}
+
+#dressUpModule .skin-card:hover {
+    transform: translateY(-4px);
+    border-color: #ec8abd;
+}
+
+#dressUpModule .skin-card.selected {
+    border: 3px solid #df65a6;
+
+    background: #ffe4f2;
+
+    box-shadow:
+        0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .skin-card {
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#dressUpModule .skin-card:hover {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+#dressUpModule .skin-card.selected {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+#dressUpModule .skin-card.selected .skin-swatch {
+    box-shadow: none;
+}
+
+#dressUpModule .skin-swatch {
+    width: 42px;
+    height: 42px;
+
+    display: block;
+
+    margin: 0 auto;
+
+    border-radius: 50%;
+
+    border: 2px solid #ffffff;
+
+    box-shadow: none;
+}
+
+#dressUpModule .skin-section .section-title {
+    display: none;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]), #dressUpModule #funkoSkinSection:not([hidden]), #dressUpModule #hironoModelSection:not([hidden]), #dressUpModule #hironoSkinSection:not([hidden]) {
+    display: block;
+    width: 100%;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-card, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-card {
+    width: calc(50% - 10px);
+}
+
+#dressUpModule #funkoSkinSection:not([hidden]) .skin-card, #dressUpModule #hironoSkinSection:not([hidden]) .skin-card {
+    width: 60px;
+}
+
+#dressUpModule .skin-light {
+    background: #F2CCB7;
+}
+
+#dressUpModule #funkoSkinSection .skin-light {
+    background: #F7C8A0;
+}
+
+#dressUpModule .skin-dark {
+    background: #D19477;
+}
+
+#dressUpModule .top-color-card {
+    display: inline-flex;
+    width: 58px;
+    min-height: 58px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+}
+
+#dressUpModule .top-color-picker .top-color-grid {
+    display: none;
+}
+
+#dressUpModule .top-color-swatch {
+    width: 30px;
+    height: 30px;
+    margin: 0;
+}
+
+#dressUpModule .top-color-name {
+    display: none;
+}
+
+#dressUpModule #funkoPanel:has(#funkoSkinSection:not([hidden])), #dressUpModule #hironoPanel:has(#hironoSkinSection:not([hidden])), #dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 24px;
+    align-items: start;
+}
+
+#dressUpModule #funkoPanel:has(#funkoSkinSection:not([hidden])) > *, #dressUpModule #hironoPanel:has(#hironoSkinSection:not([hidden])) > *, #dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) > * {
+    grid-column: 1 / -1;
+}
+
+#dressUpModule #funkoPanel:has(#funkoSkinSection:not([hidden])) > #funkoModelSection, #dressUpModule #hironoPanel:has(#hironoSkinSection:not([hidden])) > #hironoModelSection, #dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) > #chibiModelSection {
+    grid-column: 1;
+}
+
+#dressUpModule #funkoPanel:has(#funkoSkinSection:not([hidden])) > #funkoSkinSection, #dressUpModule #hironoPanel:has(#hironoSkinSection:not([hidden])) > #hironoSkinSection, #dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) > #chibiSkinSection {
+    grid-column: 2;
+    margin-top: 0;
+}
+
+#dressUpModule .skin-section .section-title {
+    display: flex;
+}@media (max-width: 500px) {
+    #dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) {
+            grid-template-columns: 1fr;
+        }
+    #dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) > #chibiSkinSection {
+            grid-column: 1;
+            align-self: start;
+            padding-bottom: 0;
+        }
+    #dressUpModule #funkoModelSection:not([hidden]), #dressUpModule #funkoSkinSection:not([hidden]), #dressUpModule #hironoModelSection:not([hidden]), #dressUpModule #hironoSkinSection:not([hidden]) {
+            display: block;
+            width: 100%;
+        }
+    #dressUpModule #funkoModelSection:not([hidden]) .figure-model-card, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-card, #dressUpModule #funkoSkinSection:not([hidden]) .skin-card, #dressUpModule #hironoSkinSection:not([hidden]) .skin-card {
+            width: 60px;
+        }
+}
+
+#dressUpModule #funkoPanel {
+    display: flex;
+    flex-direction: column;
+}
+
+#dressUpModule #funkoPanel:has(#funkoGirlHairSection:not([hidden])) #funkoGirlHairSection {
+    order: 1;
+}
+
+#dressUpModule #funkoPanel:has(#funkoGirlHairSection:not([hidden])) #funkoHairColorSection {
+    order: 2;
+}
+
+#dressUpModule #funkoPanel:has(#funkoGirlHairSection:not([hidden])) #funkoGirlTopSection {
+    order: 3;
+}
+
+#dressUpModule #funkoPanel:has(#funkoGirlHairSection:not([hidden])) #funkoGirlTopColorSection {
+    order: 4;
+}
+
+#dressUpModule #funkoPanel:has(#funkoGirlHairSection:not([hidden])) #funkoGirlBottomSection {
+    order: 5;
+}
+
+#dressUpModule #funkoPanel:has(#funkoGirlHairSection:not([hidden])) #funkoGirlBottomColorSection {
+    order: 6;
+}
+
+#dressUpModule .design-step-navigation {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin: 16px 0;
+}
+
+#dressUpModule .step-navigation-button {
+    flex: 1;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid #edb4d1;
+    border-radius: 999px;
+    background: #fff1f8;
+    color: #9f3d73;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#dressUpModule .step-navigation-button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+#dressUpModule .design-step-navigation .continue-btn {
+    flex: 1;
+    width: auto;
+    min-height: 42px;
+    margin: 0;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: inherit;
+}
+
+#dressUpModule .design-step-navigation #nextDesignStep.continue-btn {
+    border: none;
+    background: #e889bd;
+    color: #ffffff;
+}
+
+#dressUpModule .design-step-navigation #nextDesignStep.continue-btn:hover {
+    background: #d56ca5;
+}
+
+/* dapat kamukha ng regular "Next" button (#nextDesignStep) */
+#dressUpModule .design-step-navigation #continueBtn.continue-btn {
+    border: none;
+    background: #e889bd;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+#dressUpModule .design-step-navigation #continueBtn.continue-btn:hover {
+    background: #d56ca5;
+}
+
+/* "Continue to Payment" dapat kamukha ng "Next" button sa itaas */
+#dressUpModule .final-summary-navigation #finalSummaryContinueBtn.continue-btn {
+    border: none;
+    background: #e889bd;
+    color: #ffffff;
+    box-shadow: none;
+}
+
+#dressUpModule .final-summary-navigation #finalSummaryContinueBtn.continue-btn:hover {
+    background: #d56ca5;
+}
+
+#dressUpModule .preview-header h2, #dressUpModule .page-title h1, #dressUpModule .section-title h2, #dressUpModule .figure-style-kicker {
+    
+    color: #943765;
+}
+
+#dressUpModule .preview-header h2 {
+    font-size: 24px;
+}
+
+#dressUpModule .section-title span {
+    color: #b78aa1;
+}
+
+#dressUpModule .style-card, #dressUpModule .figure-model-card, #dressUpModule .option-card, #dressUpModule .skin-card, #dressUpModule .top-color-card {
+    border-radius: 20px;
+    border: 1px solid rgba(233, 191, 215, .95);
+    background: linear-gradient(180deg, #ffffff 0%, #fff8fc 100%);
+    box-shadow: 0 8px 0 rgba(221, 184, 207, .35);
+}
+
+#dressUpModule .skin-card {
+    border-radius: 50%;
+    box-shadow: 0 4px 0 rgba(221, 184, 207, .35);
+}
+
+#dressUpModule .style-card.selected, #dressUpModule .figure-model-card.selected, #dressUpModule .option-card.selected, #dressUpModule .skin-card.selected, #dressUpModule .top-color-card.selected {
+    border: 2px solid #df65a6;
+    background: #ffe4f2;
+    box-shadow: 0 0 0 3px #f8c5df;
+}
+
+#dressUpModule .style-card:hover, #dressUpModule .figure-model-card:hover, #dressUpModule .option-card:hover, #dressUpModule .skin-card:hover, #dressUpModule .top-color-card:hover, #dressUpModule #resetBtn:hover, #dressUpModule #backToStylesBtn:hover {
+    transform: translateY(-3px);
+}
+
+#dressUpModule .option-image, #dressUpModule .figure-area {
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #fff5fb 100%);
+}
+
+#dressUpModule .figure-area {
+    border: 1px solid #f0d5e5;
+}
+
+#dressUpModule .continue-btn {
+    display: block;
+    color: #ffffff;
+    text-align: center;
+    text-decoration: none;
+    background: linear-gradient(180deg, #e78aba, #d86aa7);
+    box-shadow: 0 8px 18px rgba(218, 107, 165, .24);
+    font-size: 15px;
+}
+
+#dressUpModule #resetBtn, #dressUpModule #backToStylesBtn {
+    border-radius: 999px;
+}
+
+#dressUpModule #resetBtn {
+    background: #f8d5e8;
+}@media (max-width: 500px) {
+    #dressUpModule .size-choice-grid, #dressUpModule .box-choice-grid, #dressUpModule .box-detail-fields {
+            grid-template-columns: 1fr;
+        }
+    #dressUpModule .box-detail-fields label:last-child {
+            grid-column: auto;
+        }
+}
+
+#dressUpModule .receipt-empty {
+    color: #a5748e;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* dress up order summary rows - header word (e.g. "Top") stays on top and bold,
+   the chosen value (e.g. "Hoodie") below it, not bold but still easy to read */
+#dressUpModule .figure-summary-name {
+    font-size: 11px;
+    letter-spacing: .4px;
+}
+
+#dressUpModule .figure-summary-description {
+    margin-top: 3px;
+    color: #6d3f56;
+    
+    font-size: 13px;
+    font-weight: 400;
+}
+
+#dressUpModule .category-panel[hidden], #dressUpModule .option-section[hidden] {
+    display: none !important;
+}
+
+#dressUpModule .skin-card, #dressUpModule .skin-card:hover, #dressUpModule .skin-card.selected {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+#dressUpModule .skin-card .skin-swatch, #dressUpModule .skin-card.selected .skin-swatch {
+    width: 42px;
+    height: 42px;
+    border: 2px solid #ffffff;
+    box-shadow: none;
+}
+
+#dressUpModule #chibiPanel .skin-card, #dressUpModule #chibiPanel .skin-card:hover, #dressUpModule #chibiPanel .skin-card.selected {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+#dressUpModule .custom-color-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-left: 10px;
+    padding: 5px 16px 5px 5px;
+    border: 2px solid #f1d5e5;
+    border-radius: 999px;
+    background: #fffaff;
+    cursor: pointer;
+    position: relative;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+#dressUpModule .custom-color-control:hover {
+    border-color: #edb4d1;
+    box-shadow: 0 4px 12px rgba(208, 92, 152, .2);
+    transform: translateY(-1px);
+}
+
+#dressUpModule .custom-color-wheel {
+    display: block;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, #ff6b6b, #ffd166, #f7f77b, #7ee787, #6bc9ff, #7d8bff, #d17dff, #ff6b6b);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1.5px #e7b6cf;
+    transition: background .15s ease;
+}
+
+#dressUpModule .custom-color-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #9f3d73;
+    white-space: nowrap;
+}
+
+#dressUpModule .custom-color-control input[type="color"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Chibi custom color control dapat kamukha ng Funko Pop - gamit na lang shared styles, walang override */
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #chibiModelSection:not([hidden]) .figure-model-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    align-items: stretch;
+}
+
+#dressUpModule #chibiModelSection:not([hidden]) {
+    width: 100%;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-card, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-card, #dressUpModule #chibiModelSection:not([hidden]) .figure-model-card {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 225px;
+    height: 225px;
+    box-sizing: border-box;
+}@media (max-width: 500px) {
+    #dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #chibiModelSection:not([hidden]) .figure-model-grid {
+            grid-template-columns: 1fr;
+        }
+}
+
+#dressUpModule .skin-card.selected .skin-swatch {
+    outline: 3px solid #df65a6;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px rgba(248, 197, 223, .72);
+}@media (max-width: 650px) {
+    #dressUpModule .design-step-navigation {
+            flex-wrap: wrap;
+        }
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-grid, #dressUpModule #chibiTypeSection:not([hidden]) .option-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    align-items: stretch;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-card, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-card, #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-card, #dressUpModule #chibiTypeSection:not([hidden]) .option-card {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 225px;
+    height: 225px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-card .option-image, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-card .option-image, #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-card .option-image, #dressUpModule #chibiTypeSection:not([hidden]) .option-card .option-image {
+    height: 150px;
+    min-height: 150px;
+    flex: 0 0 150px;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-name, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-name, #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-name, #dressUpModule #chibiTypeSection:not([hidden]) .option-card > span {
+    margin-top: 8px;
+    min-height: 20px;
+    line-height: 1.25;
+}
+
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-card.selected, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-card.selected, #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-card.selected, #dressUpModule #chibiTypeSection:not([hidden]) .option-card.selected {
+    border-width: 2px;
+    box-shadow: inset 0 0 0 2px #f8c5df,
+                0 8px 0 rgba(221, 184, 207, .35);
+}@media (max-width: 500px) {
+    #dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid, #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-grid, #dressUpModule #chibiTypeSection:not([hidden]) .option-grid {
+            grid-template-columns: 1fr;
+        }
+}
+
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    align-items: stretch;
+}
+
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-card {
+    width: 100% !important;
+    min-width: 0;
+    min-height: 225px;
+    height: 225px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+/* kailangan ito para hindi ma-override ng display:flex ang [hidden] - kung wala, lalabas lahat ng gender card */
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-card[hidden] {
+    display: none !important;
+}
+
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-card .option-image {
+    height: 150px;
+    min-height: 150px;
+    flex: 0 0 150px;
+}
+
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-name {
+    margin-top: 8px;
+    min-height: 20px;
+    line-height: 1.25;
+}
+
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-card.selected {
+    border-width: 2px;
+    box-shadow: inset 0 0 0 2px #f8c5df,
+                0 8px 0 rgba(221, 184, 207, .35);
+}@media (max-width: 500px) {
+    #dressUpModule #chibiModelSection:not([hidden]) {
+            width: 100%;
+        }
+}
+
+/* dress up: default + "coming soon" placeholder cards
+   (Default Hair, Sando/Tank Top, Shorts, Shoes = naka-auto-select;
+   Jacket, Long Sleeve, Skirt, Pants, etc. = may lagayan na, wala pang 3D) */
+#dressUpModule .placeholder-image {
+    background: linear-gradient(180deg, #fff 0%, #fdf0f7 100%);
+}
+
+#dressUpModule .option-card .placeholder-image .placeholder-icon {
+    display: block;
+    font-size: 56px;
+    line-height: 1;
+    margin: 0;
+    font-weight: normal;
+}
+
+#dressUpModule .option-card .default-badge,
+#dressUpModule .option-card .coming-soon-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+}
+
+#dressUpModule .option-card .default-badge {
+    background: #e1f3e7;
+    color: #4f9468;
+}
+
+#dressUpModule .option-card .coming-soon-badge {
+    background: #f3eaf7;
+    color: #9a7bb0;
+}
+
+#dressUpModule .option-card.is-coming-soon {
+    cursor: not-allowed;
+    opacity: .72;
+    filter: grayscale(.25);
+}
+
+#dressUpModule .option-card.is-coming-soon:hover {
+    transform: none;
+}
+
+#dressUpModule .option-card.is-coming-soon .placeholder-image .placeholder-icon {
+    opacity: .7;
+}
+
+/* Dress Up: "Continue to Payment" habang isinusumite ang order */
+#dressUpModule .final-summary-navigation #finalSummaryContinueBtn.is-loading {
+    opacity: .7;
+    cursor: wait;
+    pointer-events: none;
+}
+
+/* DRESS UP - Figure Details container: pare-parehong laki, scroll sa loob */
+
+/* SIZE - magkakatabi at magkakasinlaking square na card */
+#dressUpModule #sizeChoiceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 118px);
+    gap: 12px;
+}
+
+#dressUpModule #sizeChoiceGrid .detail-choice-card {
+    width: 118px;
+    height: 118px;
+    min-height: 0;
+    padding: 12px;
+    gap: 8px;
+}
+
+#dressUpModule #sizeChoiceGrid .detail-choice-card strong {
+    font-size: 30px;
+    line-height: 1;
+}
+
+#dressUpModule #sizeChoiceGrid .detail-choice-card span {
+    font-size: 12px;
+}@media (max-width: 520px) {
+    #dressUpModule #sizeChoiceGrid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        }
+    #dressUpModule #sizeChoiceGrid .detail-choice-card {
+            width: auto;
+            height: auto;
+            aspect-ratio: 1 / 1;
+        }
+}
+
+/* "DEFAULT" - nasa kaliwang itaas, sa loob ng larawan */
+#dressUpModule .option-card.is-default {
+    position: relative;
+}
+
+#dressUpModule .option-card.is-default .default-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    margin: 0;
+    z-index: 2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+}
+
+/* mas maliit na "DEFAULT" label */
+#dressUpModule .option-card.is-default .default-badge {
+    top: 14px;
+    left: 14px;
+    padding: 1px 6px;
+    font-size: 8px;
+    letter-spacing: .2px;
+    line-height: 1.5;
+    border-radius: 999px;
+}
+
+/* Items lang (Hair / Top / Bottom / Shoes) ang nagi-scroll kapag marami -
+   nananatili sa lugar ang title ng section, ang kulay, at ang Back/Next */
+
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid {
+    max-height: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 6px;
+    margin: -6px;
+    align-content: start;
+    scrollbar-width: thin;
+    scrollbar-color: #e7b9cf #fbf1f6;
+}
+
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid::-webkit-scrollbar {
+    width: 7px;
+}
+
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid::-webkit-scrollbar-thumb {
+    background: #e7b9cf;
+    border-radius: 8px;
+}
+
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid::-webkit-scrollbar-track {
+    background: #fbf1f6;
+    border-radius: 8px;
+}@media (max-width: 800px) {
+    #dressUpModule .dressup-right .category-panel .option-section > .option-grid {
+            max-height: none;
+            min-height: 0;
+            overflow: visible;
+        }
+}
+
+/* Walang sayang na espasyo: pinupuno ng listahan ng items ang natitirang taas
+   hanggang sa Back/Next (flex mula panel -> Figure Details -> section -> items) */
+
+#dressUpModule #figureDetailsContainer:not([hidden]) {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#dressUpModule #figureDetailsContainer > .category-panel:not([hidden]) {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#dressUpModule .category-panel > .option-section:not([hidden]):has(> .option-grid) {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#dressUpModule .category-panel > .option-section:not([hidden]) > .option-grid {
+    flex: 1 1 auto;
+    min-height: 150px;
+    align-content: start;
+}
+
+#dressUpModule .category-panel > .top-color-picker:not([hidden]),
+#dressUpModule .category-panel > .option-section:not([hidden]):not(:has(> .option-grid)) {
+    flex: 0 0 auto;
+}@media (max-width: 800px) {
+    #dressUpModule .dressup-right-scroll,
+        #dressUpModule #figureDetailsContainer:not([hidden]),
+        #dressUpModule #figureDetailsContainer > .category-panel:not([hidden]),
+        #dressUpModule .category-panel > .option-section:not([hidden]):has(> .option-grid) {
+            display: block;
+        }
+    #dressUpModule .category-panel > .option-section:not([hidden]) > .option-grid {
+            min-height: 0;
+        }
+}
+
+/* bawas-puwang sa pagitan ng items at ng Back/Next */
+#dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):has(> .option-grid) {
+    margin-bottom: 8px;
+}
+
+#dressUpModule .dressup-right #figureDetailsContainer {
+    margin-bottom: 0;
+}
+
+/* Dress Up - Figure Details: walang fixed na taas.
+   Isang hanay lang ng items ang kita, scroll para sa iba.
+   Hindi kasama sa scroll ang title at Back/Next. */
+
+#dressUpModule #figureDetailsContainer:not([hidden]),
+#dressUpModule #figureDetailsContainer > .category-panel:not([hidden]),
+#dressUpModule .category-panel > .option-section:not([hidden]):has(> .option-grid) {
+    display: block;
+    flex: none;
+    min-height: 0;
+}
+
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid,
+#dressUpModule .category-panel > .option-section:not([hidden]) > .option-grid {
+    flex: none;
+    min-height: 0;
+    max-height: 214px;          /* isang hanay ng card (195px) + kaunting espasyo */
+    overflow-y: auto;
+    padding: 6px 8px 6px 6px;
+    margin: -6px -8px 0 -6px;
+    align-content: start;
+}
+
+#dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):has(> .option-grid) {
+    margin-bottom: 14px;
+}@media (max-width: 800px) {
+    #dressUpModule .dressup-right .category-panel .option-section > .option-grid,
+        #dressUpModule .category-panel > .option-section:not([hidden]) > .option-grid {
+            max-height: none;
+            overflow: visible;
+        }
+}
+
+/* Product Type (Chibi) - dalawang card lang, kaya buo dapat ang kita, walang scroll */
+#dressUpModule #chibiTypeSection:not([hidden]) > .option-grid {
+    max-height: none;
+    overflow: visible;
+}
+
+/* FINAL SUMMARY (finalsummary.php) - hero sa taas, iisang container,
+   3D figure sa kaliwa, compact figure details sa kanan (magkakatabi),
+   Custom Box sa pinakababa */
+body[data-page="finalSummary"] .final-summary-hero {
+    min-height: 230px;
+}
+
+body[data-page="finalSummary"] #dressUpModule {
+    padding: 36px 0 60px;
+}
+
+/* ang iisang container */
+body[data-page="finalSummary"] #dressUpModule .final-summary-shell {
+    width: min(1180px, 92%);
+    margin: 0 auto;
+    padding: 26px;
+    background: #ffffff;
+    border-radius: 24px;
+    border: 3px solid #ffffff;
+    box-shadow:
+        0 0 0 1px #e4d5df,
+        8px 10px 0 rgba(216,194,222,.35);
+}
+
+/* 3D (left) + details (right), pantay ang taas */
+body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    gap: 22px;
+    align-items: stretch;
+    max-width: none;
+    margin: 0;
+}
+
+/* mga section sa loob ng container - magaan na lang, walang sariling shadow */
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure,
+body[data-page="finalSummary"] #dressUpModule .final-summary-details,
+body[data-page="finalSummary"] #dressUpModule .final-summary-box {
+    min-width: 0;
+    padding: 18px;
+    background: #fffafd;
+    border: 1px solid #f1dbe7;
+    border-radius: 18px;
+    box-shadow: none;
+}
+
+/* 3D figure (left) */
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure {
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure .preview-header {
+    margin-bottom: 12px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure .preview-header h2 {
+    margin: 0;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure .figure-area {
+    flex: 1 1 auto;
+    aspect-ratio: auto;
+    min-height: 360px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure-hint {
+    margin: 8px 0 0;
+    color: #b58aa0;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* figure details (right) */
+body[data-page="finalSummary"] #dressUpModule .final-summary-details .receipt-subtitle,
+body[data-page="finalSummary"] #dressUpModule .final-summary-box .receipt-subtitle {
+    margin-bottom: 10px;
+}
+
+/* Order Type + Booking Date magkatabi */
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta .selected-order-box {
+    margin: 0;
+    padding: 9px 11px;
+    background: #ffffff;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta .selected-order-value {
+    font-size: 13px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta .order-type-price {
+    font-size: 12px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta .selected-order-date {
+    font-size: 10px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-details .figure-summary-box {
+    margin-top: 12px;
+    padding-top: 12px;
+}
+
+/* compact grid ng figure details - 3 magkakatabi */
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .receipt-empty,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems .receipt-empty {
+    grid-column: 1 / -1;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-item,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems .figure-summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 3px;
+    min-width: 0;
+    margin: 0;
+    padding: 8px 10px;
+    background: #ffffff;
+    border: 1px solid #efd6e4;
+    border-radius: 10px;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-info,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems .figure-summary-info {
+    width: 100%;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-name,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems .figure-summary-name {
+    color: #bd5c8d;
+    
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-description,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems .figure-summary-description {
+    margin-top: 2px;
+    color: #873c63;
+    
+    font-size: 13px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-price,
+body[data-page="finalSummary"] #dressUpModule #summaryBoxItems .figure-summary-price {
+    color: #a04a78;
+    font-size: 11px;
+    font-weight: 900;
+    text-align: left;
+}
+
+/* custom box (bottom) */
+body[data-page="finalSummary"] #dressUpModule .final-summary-box {
+    margin-top: 22px;
+}
+
+/* total + buttons (loob ng container) */
+body[data-page="finalSummary"] #dressUpModule .final-summary-total {
+    margin-top: 20px;
+    padding: 14px 4px 0;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation.design-step-navigation {
+    margin: 20px auto 0;
+}
+
+/* responsive */@media (max-width: 1000px) {
+    body[data-page="finalSummary"] #dressUpModule #summaryBoxItems {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+}@media (max-width: 860px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    body[data-page="finalSummary"] #dressUpModule .final-summary-figure .figure-area {
+            min-height: 320px;
+        }
+}@media (max-width: 560px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-shell {
+            padding: 16px;
+        }
+    body[data-page="finalSummary"] #dressUpModule .final-summary-meta,
+        body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems,
+        body[data-page="finalSummary"] #dressUpModule #summaryBoxItems {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+}
+
+/* DRESS UP - "+ Add Another Figure" (maraming figure sa isang order) */
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation.design-step-navigation {
+    max-width: 700px;
+}
+
+#dressUpModule .final-summary-navigation .final-summary-add-btn.step-navigation-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    color: #a04a78;
+    background: #fff;
+    border: 2px dashed #e78aba;
+}
+
+#dressUpModule .final-summary-navigation .final-summary-add-btn.step-navigation-button:hover {
+    background: #fff4fa;
+}
+
+#dressUpModule .receipt-header .figure-index-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #ffe4f2;
+    color: #a04a78;
+    
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    vertical-align: middle;
+}
+
+#dressUpModule .dressup-cart-section[hidden] {
+    display: none;
+}
+
+#dressUpModule #dressUpCartList {
+    display: grid;
+    gap: 8px;
+}
+
+#dressUpModule .dressup-cart-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #efd6e4;
+    border-radius: 12px;
+}
+
+#dressUpModule .dressup-cart-info {
+    flex: 1;
+    min-width: 0;
+}
+
+#dressUpModule .dressup-cart-title {
+    color: #873c63;
+    
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#dressUpModule .dressup-cart-meta {
+    margin-top: 2px;
+    color: #a17488;
+    font-size: 12px;
+}
+
+#dressUpModule .dressup-cart-price {
+    color: #a04a78;
+    font-size: 14px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+#dressUpModule .dressup-cart-remove {
+    padding: 6px 12px;
+    border: 1px solid #efb3cf;
+    border-radius: 999px;
+    background: #fff;
+    color: #c0507f;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#dressUpModule .dressup-cart-remove:hover {
+    background: #ffe9f3;
+}
+
+#dressUpModule .dressup-cart-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 auto 16px;
+    padding: 12px 16px;
+    border: 1px solid #f1c7dc;
+    border-radius: 14px;
+    background: #fff4fa;
+    color: #873c63;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#dressUpModule .dressup-cart-banner button {
+    padding: 6px 12px;
+    border: 1px solid #efb3cf;
+    border-radius: 999px;
+    background: #fff;
+    color: #c0507f;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}@media (max-width: 600px) {
+    #dressUpModule .dressup-cart-item {
+            flex-wrap: wrap;
+        }
+}
+
+/* FINAL SUMMARY - 3 magkakatabi: Your Figure | Figure Details |
+   Other Figures in This Order. "+ Add Another Order" at "Reset" nasa
+   kanan ng "Your Figure". */
+body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+    grid-template-columns: minmax(0, 468px) minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 18px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart {
+    min-width: 0;
+    padding: 18px;
+    background: #fffafd;
+    border: 1px solid #f1dbe7;
+    border-radius: 18px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart[hidden] {
+    display: block;
+}
+
+/* header ng Your Figure: title sa kaliwa, buttons sa kanan */
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-add-btn,
+body[data-page="finalSummary"] #dressUpModule .final-summary-reset-btn {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: .2s;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-add-btn {
+    border: 2px dashed #e78aba;
+    background: #fff;
+    color: #a04a78;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-add-btn:hover {
+    background: #fff4fa;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-reset-btn {
+    border: 1px solid #f2b9d7;
+    background: #f7c9e0;
+    color: #86365f;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-reset-btn:hover {
+    background: #f2b9d7;
+}
+
+/* mas maliit na Figure Details para magkasya ang ikatlong column */
+body[data-page="finalSummary"] #dressUpModule .final-summary-details {
+    padding: 16px;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta .selected-order-box {
+    padding: 8px 10px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-meta .selected-order-value {
+    font-size: 12.5px;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-item {
+    padding: 7px 9px;
+}
+
+body[data-page="finalSummary"] #dressUpModule #summaryReceiptItems .figure-summary-description {
+    font-size: 12.5px;
+}
+
+/* Other Figures list - naka-stack para kasya sa makitid na column */
+body[data-page="finalSummary"] #dressUpModule #dressUpCartList {
+    display: grid;
+    gap: 8px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "info info"
+        "price remove";
+    align-items: center;
+    gap: 6px 10px;
+    padding: 10px 12px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-info { grid-area: info; }
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-price { grid-area: price; }
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-remove { grid-area: remove; }
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .receipt-empty {
+    color: #a17488;
+    font-size: 13px;
+    line-height: 1.45;
+}@media (max-width: 1150px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+        }
+    body[data-page="finalSummary"] #dressUpModule .final-summary-cart {
+            grid-column: 1 / -1;
+        }
+}@media (max-width: 860px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+}
+
+/* 360° rotate control (← 360° →) sa gitna-baba ng 3D figure viewer - maliit para hindi matakpan ang paa */
+#dressUpModule .figure-360-control {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid #f0c3dc;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 2px 6px rgba(218, 107, 165, .14);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#dressUpModule .figure-360-label {
+    min-width: 30px;
+    text-align: center;
+    color: #c9548f;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+
+#dressUpModule .figure-360-arrow {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #fbe3f0;
+    color: #c9548f;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .15s;
+}
+
+#dressUpModule .figure-360-arrow:hover {
+    background: linear-gradient(180deg, #e78aba, #d86aa7);
+    color: #ffffff;
+}
+
+#dressUpModule .figure-360-arrow:active {
+    transform: scale(.9);
+}
+
+/* DESIGN SECTION dropdown = header na ng bawat step (pumalit sa h2) */
+
+/* damit / buhok / sapatos cards: price na lang, walang pangalan
+   (maliban sa Chibi Type na kailangan ang pangalan) */
+#dressUpModule .option-card:not([data-slot="chibiType"]) > span {
+    display: none;
+}
+
+/* DESIGN SECTION custom dropdown (kamukha ng Collection page dropdown) */
+
+/* dropdown menu nasa ibabaw ng option cards */
+
+/* Kulay ng left/right containers = kapareho ng Image Submission */
+#dressUpModule .dressup-workspace > .dressup-left,
+#dressUpModule .dressup-workspace > .dressup-right {
+    background: linear-gradient(145deg, #fff5fa, #f4edff);
+    border: 2px solid #ffffff;
+    box-shadow:
+        0 0 0 1px #dfd1e1,
+        5px 7px 0 rgba(215, 192, 221, .35);
+}
+
+/* Skin Tone: nasa right side, maliit na bilog (kasing laki ng letters) */
+#dressUpModule .skin-section:not([hidden]) {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    width: auto !important;
+    min-height: 44px;           /* kapantay ng dropdown sa kaliwa */
+    margin: 0 !important;
+    padding: 0 !important;
+    align-self: start;
+    justify-self: end;
+}
+
+#dressUpModule .skin-section .section-title {
+    display: flex !important;
+    margin: 0;
+}
+
+#dressUpModule .skin-section .section-title h2 {
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#dressUpModule .skin-section .skin-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+}
+
+#dressUpModule .skin-section .skin-card,
+#dressUpModule .skin-section .skin-card:hover,
+#dressUpModule .skin-section .skin-card.selected,
+#dressUpModule #chibiPanel .skin-section .skin-card,
+#dressUpModule #chibiPanel .skin-section .skin-card:hover,
+#dressUpModule #chibiPanel .skin-section .skin-card.selected {
+    width: 22px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    padding: 0 !important;
+}
+
+#dressUpModule .skin-section .skin-card .skin-swatch,
+#dressUpModule .skin-section .skin-card.selected .skin-swatch {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border: 1px solid rgba(116, 54, 91, .18);
+    border-radius: 50%;
+    box-shadow: none;
+}
+
+#dressUpModule .skin-section .skin-card.selected .skin-swatch {
+    outline: 2px solid #df65a6;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+/* Dress Up - 50/50 ang lapad ng left at right */@media (min-width: 801px) {
+    /* left (Your Figure) mas maliit, right (Figure Details) mas malapad */
+    #dressUpModule .dressup-workspace {
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        }
+}
+
+/* mga damit / buhok / sapatos: grid, magkakatabi */
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid,
+#dressUpModule .category-panel > .option-section:not([hidden]) > .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 10px;
+    max-height: none;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    align-content: start;
+}
+
+#dressUpModule .dressup-right .option-grid > .option-card {
+    width: 100% !important;
+    min-width: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Skin Tone: naka-float sa kanang itaas ng panel (kapantay ng dropdown),
+   para buong lapad ang Gender cards */
+#dressUpModule #funkoPanel:has(#funkoSkinSection:not([hidden])),
+#dressUpModule #hironoPanel:has(#hironoSkinSection:not([hidden])),
+#dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#dressUpModule #funkoPanel:has(#funkoSkinSection:not([hidden])) > #funkoModelSection,
+#dressUpModule #hironoPanel:has(#hironoSkinSection:not([hidden])) > #hironoModelSection,
+#dressUpModule #chibiPanel:has(#chibiSkinSection:not([hidden])) > #chibiModelSection {
+    grid-column: 1 / -1;
+}
+
+#dressUpModule #funkoPanel > #funkoSkinSection:not([hidden]),
+#dressUpModule #hironoPanel > #hironoSkinSection:not([hidden]),
+#dressUpModule #chibiPanel > #chibiSkinSection:not([hidden]) {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 20;
+}
+
+/* Dropdown: puting button, pink ang kasalukuyang page sa listahan */
+
+/* Right side: lahat ng laman ay square box (pare-pareho ang laki) */
+#dressUpModule .dressup-right .option-card,
+#dressUpModule .dressup-right .figure-model-card,
+#dressUpModule .dressup-right .figure-style-card {
+    aspect-ratio: 1 / 1;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#dressUpModule .dressup-right .option-card .option-image,
+#dressUpModule .dressup-right .figure-model-card .option-image {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+#dressUpModule .dressup-right .figure-style-card img {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+}
+
+#dressUpModule .dressup-right .option-card > small,
+#dressUpModule .dressup-right .option-card > span,
+#dressUpModule .dressup-right .figure-model-card > span,
+#dressUpModule .dressup-right .figure-style-card > span {
+    flex: 0 0 auto;
+}
+
+/* Skin Tone dropdown nasa ibabaw ng header row para ma-click */
+#dressUpModule #funkoPanel > #funkoSkinSection:not([hidden]),
+#dressUpModule #hironoPanel > #hironoSkinSection:not([hidden]),
+#dressUpModule #chibiPanel > #chibiSkinSection:not([hidden]) {
+    z-index: 40;
+}
+
+/* [hidden] laging nakatago kahit may display:flex !important sa itaas
+   (para hindi sabay lumabas ang Standee at Keychain na gender card) */
+#dressUpModule [hidden][hidden][hidden] {
+    display: none !important;
+}
+
+/* FINAL SUMMARY - 4 magkakatabi: Your Figure | Figure Details |
+   Custom Box & Add-ons | Other Figures in This Order. Mas malapad ang
+   main container para magkasya ang apat. */
+body[data-page="finalSummary"] #dressUpModule .final-summary-shell {
+    width: min(1680px, 96%);
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+    grid-template-columns:
+        minmax(0, 1.15fr)
+        minmax(0, 1.25fr)
+        minmax(0, 1fr)
+        minmax(0, 0.95fr);
+    gap: 16px;
+}
+
+/* nasa loob na ng row ang Custom Box - walang dagdag na space sa itaas */
+body[data-page="finalSummary"] #dressUpModule .final-summary-layout .final-summary-box {
+    margin-top: 0;
+    padding: 16px;
+}
+
+/* makitid na column: 2 magkatabing item */
+body[data-page="finalSummary"] #dressUpModule .final-summary-layout #summaryBoxItems {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-layout #summaryBoxItems .figure-summary-item {
+    padding: 7px 9px;
+}
+
+/* katamtamang screen: 2 x 2 */@media (max-width: 1280px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        }
+    body[data-page="finalSummary"] #dressUpModule .final-summary-cart {
+            grid-column: auto;
+        }
+}
+
+/* phone: isa-isa */@media (max-width: 760px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+}
+
+/* FINAL SUMMARY - Total Price sa loob ng Figure Details (ibaba),
+   at katamtamang laki ng Back / Proceed to Payment */
+body[data-page="finalSummary"] #dressUpModule .final-summary-details {
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-details .final-summary-total {
+    margin-top: auto;
+    padding: 12px 2px 0;
+    border-top: 1px dashed #efd6e4;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-details .figure-summary-box {
+    margin-bottom: 14px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation.design-step-navigation {
+    max-width: 380px;
+    gap: 10px;
+    margin: 22px auto 0;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation .step-navigation-button {
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 10px 18px;
+    font-size: 14px;
+}
+
+/* DRESS UP - 3 magkakatabi: Order Summary | Your Figure | Figure Details.
+   Mas malapad ang Dress Up section (hindi na 1120px lang) para hindi
+   lumiit ang Your Figure at Figure Details. Sa mas maliit na screen:
+   Order Summary sa ilalim ng Your Figure (dating ayos); phone: isa-isa. */
+#dressUpModule .dressup-workspace > .dressup-summary {
+    min-width: 0;
+    padding: 22px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #fff5fa, #f4edff);
+    border: 2px solid #ffffff;
+    box-shadow:
+        0 0 0 1px #dfd1e1,
+        5px 7px 0 rgba(215, 192, 221, .35);
+    align-self: start;
+}
+
+#dressUpModule .dressup-summary .preview-summary {
+    margin-top: 0;
+}@media (min-width: 1281px) {
+    body:not([data-page="finalSummary"]) #dressUpModule {
+            --du-width: min(1560px, calc(100vw - 48px));
+            width: var(--du-width);
+            margin-left: calc((100% - var(--du-width)) / 2);
+        }
+    #dressUpModule .dressup-workspace {
+            grid-template-columns:
+                minmax(260px, 340px)
+                minmax(330px, 415px)
+                minmax(540px, 1fr);
+            grid-template-areas: "summary left right";
+        }
+    #dressUpModule .dressup-workspace > .dressup-summary {
+            grid-area: summary;
+            position: sticky;
+            top: 100px;
+        }
+    #dressUpModule .dressup-summary .preview-summary {
+            max-height: calc(100vh - 190px);
+        }
+}@media (min-width: 801px) and (max-width: 1280px) {
+    #dressUpModule .dressup-workspace {
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+            grid-template-areas:
+                "left right"
+                "summary right";
+        }
+    #dressUpModule .dressup-workspace > .dressup-summary {
+            grid-area: summary;
+        }
+}
+
+#dressUpModule .dressup-workspace > .dressup-left { grid-area: left; }
+
+#dressUpModule .dressup-workspace > .dressup-right { grid-area: right; }@media (max-width: 800px) {
+    #dressUpModule .dressup-workspace {
+            grid-template-columns: 1fr;
+            grid-template-areas: "left" "summary" "right";
+        }
+    #dressUpModule .dressup-workspace > .dressup-summary {
+            grid-area: summary;
+            padding: 16px;
+        }
+}
+
+/* DRESS UP - ORDER SUMMARY (simple at modern, "Option C")
+   Order info bilang listahan, bawat item may larawan + presyo,
+   Total Price sa pinakababa. Kulay: kapareho ng pink/plum ng page. */
+#dressUpModule .preview-summary.os-card {
+    margin: 0;
+    padding: 0;
+    max-height: none;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #f0dbe7;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(140, 55, 100, .06), 0 8px 22px rgba(140, 55, 100, .07);
+    
+    color: #3b2340;
+}
+
+#dressUpModule .os-card .os-title {
+    margin: 0;
+    padding: 18px 18px 2px;
+    
+    font-size: 19px;
+    font-weight: 700;
+    color: #8c3764;
+}
+
+#dressUpModule .os-card .os-group {
+    padding: 14px 18px 2px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    color: #bd5c8d;
+}
+
+#dressUpModule .os-card .os-info,
+#dressUpModule .os-card .os-items {
+    list-style: none;
+    margin: 0;
+    padding: 0 18px;
+}
+
+#dressUpModule .os-card .os-info li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f3e7ee;
+    font-size: 14px;
+}
+
+#dressUpModule .os-card .os-info li[hidden] {
+    display: none;
+}
+
+#dressUpModule .os-card .os-info li:last-child,
+#dressUpModule .os-card .os-items li:last-child {
+    border-bottom: 0;
+}
+
+#dressUpModule .os-card .os-k {
+    color: #957586;
+}
+
+#dressUpModule .os-card .os-v {
+    font-weight: 700;
+    text-align: right;
+    color: #3b2340;
+}
+
+#dressUpModule .os-card .os-items {
+    padding-bottom: 6px;
+    max-height: calc(100vh - 430px);
+    min-height: 120px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#dressUpModule .os-card .os-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3e7ee;
+}
+
+#dressUpModule .os-card .os-thumb {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #fbf3f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#dressUpModule .os-card .os-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 3px;
+}
+
+#dressUpModule .os-card .os-thumb-icon {
+    font-size: 20px;
+}
+
+#dressUpModule .os-card .os-thumb-empty {
+    background: transparent;
+}
+
+#dressUpModule .os-card .os-text {
+    flex: 1;
+    min-width: 0;
+}
+
+#dressUpModule .os-card .os-text b {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #3b2340;
+    overflow-wrap: anywhere;
+}
+
+#dressUpModule .os-card .os-text span {
+    display: block;
+    font-size: 12px;
+    color: #957586;
+}
+
+#dressUpModule .os-card .os-price {
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #3b2340;
+    white-space: nowrap;
+}
+
+#dressUpModule .os-card .os-price-muted {
+    font-size: 12px;
+    font-weight: 600;
+    color: #b39aa8;
+}
+
+#dressUpModule .os-card .os-empty {
+    padding: 12px 0;
+    font-size: 13px;
+    font-style: italic;
+    color: #a17488;
+}
+
+#dressUpModule .os-card .os-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 18px 16px;
+    background: linear-gradient(135deg, #fff1f8, #f6eefe);
+    border-top: 1px solid #f0dbe7;
+}
+
+#dressUpModule .os-card .os-total span {
+    font-size: 14px;
+    font-weight: 700;
+    color: #957586;
+}
+
+#dressUpModule .os-card .os-total strong {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -.4px;
+    color: #8c3764;
+}
+
+/* ang container sa paligid: mas manipis na padding, card na ang may itsura */
+#dressUpModule .dressup-workspace > .dressup-summary {
+    padding: 14px;
+}
+
+/* DRESS UP - pagbabago :
+   - Your Figure | Order Summary | Figure Details
+   - Order Summary: iisang container lang (ang card mismo)
+   - Figure Details: nakapirming laki, scroll sa loob */@media (min-width: 1281px) {
+    #dressUpModule .dressup-workspace {
+            grid-template-columns:
+                minmax(330px, 415px)
+                minmax(260px, 340px)
+                minmax(540px, 1fr);
+            grid-template-areas: "left summary right";
+        }
+}
+
+/* iisang container: walang panlabas na kahon sa paligid ng card */
+#dressUpModule .dressup-workspace > .dressup-summary {
+    padding: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#dressUpModule .dressup-summary .preview-summary.os-card {
+    border-radius: 20px;
+    border: 2px solid #ffffff;
+    box-shadow:
+        0 0 0 1px #dfd1e1,
+        5px 7px 0 rgba(215, 192, 221, .35);
+}
+
+#dressUpModule .os-card .os-k small {
+    display: block;
+    font-size: 11.5px;
+    color: #b39aa8;
+}
+
+/* Figure Details: pare-parehong laki kahit anong step; scroll sa loob */
+
+/* FINAL SUMMARY - Reset sa kanang itaas ng "Your Figure"; Add Another Order
+   nasa loob ng "Other Figures in This Order" */
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure .preview-header {
+    flex-wrap: nowrap;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure-actions {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-add-btn-wide {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+/* Dress Up layout:
+   Product Type images kasing laki ng Figure Style images
+   mas maliit na Gender cards
+   Hair hanggang Shoes at Custom Box: 4 columns na may sariling scroll
+   Your Figure: background na parang pader at sahig */
+/* 6. walang sticky */
+#dressUpModule .dressup-workspace > .dressup-summary,
+#dressUpModule .dressup-workspace > .dressup-left,
+#dressUpModule .dressup-workspace > .dressup-right {
+    position: static !important;
+    top: auto !important;
+    align-self: start;
+}@media (min-width: 801px) {
+    #dressUpModule .dressup-summary .preview-summary.os-card {
+            height: clamp(560px, calc(100vh - 130px), 680px);
+            max-height: none;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+    #dressUpModule .os-card .os-title,
+        #dressUpModule .os-card .os-group,
+        #dressUpModule .os-card .os-info,
+        #dressUpModule .os-card .os-total {
+            flex: 0 0 auto;
+        }
+    #dressUpModule .os-card #summaryReceiptItems {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #e7b9cf transparent;
+        }
+}
+
+/* 1. Product Type = Figure Style size, naka-center */
+#dressUpModule #chibiTypeSection:not([hidden]) > .option-grid,
+#dressUpModule #hironoTypeSection:not([hidden]) .figure-model-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, calc((100% - 24px) / 3)) !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+}
+
+#dressUpModule #chibiTypeSection .option-card,
+#dressUpModule #hironoTypeSection .figure-model-card {
+    aspect-ratio: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 2px solid #f1d5e5 !important;
+    border-radius: 12px !important;
+    background: linear-gradient(180deg, #fffaff 0%, #fff0f7 100%) !important;
+    box-shadow: none !important;
+    gap: 0 !important;
+}
+
+#dressUpModule #chibiTypeSection .option-card.selected,
+#dressUpModule #hironoTypeSection .figure-model-card.selected {
+    border-color: #df65a6 !important;
+    box-shadow: 0 0 0 3px #f8c5df !important;
+}
+
+#dressUpModule #chibiTypeSection .option-card .option-image,
+#dressUpModule #hironoTypeSection .figure-model-card .option-image {
+    flex: 0 0 160px !important;
+    height: 160px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    overflow: hidden;
+}
+
+#dressUpModule #chibiTypeSection .option-card .option-image img,
+#dressUpModule #hironoTypeSection .figure-model-card .option-image img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+    display: block;
+}
+
+#dressUpModule #chibiTypeSection .option-card > span,
+#dressUpModule #hironoTypeSection .figure-model-card > span {
+    display: block;
+    padding: 8px 10px 10px !important;
+    margin: 0 !important;
+    text-align: left !important;
+    
+    font-size: 15px !important;
+    font-weight: bold !important;
+    color: #893960 !important;
+}
+
+/* 2. Gender cards mas maliit */
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, calc((100% - 24px) / 3)) !important;
+    justify-content: center !important;
+    gap: 12px !important;
+}
+
+#dressUpModule #funkoModelSection .figure-model-card,
+#dressUpModule #hironoModelSection .figure-model-card,
+#dressUpModule #chibiModelSection .figure-model-card {
+    aspect-ratio: auto !important;
+    height: auto !important;
+    padding: 8px !important;
+}
+
+#dressUpModule #funkoModelSection .figure-model-card .option-image,
+#dressUpModule #hironoModelSection .figure-model-card .option-image,
+#dressUpModule #chibiModelSection .figure-model-card .option-image {
+    flex: 0 0 150px !important;
+    height: 150px !important;
+    padding: 6px !important;
+}
+
+#dressUpModule #funkoModelSection .figure-model-card .option-image img,
+#dressUpModule #hironoModelSection .figure-model-card .option-image img,
+#dressUpModule #chibiModelSection .figure-model-card .option-image img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: contain !important;
+}
+
+#dressUpModule #funkoModelSection .figure-model-card > span,
+#dressUpModule #hironoModelSection .figure-model-card > span,
+#dressUpModule #chibiModelSection .figure-model-card > span {
+    font-size: 14px !important;
+    padding: 6px 2px 0 !important;
+}
+
+/* 3/5. scroll box sa bawat step (desktop) */@media (min-width: 801px) {
+    /* ang "Figure Details" title at Back/Next ay hindi na nag-i-scroll */
+    #dressUpModule #figureDetailsContainer:not([hidden]),
+        #dressUpModule #figureDetailsContainer > .category-panel:not([hidden]),
+        #dressUpModule #productDetailsPanel:not([hidden]) {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex !important;
+            flex-direction: column;
+        }
+    #dressUpModule #figureDetailsContainer > h2,
+        #dressUpModule #productDetailsPanel > .section-title {
+            flex: 0 0 auto;
+        }
+    #dressUpModule #figureDetailsContainer > .option-section:not([hidden]),
+        #dressUpModule #figureDetailsContainer > .category-panel > .option-section:not([hidden]):not(.skin-section) {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex !important;
+            flex-direction: column;
+        }
+    #dressUpModule #figureDetailsContainer .option-section > .section-title {
+            flex: 0 0 auto;
+        }
+    /* Hair → Shoes: 4 columns, 3 rows ang kita, scroll kapag sobra */
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            grid-auto-rows: calc((100% - 20px) / 3) !important;
+            gap: 10px !important;
+            align-content: start;
+            overflow-y: auto !important;
+            overscroll-behavior: contain;
+            max-height: none !important;
+            margin: 0 !important;
+            padding: 10px !important;
+            border: 1px solid #f0dce8 !important;
+            border-radius: 14px !important;
+            background: rgba(255, 255, 255, .55) !important;
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: #e7b9cf transparent;
+        }
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card {
+            aspect-ratio: auto !important;
+            height: 100% !important;
+            min-height: 0 !important;
+            padding: 6px !important;
+            gap: 2px !important;
+        }
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card .option-image {
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            height: auto !important;
+        }
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card .option-image img {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: none !important;
+            object-fit: contain !important;
+        }
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card > span,
+        #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card > small {
+            font-size: 12px !important;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    /* Custom Box / Add-ons: title naka-pirmi, laman ang nag-i-scroll */
+    #dressUpModule #productDetailsPanel .product-details-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding: 12px;
+            border: 1px solid #f0dce8;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .55);
+            box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: #e7b9cf transparent;
+        }
+}
+
+/* Hirono Product Type: buong figure ang kita (transparent render) */
+#dressUpModule #hironoTypeSection .figure-model-card .option-image img {
+    object-fit: contain !important;
+    padding: 6px;
+    box-sizing: border-box;
+}@media (max-width: 640px) {
+    #dressUpModule #chibiTypeSection:not([hidden]) > .option-grid,
+        #dressUpModule #hironoTypeSection:not([hidden]) .figure-model-grid,
+        #dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid,
+        #dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid,
+        #dressUpModule #chibiModelSection:not([hidden]) .figure-model-grid {
+            grid-template-columns: repeat(auto-fit, calc((100% - 12px) / 2)) !important;
+        }
+}
+
+/* DRESS UP - */
+/* Size: header at laman nasa taas */
+#dressUpModule #figureDetailsContainer > #figureSizeSection:not([hidden]),
+#dressUpModule #figureDetailsContainer > #figureStyleSection:not([hidden]) {
+    flex: 0 0 auto !important;
+    justify-content: flex-start !important;
+    margin-top: 0 !important;
+}@media (min-width: 801px) {
+    /* 2. tuloy-tuloy na guhit sa ibabaw ng Back/Next */
+    /* box ng Hair → Shoes: sagad hanggang sa guhit */
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid {
+            grid-auto-rows: auto !important;
+            margin-bottom: 0 !important;
+        }
+    /* pare-parehong square ang bawat item */
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card {
+            aspect-ratio: 1 / 1 !important;
+            height: auto !important;
+        }
+    /* 3. Your Figure kasing taas ng Order Summary at Figure Details */
+    #dressUpModule .dressup-workspace > .dressup-left {
+            height: clamp(560px, calc(100vh - 130px), 680px);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+    #dressUpModule .dressup-left .preview-header {
+            flex: 0 0 auto;
+        }
+    #dressUpModule .dressup-left .figure-area {
+            flex: 1 1 auto;
+            min-height: 0;
+            aspect-ratio: auto !important;
+            height: auto !important;
+        }
+}
+
+/* 4. Back / Next: mas maliit, naka-center */@media (min-width: 801px) {
+    /* walang dagdag na puwang sa ilalim ng box */
+    #dressUpModule #figureDetailsContainer > .category-panel:not([hidden]) {
+            gap: 0 !important;
+            row-gap: 0 !important;
+        }
+    #dressUpModule #figureDetailsContainer > .category-panel > .option-section:not([hidden]) {
+            margin-bottom: 0 !important;
+        }
+    /* square items: kasya ang 4 columns x 3 rows, scroll kapag lampas */
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid {
+            container-type: size;
+            grid-template-columns: repeat(4, auto) !important;
+            justify-content: center !important;
+        }
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card {
+            --du-sq: min(calc((100cqw - 31px) / 4), calc((100cqh - 21px) / 3));
+            width: var(--du-sq) !important;
+            height: var(--du-sq) !important;
+            aspect-ratio: 1 / 1 !important;
+        }
+}@media (min-width: 801px) {
+    #dressUpModule #figureDetailsContainer > .category-panel > .top-color-picker {
+            margin-top: 0 !important;
+        }
+}@media (min-width: 801px) {
+    /* walang laman na panel (hal. nasa Size step) - huwag kumain ng espasyo */
+    #dressUpModule #figureDetailsContainer > .category-panel:not(:has(> .option-section:not([hidden]))) {
+            flex: 0 0 auto !important;
+        }
+}@media (min-width: 801px) {
+    /* Your Figure: parisukat na box (hindi sobrang haba) */
+    #dressUpModule .dressup-workspace > .dressup-left {
+            height: auto !important;
+            aspect-ratio: 1 / 1;
+        }
+}@media (min-width: 801px) {
+    /* Hair → Shoes: sakto 4 columns, mas malaking square boxes (hindi naka-center) */
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            justify-content: stretch !important;
+            grid-auto-rows: auto !important;
+        }
+    #dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid > .option-card {
+            width: 100% !important;
+            height: calc((100cqw - 31px) / 4) !important;
+            aspect-ratio: auto !important;
+        }
+}
+
+/* tago ang "DEFAULT" na salita (default pa rin sa system) */
+#dressUpModule .dressup-right .option-card .default-badge {
+    display: none !important;
+}
+
+/* Your Figure: Reset at Add Another Order magkatabi sa ilalim ng figure */
+#dressUpModule .dressup-left .figure-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+#dressUpModule .dressup-left .figure-actions > button {
+    flex: 1 1 0;
+    min-height: 40px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+#dressUpModule .dressup-left .figure-actions #resetBtn {
+    border: 0;
+    background: #f8d5e8;
+    color: #814d69;
+}
+
+#dressUpModule .dressup-left .figure-actions .figure-add-btn {
+    border: 0;
+    background: linear-gradient(180deg, #e78aba, #d86aa7);
+    color: #ffffff;
+    box-shadow: 0 6px 14px rgba(218, 107, 165, .22);
+}
+
+#dressUpModule .dressup-left .figure-actions .figure-add-btn:hover {
+    filter: brightness(1.05);
+}
+
+/* Figure 1, Figure 2... sa Order Summary */
+#dressUpModule .os-card .os-figures {
+    flex: 0 0 auto;
+    padding-bottom: 12px;
+}
+
+#dressUpModule .os-figure-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 18px 0;
+}
+
+#dressUpModule .os-figure-tab {
+    border: 1px solid #ecd3e1;
+    background: #ffffff;
+    color: #8a4a6c;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .15s;
+}
+
+#dressUpModule .os-figure-tab:hover {
+    border-color: #e597bf;
+}
+
+#dressUpModule .os-figure-tab.active {
+    background: #e78aba;
+    border-color: #e78aba;
+    color: #ffffff;
+}
+
+/* Edit / Remove sa ilalim ng figure */
+#dressUpModule .dressup-left .figure-actions .figure-edit-btn {
+    border: 0;
+    background: linear-gradient(180deg, #e78aba, #d86aa7);
+    color: #ffffff;
+    box-shadow: 0 6px 14px rgba(218, 107, 165, .22);
+}
+
+#dressUpModule .dressup-left .figure-actions .figure-remove-btn {
+    border: 1px solid #f1c4d4;
+    background: #ffffff;
+    color: #c0436f;
+}
+
+#dressUpModule .dressup-left .figure-actions .figure-remove-btn:hover {
+    background: #fff0f4;
+}
+
+/* naka-save na figure: tingin lang hanggang i-Edit */
+#dressUpModule .dressup-view-note {
+    flex: 0 0 auto;
+    margin: 0 0 12px;
+    padding: 9px 14px;
+    border-radius: 12px;
+    background: #fff3f9;
+    border: 1px solid #f3d2e3;
+    color: #8a4a6c;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* dress-up.php lang */
+.dress-up-hero {
+    min-height: 170px;
+}
+
+.dress-up-back {
+    display: inline-block;
+    margin: 0 0 14px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #ecd3e1;
+    background: #ffffff;
+    color: #8a4a6c;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: .15s;
+}
+
+.dress-up-back:hover {
+    border-color: #e597bf;
+    background: #fff3f9;
+}
+
+
+/* DRESS UP (dress-up.php) -
+   - walang "Build Your Dress Up Order" header, walang Order Summary
+   - Your Figure at Figure Details: 50/50, pareho ang laki
+   - "Back" button sa kaliwang taas ng container
+   - Final Summary: Edit + Remove sa bawat naka-save na figure */
+.dress-up-back {
+    display: inline-block;
+    margin: 0 0 16px;
+    padding: 7px 22px;
+    border-radius: 999px;
+    border: 1px solid #f1c4d4;
+    background: #ffffff;
+    color: #8a4a6c;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+body[data-page="editor"] #dressUpModule .dressup-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "left right";
+    align-items: start;
+}
+
+body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-left,
+body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-right {
+    position: static;
+    top: auto;
+    box-sizing: border-box;
+}@media (min-width: 801px) {
+    body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-left,
+    body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-right {
+        height: clamp(560px, calc(100vh - 130px), 680px) !important;
+        aspect-ratio: auto !important;
+    }
+
+    body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-left {
+        display: flex;
+        flex-direction: column;
+    }
+
+    body[data-page="editor"] #dressUpModule .dressup-left .figure-area {
+        flex: 1 1 auto;
+        min-height: 0;
+        aspect-ratio: auto !important;
+        height: auto !important;
+    }
+}@media (max-width: 800px) {
+    body[data-page="editor"] #dressUpModule .dressup-workspace {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "left" "right";
+    }
+}
+
+/* Final Summary - Edit + Remove */
+#dressUpModule .dressup-cart-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+#dressUpModule .dressup-cart-edit {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #e78aba, #d86aa7);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#dressUpModule .dressup-cart-edit:hover {
+    filter: brightness(1.06);
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-actions {
+    grid-area: remove;
+}
+
+/* full-viewport Dress Up (walang hero/footer/scroll) */@media (min-width: 801px) and (min-height: 600px) {
+  body[data-page="editor"] { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  body[data-page="editor"] > main.page { flex: 1 1 auto; min-height: 0; width: 100%; padding: 0; margin: 0; display: flex; }
+  body[data-page="editor"] #dressUpModule { flex: 1 1 auto; min-height: 0; width: 100%; max-width: none; margin: 0; padding: 10px 24px 16px; display: flex; --du-width: 100%; }
+  body[data-page="editor"] #dressUpModule .form-shell { flex: 1 1 auto; min-height: 0; width: 100%; max-width: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  body[data-page="editor"] #dressUpModule .dressup-workspace { flex: 1 1 auto; min-height: 0; height: auto; }
+  body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-left,
+  body[data-page="editor"] #dressUpModule .dressup-workspace > .dressup-right { height: 100% !important; min-height: 0; }
+  body[data-page="editor"] #dressUpModule .form-shell { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; }
+  body[data-page="editor"] #dressUpModule .dressup-workspace { align-items: stretch; }
+}
+body[data-page="editor"] #dressUpModule { padding-top: 10px; }
+body[data-page="editor"] > main.page { padding-top: 0; }
+
+/* Reset Design: nasa taas, katapat ng "Your Figure" */
+body[data-page="editor"] #dressUpModule .preview-header #resetBtn {
+    display: inline-block !important;
+    margin-left: auto;
+    padding: 8px 18px;
+    border: 0;
+    border-radius: 999px;
+    background: #f8d5e8;
+    color: #814d69;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+body[data-page="editor"] #dressUpModule .preview-header #resetBtn:hover { background: #f3c3dc; }
+/* walang laman ang figure-actions kapag hindi edit mode */
+body[data-page="editor"] #dressUpModule .dressup-left .figure-actions:not(:has(> button:not([hidden]))) { display: none; }
+
+/* Back: sakto lang ang haba */
+body[data-page="editor"] #dressUpModule .dress-up-back {
+    align-self: flex-start;
+    width: fit-content;
+    flex: 0 0 auto;
+}
+
+/* Your Figure (Final Summary): click para makita ang details */
+#dressUpModule .dressup-cart-item { display: block; cursor: pointer; }
+#dressUpModule .dressup-cart-head { display: flex; align-items: center; gap: 14px; }
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-item { display: block; padding: 10px 12px; }
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "info info" "price remove";
+    align-items: center;
+    gap: 6px 10px;
+}
+#dressUpModule .dressup-cart-item.is-open { border-color: #e597bf; background: #fff8fc; }
+#dressUpModule .dressup-cart-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #efd6e4;
+    display: grid;
+    gap: 6px;
+    cursor: default;
+}
+#dressUpModule .dressup-cart-line { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
+#dressUpModule .dressup-cart-line-label { color: #873c63; font-weight: 700; }
+#dressUpModule .dressup-cart-line-value { color: #6d4a5e; text-align: right; display: inline-flex; align-items: center; gap: 6px; }
+#dressUpModule .dressup-cart-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,.2); display: inline-block; }
+
+/* Your Figure (Final Summary) - kasya lang sa laman, hindi hinahaba */
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart { align-self: start; height: auto; min-height: 0; }
+
+/* canvas hindi na nakakaapekto sa taas ng container (iwas tuloy-tuloy na paghaba
+   kapag may devicePixelRatio > 1) - nakalutang ang canvas sa loob ng figure-area */
+#dressUpModule .figure-area { position: relative; }
+#dressUpModule .figure-area > .figure-viewer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-figure .figure-area {
+    flex: 1 1 auto;
+    min-height: 420px;
+    height: auto;
+}
+
+/* Your Figure (pang-apat na container) - fixed height gaya ng iba, nag-i-scroll ang listahan */
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart #dressUpCartList {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 420px;
+    overflow-y: auto;
+    align-content: start;
+    padding-right: 4px;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .final-summary-add-btn { flex: 0 0 auto; margin-top: 12px; }@media (min-width: 1281px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-cart {
+        align-self: stretch;
+        contain: size;
+        overflow: hidden;
+    }
+    body[data-page="finalSummary"] #dressUpModule .final-summary-cart #dressUpCartList { max-height: none; }
+}
+
+/* kulay ng napiling item sa Final Summary */
+#dressUpModule .summary-color-dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    margin-right: 6px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,.2);
+    vertical-align: -1px;
+}
+
+
+/* grupo ng damit + color availability */
+#dressUpModule .option-card.group-collapsed { display: none !important; }
+#dressUpModule .top-color-picker.color-unavailable,
+#dressUpModule .custom-color-only-section.color-unavailable,
+#dressUpModule .custom-color-control.color-unavailable { display: none !important; }
+
+#dressUpModule .option-grid > .option-group-head {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    max-width: 230px;
+    justify-self: start;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 12px;
+    background: #fbe3f0;
+    color: #873c63;
+    
+    font-size: 11.5px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+#dressUpModule .option-grid > .option-group-head:hover { background: #f7d2e6; }
+#dressUpModule .option-group-chevron {
+    width: 9px; height: 9px;
+    border-right: 3px solid currentColor; border-bottom: 3px solid currentColor;
+    transform: rotate(45deg); margin-top: -3px; transition: transform .15s;
+}
+#dressUpModule .option-group-head[aria-expanded="true"] .option-group-chevron { transform: rotate(-135deg); margin-top: 3px; }
+
+#dressUpModule .dress-up-back[hidden] { display: none !important; }
+
+/* walang shadow sa mga card ng hair/damit/sapatos; mas maliit na picture */
+#dressUpModule .dressup-right .option-card,
+#dressUpModule .dressup-right .figure-model-card,
+#dressUpModule .dressup-right .option-card:hover,
+#dressUpModule .dressup-right .figure-model-card:hover {
+    box-shadow: none !important;
+}
+#dressUpModule .dressup-right .option-card.selected,
+#dressUpModule .dressup-right .figure-model-card.selected {
+    box-shadow: 0 0 0 2px #f8c5df !important;
+}
+#dressUpModule .dressup-right .option-card .option-image,
+#dressUpModule .dressup-right .option-card .option-image img {
+    box-shadow: none !important;
+    filter: none !important;
+}
+#dressUpModule .dressup-right .category-panel .option-section > .option-grid,
+#dressUpModule .category-panel > .option-section:not([hidden]) > .option-grid {
+    grid-template-columns: repeat(auto-fill, minmax(86px, 98px));
+    justify-content: start;
+}
+#dressUpModule .dressup-right .category-panel .option-card:not([data-slot="model"]):not([data-slot="chibiType"]):not([data-slot="skin"]) {
+    aspect-ratio: 1 / .92;
+}
+
+/* walang tumatalon sa card pag na-click/na-hover (walang angat, walang pagbabago ng border width) */
+#dressUpModule .dressup-right .option-card,
+#dressUpModule .dressup-right .figure-model-card,
+#dressUpModule .dressup-right .skin-card {
+    transition: border-color .15s ease, background-color .15s ease !important;
+    border-width: 2px !important;
+}
+#dressUpModule .dressup-right .option-card:hover,
+#dressUpModule .dressup-right .option-card.selected,
+#dressUpModule .dressup-right .figure-model-card:hover,
+#dressUpModule .dressup-right .figure-model-card.selected,
+#dressUpModule .dressup-right .skin-card:hover,
+#dressUpModule .dressup-right .skin-card.selected {
+    transform: none !important;
+}
+
+/* no-sign (gray) sa default na Sando / Shorts */
+#dressUpModule .option-card .placeholder-icon .no-sign { display: block; margin: 0 auto; opacity: .9; }
+#dressUpModule .option-card:not(.selected) .placeholder-icon .no-sign circle,
+#dressUpModule .option-card:not(.selected) .placeholder-icon .no-sign line { stroke: #a3a3a3; }
+
+/* default card = picture (kalbo / sando / shorts / paa) na gray + "no sign" na nakapatong */
+#dressUpModule .option-card.is-default[data-slot="top"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="bottom"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="girlTop"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="girlBottom"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="outfit"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="pants"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="hair"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="girlHair"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="keychainHair"] .placeholder-image,
+#dressUpModule .option-card.is-default[data-slot="shoes"] .placeholder-image {
+    position: relative;
+}
+#dressUpModule .option-card.is-default[data-slot="top"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="bottom"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="girlTop"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="girlBottom"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="outfit"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="pants"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="hair"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="girlHair"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="keychainHair"] .placeholder-image img,
+#dressUpModule .option-card.is-default[data-slot="shoes"] .placeholder-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: .6;
+}
+#dressUpModule .option-card.is-default[data-slot="top"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="bottom"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="girlTop"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="girlBottom"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="outfit"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="pants"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="hair"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="girlHair"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="keychainHair"] .placeholder-image::after,
+#dressUpModule .option-card.is-default[data-slot="shoes"] .placeholder-image::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 62%;
+    aspect-ratio: 1 / 1;
+    max-height: 80%;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    border: 5px solid rgba(120,120,120,.92);
+    border-radius: 50%;
+    background: linear-gradient(to top right, transparent calc(50% - 2.5px), rgba(120,120,120,.92) calc(50% - 2.5px), rgba(120,120,120,.92) calc(50% + 2.5px), transparent calc(50% + 2.5px));
+    pointer-events: none;
+}
+
+
+/* /57 - ISANG container na lang ang kanang panel:
+   walang hiwalay na bordered na kahon sa gitna at walang linya sa itaas ng Back/Next.
+   Sa Hair/Top/Bottom/Shoes: itim na malambot na shadow sa taas at baba na SAGAD sa
+   buong lapad ng panel (full-bleed). */
+#dressUpModule .dressup-right .category-panel > .option-section:not([hidden]):not(#chibiTypeSection) > .option-grid,
+#dressUpModule #productDetailsPanel .product-details-scroll {
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 14px 6px !important;
+}
+
+/* full-width: lumalabas ang scroll area at Back/Next hanggang gilid ng panel */
+
+/* itim na shadow SA TAAS (sa ilalim ng header) - grid steps lang */
+#dressUpModule .dressup-right.is-grid-step .category-panel > .option-section:not([hidden]) > .section-title {
+    position: relative;
+    z-index: 4;
+}
+#dressUpModule .dressup-right.is-grid-step .category-panel > .option-section:not([hidden]) > .section-title::after {
+    content: "";
+    position: absolute;
+    left: -30px;
+    right: -22px;
+    bottom: -12px;
+    height: 1px;
+    background: transparent;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .38);
+    pointer-events: none;
+}
+
+/* itim na shadow SA BABA (sa ibabaw ng Back/Next) - grid steps lang */
+
+/* Gender / Skin / Size sa iisang step: huwag i-stretch ang Gender section,
+   para dikit ang Size sa ilalim ng mga Gender card.
+   (Gender step lang - hindi dapat galawin ang Hair/Top/Bottom/Shoes na grid.) */
+#dressUpModule .dressup-right #figureDetailsContainer > .category-panel:has(> #funkoModelSection:not([hidden])),
+#dressUpModule .dressup-right #figureDetailsContainer > .category-panel:has(> #hironoModelSection:not([hidden])),
+#dressUpModule .dressup-right #figureDetailsContainer > .category-panel:has(> #chibiModelSection:not([hidden])) {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+#dressUpModule .dressup-right #figureDetailsContainer > .category-panel > #funkoModelSection:not([hidden]),
+#dressUpModule .dressup-right #figureDetailsContainer > .category-panel > #hironoModelSection:not([hidden]),
+#dressUpModule .dressup-right #figureDetailsContainer > .category-panel > #chibiModelSection:not([hidden]) {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+#dressUpModule .dressup-right #figureSizeSection:not([hidden]) {
+    margin-top: 6px;
+}
+
+/* Figure Style + Product Type sa iisang screen: Back/Next sa baba na ang gagamitin */
+#dressUpModule #figureStyleSection.merged-with-type #figureStyleNavigation {
+    display: none !important;
+}
+#dressUpModule #figureStyleSection.merged-with-type {
+    margin-bottom: 16px;
+}@media (max-width: 480px) {
+    /* mahabang pill ("Gender / Skin / Size") - huwag mag-overlap sa Skin Tone */
+    #dressUpModule .skin-section .section-title h2 {
+        display: none !important;
+    }
+}
+
+
+/* group bar full-width; buo ang larawan ng Figure Style / Product Type */
+#dressUpModule .option-grid > .option-group-head {
+    max-width: none !important;
+    width: 100% !important;
+    justify-self: stretch !important;
+    padding: 10px 16px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(90deg, #ffe3f1, #f1e4ff) !important;
+    font-size: 13px !important;
+    letter-spacing: .04em;
+}
+
+/* Figure Style: square ang larawan at object-fit: contain para buo ang kita */
+#dressUpModule .dressup-right .figure-style-card {
+    aspect-ratio: auto !important;
+}
+#dressUpModule .dressup-right .figure-style-card img {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+    object-fit: contain !important;
+    background: #fff;
+}
+
+/* Product Type (Chibi / Hirono): buo rin ang larawan */
+#dressUpModule #chibiTypeSection .option-card,
+#dressUpModule #hironoTypeSection .figure-model-card {
+    aspect-ratio: auto !important;
+}
+#dressUpModule #chibiTypeSection .option-card .option-image,
+#dressUpModule #hironoTypeSection .figure-model-card .option-image {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+    background: #fff !important;
+}
+#dressUpModule #chibiTypeSection .option-card .option-image img,
+#dressUpModule #hironoTypeSection .figure-model-card .option-image img {
+    object-fit: contain !important;
+}
+
+/* kapag maliit ang screen, nag-i-scroll ang gitna (Gender / Skin / Size / Style / Product Type).
+   Ang Hair, Top, Bottom, Shoes ay may sariling scroll. */
+
+/* Style/Type at Gender/Skin/Size steps: huwag pag-urungin ang mga section kapag maliit ang screen,
+   mag-scroll na lang. (Hindi kasama ang Hair/Top/Bottom/Shoes na may sariling scroll na grid.) */
+#dressUpModule .dressup-right:not(.is-grid-step) #figureDetailsContainer {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: min-content;
+}
+#dressUpModule .dressup-right:not(.is-grid-step) #figureDetailsContainer > * {
+    flex-shrink: 0 !important;
+}
+
+/* FIGURE DETAILS = IISANG screen
+   Figure Style -> Product Type -> Size -> Gender + Skin
+   (walang pill/filter, heading na "Figure Details" lang)
+   Lahat naka-LEFT, hindi naka-center. */
+#dressUpModule .figure-style-grid,
+#dressUpModule .figure-model-grid,
+#dressUpModule .size-choice-grid,
+#dressUpModule #chibiTypeSection > .option-grid,
+#dressUpModule #hironoTypeSection .figure-model-grid,
+#dressUpModule #funkoModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule #hironoModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule #chibiModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule #chibiTypeSection:not([hidden]) > .option-grid,
+#dressUpModule #hironoTypeSection:not([hidden]) .figure-model-grid {
+    justify-content: start !important;
+    justify-items: stretch;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* walang Next sa Figure Style: diretso na pag pumili */
+#dressUpModule #figureStyleNavigation {
+    display: none !important;
+}
+
+/* order sa loob ng container */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+    align-content: start;
+    row-gap: 6px;
+    flex: 0 0 auto !important;
+    height: auto !important;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > .category-panel:not([hidden]) {
+    display: contents !important;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > h2 { grid-row: 1; grid-column: 1; }
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureStyleSection { grid-row: 2; grid-column: 1; }
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiTypeSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoTypeSection { grid-row: 3; grid-column: 1; }
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureSizeSection { grid-row: 4; grid-column: 1; margin-top: 0; }
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoModelSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoModelSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiModelSection { grid-row: 5; grid-column: 1; }
+/* Skin Tone: nasa kanang itaas ng Gender row (kapantay ng "GENDER" title) */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) {
+    position: static !important;
+    grid-row: 5;
+    grid-column: 1;
+    justify-self: end;
+    align-self: start;
+    width: auto;
+    margin: 0 !important;
+    z-index: 40;
+}
+
+/* mas siksik ang mga section sa Figure Details screen */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer .option-section:not([hidden]) {
+    margin-bottom: 0;
+}
+
+/* group bar (HAIR (11), TOP (..)): sakto lang ang haba, walang itim na outline */
+#dressUpModule .option-grid > .option-group-head {
+    width: fit-content !important;
+    min-width: 150px !important;
+    max-width: min(260px, 100%) !important;
+    justify-self: start !important;
+    gap: 14px !important;
+    padding: 8px 14px !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+#dressUpModule .option-grid > .option-group-head:focus { outline: none !important; }
+#dressUpModule .option-grid > .option-group-head:focus-visible {
+    outline: 2px solid #f7afd3 !important;
+    outline-offset: 1px;
+}
+
+/* Size: mas maliit na card para kasya ang 4 na sukat (Chibi 2-5") sa isang hilera */
+#dressUpModule .dressup-right #sizeChoiceGrid {
+    grid-template-columns: repeat(auto-fill, 92px);
+    gap: 10px;
+}
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card {
+    width: 92px;
+    height: 92px;
+    padding: 8px;
+    gap: 4px;
+}
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card strong { font-size: 26px; }
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card span { font-size: 11px; }@media (max-width: 520px) {
+    #dressUpModule .dressup-right #sizeChoiceGrid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+    #dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card { width: auto; height: auto; aspect-ratio: 1 / 1; }
+}@media (max-width: 520px) {
+    /* Figure Style: 3 magkakatabi para hindi sobrang haba sa phone */
+    #dressUpModule .dressup-right .figure-style-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+    #dressUpModule .dressup-right .figure-style-card > span { font-size: 12px; padding: 6px 8px; }
+}
+
+/* Figure Details: numbered required steps (1, 2, 3...) -> check kapag tapos na */
+#dressUpModule .fd-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #f7afd3;
+    color: #873c63;
+    font-weight: 800; font-size: 12px; line-height: 1;
+    vertical-align: middle;
+}
+#dressUpModule .fd-badge.done {
+    background: #e58fbd;
+    border-color: #e58fbd;
+    color: #fff;
+}
+#dressUpModule .section-title:has(> .fd-badge) { align-items: center; }
+#dressUpModule .section-title > .fd-badge,
+#dressUpModule #figureDetailsContainer .option-section > .section-title > .fd-badge {
+    display: inline-flex !important;
+}
+#dressUpModule .section-title:has(> .fd-badge) {
+    justify-content: flex-start !important;
+    gap: 0 !important;
+}
+#dressUpModule .skin-section .section-title:has(> .fd-badge) { align-items: center; }
+
+/* numbered steps (required) + parehong laki ng cards sa lahat ng figure */
+/* Required: pulang * sa tabi ng pamagat ng bawat numbered na hakbang */
+#dressUpModule .figure-style-kicker:has(> .fd-badge)::after,
+#dressUpModule .section-title:has(> .fd-badge) h2::after {
+    content: " *";
+    color: #d6336c;
+    font-weight: 800;
+}
+/* Required na hakbang: nakasulat din sa kanan */
+#dressUpModule #funkoModelSection .section-title > span,
+#dressUpModule #hironoModelSection .section-title > span,
+#dressUpModule #chibiModelSection .section-title > span { white-space: nowrap; }
+
+/* Parehong laki ng cards (Style, Type, Size, Gender) sa LAHAT ng figure at sa lahat ng estado:
+   laging 3 magkakasinlapad na column na sagad ang lapad ng panel (hindi lumiliit pag may napili) */
+#dressUpModule .dressup-right .figure-style-grid,
+#dressUpModule .dressup-right #chibiTypeSection:not([hidden]) > .option-grid,
+#dressUpModule .dressup-right #hironoTypeSection:not([hidden]) .figure-model-grid,
+#dressUpModule .dressup-right #funkoModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule .dressup-right #hironoModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule .dressup-right #chibiModelSection:not([hidden]) .figure-model-grid,
+#dressUpModule .dressup-right #sizeChoiceGrid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    justify-content: stretch !important;
+    justify-items: stretch !important;
+    width: 100% !important;
+    max-width: none !important;
+}
+#dressUpModule .dressup-right .figure-style-card,
+#dressUpModule .dressup-right #chibiTypeSection .option-card,
+#dressUpModule .dressup-right #hironoTypeSection .figure-model-card,
+#dressUpModule .dressup-right .figure-model-card {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+}
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card {
+    width: auto !important;
+    height: 110px !important;
+    aspect-ratio: auto !important;
+    padding: 10px !important;
+}
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card strong { font-size: 30px; }
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card span { font-size: 12px; }@media (max-width: 520px) {
+    #dressUpModule .dressup-right .figure-style-grid,
+    #dressUpModule .dressup-right #chibiTypeSection:not([hidden]) > .option-grid,
+    #dressUpModule .dressup-right #hironoTypeSection:not([hidden]) .figure-model-grid,
+    #dressUpModule .dressup-right #funkoModelSection:not([hidden]) .figure-model-grid,
+    #dressUpModule .dressup-right #hironoModelSection:not([hidden]) .figure-model-grid,
+    #dressUpModule .dressup-right #chibiModelSection:not([hidden]) .figure-model-grid,
+    #dressUpModule .dressup-right #sizeChoiceGrid { gap: 8px !important; }
+    #dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card { height: 84px !important; }
+    #dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card strong { font-size: 24px; }
+    #dressUpModule .dressup-right .figure-style-card > span { font-size: 12px; padding: 6px 8px; }
+}
+
+/* Figure Details: lahat ng section ay sagad ang lapad ng panel (pareho sa lahat ng figure) */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureStyleSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureSizeSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiTypeSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoTypeSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoModelSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoModelSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiModelSection {
+    width: 100% !important;
+    max-width: none !important;
+    justify-self: stretch !important;
+    box-sizing: border-box;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:not([hidden]) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-auto-columns: 0 !important;
+}
+
+/* numero (bilog) nasa TAAS ng bawat section, hindi sa loob ng title;
+   naka-LOCK ang mga hakbang hangga't hindi pa napipili ang nauna */
+#dressUpModule .dressup-right.is-details-step .section-title:has(> .fd-badge) {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+}
+#dressUpModule .dressup-right.is-details-step .section-title:has(> .fd-badge) > span:not(.fd-badge) {
+    display: none !important;
+}
+#dressUpModule .dressup-right.is-details-step .fd-badge {
+    margin: 0 !important;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+}
+#dressUpModule .dressup-right.is-details-step .figure-style-kicker:has(> .fd-badge) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+#dressUpModule .step-locked {
+    opacity: .45;
+    filter: grayscale(.35);
+    cursor: not-allowed;
+    transition: opacity .2s;
+}
+#dressUpModule .step-locked * {
+    cursor: not-allowed !important;
+}
+#dressUpModule .dressup-right.is-details-step .figure-style-kicker:has(> .fd-badge) {
+    display: block;
+}
+#dressUpModule .dressup-right.is-details-step .figure-style-kicker > .fd-badge {
+    display: flex !important;
+    margin-bottom: 4px !important;
+}
+
+
+/* numero sa BILOG ng napiling card (hindi sa header),
+   at naka-lock ang susunod na hakbang hanggang may napili sa nauna */
+#dressUpModule .fd-badge { display: none !important; }
+#dressUpModule .figure-style-card.selected::after,
+#dressUpModule .detail-choice-card .image-check { display: none !important; }
+
+#dressUpModule .card-step-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 6;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4a4ca;
+    color: #fff;
+    font-weight: 800; font-size: 13px; line-height: 1;
+    box-shadow: 0 1px 4px rgba(120, 40, 80, .25);
+    pointer-events: none;
+}
+#dressUpModule .figure-style-card.selected,
+#dressUpModule .figure-model-card.selected,
+#dressUpModule .option-card.selected,
+#dressUpModule .detail-choice-card.selected,
+#dressUpModule .skin-card.selected { position: relative; }
+#dressUpModule .skin-card .card-step-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    top: -6px;
+    right: -6px;
+}
+
+#dressUpModule .step-locked {
+    opacity: .42;
+    filter: grayscale(.35);
+    pointer-events: none;
+    user-select: none;
+}
+
+#dressUpModule .figure-style-kicker[data-req]::after,
+#dressUpModule .section-title[data-req] h2::after {
+    content: " *";
+    color: #d6336c;
+    font-weight: 800;
+}
+
+/* ayos ng bilog, Size (4 magkakatabi), at pantay na espasyo */
+/* bilog na may numero: sentro ang numero, hindi nagagalaw ng ibang rule ng card */
+#dressUpModule i.card-step-badge {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    left: auto !important;
+    bottom: auto !important;
+    z-index: 6;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #ef8fbd;
+    color: #fff !important;
+    font-weight:700 !important; font-size:12px !important; line-height:24px !important;
+    font-style: normal !important;
+    letter-spacing: 0 !important;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(120, 40, 80, .28);
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+/* Size: 4 magkakatabi, magkakasinlaki */
+#dressUpModule .dressup-right #sizeChoiceGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+}
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card {
+    height: 96px !important;
+    padding: 8px !important;
+    gap: 4px;
+}
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card strong { font-size: 26px; }
+#dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card span { font-size: 11px; }
+#dressUpModule .dressup-right #sizeChoiceGrid .card-step-badge { top: 6px !important; right: 6px !important; width: 20px !important; height: 20px !important; min-width: 20px; font-size: 11px !important; line-height: 20px !important; }@media (max-width: 520px) {
+    #dressUpModule .dressup-right #sizeChoiceGrid { gap: 6px !important; }
+    #dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card { height: 78px !important; padding: 4px !important; }
+    #dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card strong { font-size: 20px; }
+    #dressUpModule .dressup-right #sizeChoiceGrid .detail-choice-card span { font-size: 9.5px; }
+}
+
+/* Figure Details: pantay na espasyo - pareho ang layo ng bawat header sa laman niya,
+   at pareho ang layo ng bawat section sa nauna */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:not([hidden]) {
+    row-gap: 26px !important;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > h2 {
+    margin: 0 0 -6px !important;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer .option-section > .section-title,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer .figure-style-kicker {
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+    min-height: 0;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer .figure-style-kicker {
+    display: block;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer .option-section:not([hidden]) {
+    margin: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+/* Skin Tone: nakapantay sa title ng Gender (kanan) */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer .skin-section > .section-title {
+    margin: 0 !important;
+}
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) { margin-top: -10px !important; }
+
+/* header (taas) may shadow sa baba, Back/Next (baba) may shadow sa taas,
+   at ang gitna ay nasa pinaka-likod (parang nakapasok). Figure Details hanggang Shoes. */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > h2 {
+    position: sticky;
+    top: -6px;
+    z-index: 6;
+    margin: -6px -8px 0 -6px !important;
+    padding: 6px 8px 14px 6px !important;
+    background: #fbf1fa;
+    box-shadow: 0 7px 6px -6px rgba(60, 20, 50, .45);
+    clip-path: inset(0 0 -14px 0);
+}
+/* grid steps (Hair → Shoes): mas malinaw ang parehong shadow */
+#dressUpModule .dressup-right.is-grid-step .category-panel > .option-section:not([hidden]) > .section-title::after {
+    box-shadow: 0 2px 7px 0 rgba(60, 20, 50, .38);
+}
+
+/* pare-parehong laki ang mga header sa Final Summary + mas maliit ang figure card */
+body[data-page="finalSummary"] #dressUpModule .final-summary-details .receipt-header h3,
+body[data-page="finalSummary"] #dressUpModule .final-summary-box .receipt-header h3,
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .receipt-header h3 {
+    font-size: 17px;
+    letter-spacing: 0;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-title { font-size: 14px; }
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-meta { font-size: 11.5px; }
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-price { font-size: 14px; }
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-edit,
+body[data-page="finalSummary"] #dressUpModule .final-summary-cart .dressup-cart-remove { font-size: 11px; padding: 5px 12px; }
+
+/* guhit (shadow) sa ilalim ng "Figure Details" ay full-width, pareho ng
+   shadow sa ibabaw ng Back/Next; ang scrollbar ay nagsisimula sa ilalim ng guhit. */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > h2 {
+    margin: -6px -22px 0 -30px !important;
+    padding: 6px 22px 14px 30px !important;
+    box-shadow: 0 2px 7px 0 rgba(60, 20, 50, .38);
+    clip-path: inset(0 0 -14px 0);
+}
+#dressUpModule .dressup-right.is-grid-step #figureDetailsContainer > h2 {
+    position: sticky;
+    top: -6px;
+    z-index: 7;
+    margin: -6px -22px 0 -30px !important;
+    padding: 6px 22px 14px 30px !important;
+    background: #fbf1fa;
+}
+#dressUpModule .dressup-right.is-grid-step .category-panel > .option-section:not([hidden]) > .section-title {
+    position: sticky !important;
+    top: 44px;
+    z-index: 6 !important;
+    background: #fbf1fa;
+    box-shadow: -30px 0 0 #fbf1fa, 22px 0 0 #fbf1fa, 0 12px 0 #fbf1fa;
+}
+/* scrollbar: nagsisimula sa ilalim ng guhit ng header */
+
+/* Scroll ng Figure Details:
+   - shadow sa header lalabas lang kapag naka-scroll na
+   - shadow sa Back/Next lalabas lang kapag may laman pa sa baba
+   - scrollbar nagsisimula sa ilalim ng header (--du-track-top galing JS)
+   - number badge hindi pumapatong sa header */
+#dressUpModule .dressup-right:not(.du-scrolled) #figureDetailsContainer > h2,
+#dressUpModule .dressup-right:not(.du-scrolled) .category-panel > .option-section:not([hidden]) > .section-title {
+    box-shadow: none !important;
+}
+#dressUpModule .dressup-right:not(.du-scrolled) .category-panel > .option-section:not([hidden]) > .section-title::after {
+    box-shadow: none !important;
+    opacity: 0 !important;
+}
+#dressUpModule .dressup-right.is-grid-step .category-panel > .option-section:not([hidden]) > .section-title {
+    box-shadow: -30px 0 0 #fbf1fa, 22px 0 0 #fbf1fa, 0 12px 0 #fbf1fa !important;
+}
+#dressUpModule .dressup-right #figureDetailsContainer > h2,
+#dressUpModule .dressup-right .category-panel > .option-section:not([hidden]) > .section-title {
+    transition: box-shadow .18s ease;
+}
+
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > h2,
+#dressUpModule .dressup-right.is-grid-step #figureDetailsContainer > h2 {
+    z-index: 50 !important;
+}
+#dressUpModule .dressup-right.is-grid-step .category-panel > .option-section:not([hidden]) > .section-title {
+    z-index: 45 !important;
+}
+
+/* Funko: walang Product Type (row 3), kaya Size at Gender aakyat - pare-pareho ang puwang */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:has(> #funkoPanel:not([hidden])) > #figureSizeSection { grid-row: 3; }
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:has(> #funkoPanel:not([hidden])) #funkoModelSection,
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:has(> #funkoPanel:not([hidden])) #funkoSkinSection:not([hidden]) { grid-row: 4; }
+
+/* Chrome: hindi gumagana ang ::-webkit-scrollbar kapag may scrollbar-width/scrollbar-color */
+/* pantay na puwang ng bawat section (Figure Style, Product Type, Size, Gender) */
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer:not([hidden]) { row-gap: 30px !important; }
+#dressUpModule .dressup-right.is-details-step #figureDetailsContainer > h2 { margin-bottom: -10px !important; }
+
+/* ==========================================================================
+   [REDESIGN] Dress Up + Final Summary - ayon sa mockup
+   Fraunces para sa headings, Plus Jakarta Sans para sa lahat ng iba,
+   #C2325F (primary), #4A1D3B (plum), #FFF8F6 (cream), #FFEDF2 (blush).
+   Nasa dulo ng file para ito ang mananaig. Walang binagong IDs o JS.
+   ========================================================================== */
+
+#dressUpModule,
+.final-summary-shell {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    color: #4A1D3B;
+}
+#dressUpModule h1, #dressUpModule h2, #dressUpModule h3,
+.final-summary-shell h1, .final-summary-shell h2, .final-summary-shell h3 {
+    font-family: Fraunces, Georgia, serif;
+    color: #4A1D3B;
+    letter-spacing: 0;
+}
+
+/* Preview + Figure Details: malinis na puting card, mas bilog */
+#dressUpModule .dressup-left,
+#dressUpModule .dressup-right {
+    background: #FFFFFF;
+    border: 1px solid #F3DCE3;
+    border-radius: 20px;
+    box-shadow: none;
+}
+#dressUpModule .preview-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+}
+#dressUpModule .preview-header button,
+#dressUpModule #resetBtn {
+    border: 1px solid #E7B9C6;
+    background: #FFF8F6;
+    color: #4A1D3B;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+#dressUpModule .figure-area {
+    background: #FFF8F6;
+    border-radius: 16px;
+}
+
+/* Section headings: maliit na pink caps, tulad ng mockup */
+#dressUpModule .section-title,
+#dressUpModule .figure-details-heading > h2,
+#dressUpModule .option-section > h3 {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #C2325F;
+}
+
+/* Option tiles (style, parts, box, size) */
+#dressUpModule .option-card,
+#dressUpModule .detail-choice-card,
+#dressUpModule .figure-style-card,
+#dressUpModule .figure-model-card,
+#dressUpModule .top-color-card {
+    border: 1px solid #F3DCE3;
+    border-radius: 16px;
+    background: #FFFFFF;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+#dressUpModule .option-card:hover,
+#dressUpModule .detail-choice-card:hover,
+#dressUpModule .figure-style-card:hover {
+    border-color: #E7B9C6;
+    box-shadow: 0 8px 20px -14px rgba(74, 29, 59, .35);
+}
+#dressUpModule .option-card.selected,
+#dressUpModule .detail-choice-card.selected,
+#dressUpModule .top-color-card.selected {
+    border: 2px solid #C2325F;
+    background: #FFF8F6;
+}
+#dressUpModule .option-image,
+#dressUpModule .detail-card-image {
+    border-radius: 12px;
+    background: #FFF8F6;
+}
+#dressUpModule .option-price,
+#dressUpModule .option-card .price {
+    color: #C2325F;
+    font-weight: 800;
+    font-size: 13px;
+}
+#dressUpModule .default-badge,
+#dressUpModule .coming-soon-badge {
+    border-radius: 999px;
+    background: #FFEDF2;
+    color: #4A1D3B;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+/* Buttons: Back (outline) + Next/Continue/Proceed (filled pill) */
+#dressUpModule .continue-btn,
+#dressUpModule .step-navigation-button:not(.secondary):not(.final-summary-back-btn),
+.final-summary-shell .final-summary-add-btn,
+.final-summary-shell .final-summary-add-btn-wide {
+    border-radius: 999px;
+    font-weight: 800;
+    background: #C2325F;
+    color: #FFFFFF;
+    border: 0;
+    padding: 12px 26px;
+    cursor: pointer;
+}
+#dressUpModule .continue-btn:hover,
+#dressUpModule .step-navigation-button:not(.secondary):hover {
+    background: #9E2549;
+}
+#dressUpModule .dress-up-back,
+#dressUpModule .step-navigation-button.secondary,
+.final-summary-shell .final-summary-back-btn {
+    border: 1px solid #E7B9C6;
+    background: #FFF8F6;
+    color: #4A1D3B;
+    border-radius: 999px;
+    font-weight: 800;
+    padding: 12px 26px;
+}
+
+/* ---------- FINAL SUMMARY (Review): ayon sa mockup ---------- */
+.final-summary-shell .final-summary-box,
+.final-summary-shell .figure-summary-box,
+.final-summary-shell .final-summary-cart,
+.final-summary-shell .final-summary-figure,
+.final-summary-shell .final-summary-details {
+    background: #FFFFFF;
+    border: 1px solid #F3DCE3;
+    border-radius: 20px;
+    box-shadow: none;
+}
+.final-summary-shell .summary-total,
+.final-summary-shell .final-summary-total {
+    background: #4A1D3B;
+    color: #FFF8F6;
+    border-radius: 20px;
+    padding: 18px 22px;
+}
+.final-summary-shell .summary-total *,
+.final-summary-shell .final-summary-total * {
+    color: #FFF8F6 !important;
+}
+.final-summary-shell .summary-total strong,
+.final-summary-shell .final-summary-total strong {
+    font-family: Fraunces, Georgia, serif;
+    font-size: 28px;
+}
+.final-summary-shell .receipt-header,
+.final-summary-shell .figure-summary-title,
+.final-summary-shell .order-type-summary-left {
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #C2325F;
+}
+
+/* [REDESIGN 2] Laman lang ng Dress Up (walang navbar, walang bg - nasa all-in-one) */
+#dressUpModule .design-step-navigation {
+    background: #4A1D3B;
+    border-radius: 20px;
+    padding: 14px 18px;
+    box-shadow: none;
+    border: 0;
+}
+#dressUpModule .design-step-navigation #previousDesignStep {
+    border: 1px solid #F6BCCB;
+    background: transparent;
+    color: #FFF8F6;
+    border-radius: 999px;
+    font-weight: 800;
+    padding: 12px 22px;
+}
+#dressUpModule .design-step-navigation #nextDesignStep,
+#dressUpModule .design-step-navigation #continueBtn {
+    background: #C2325F;
+    color: #FFFFFF;
+    border-radius: 999px;
+    font-weight: 800;
+    padding: 12px 26px;
+}
+
+/* option grids: pantay na pagitan, parang mockup */
+#dressUpModule .option-grid,
+#dressUpModule .figure-model-grid,
+#dressUpModule .box-choice-grid {
+    gap: 12px;
+}
+#dressUpModule .option-card .option-image {
+    background: #FFF8F6;
+    border-radius: 12px;
+}
+#dressUpModule .dressup-left .preview-header {
+    margin-bottom: 14px;
+}
+
+/* [REDESIGN 3] header ng wizard (STEP x OF 4 + pills) at total bar, parang mockup */
+
+/* total bar: plum, total sa kaliwa, Back/Next sa kanan */
+#dressUpModule .design-step-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+/* dropdown ng "Design section" ay hindi na kailangan sa bagong layout */
+
+/* [REDESIGN 4] pills + step title nasa loob ng kanang panel; Size at total bar nasa baba (labas ng scroll) */
+
+/* [REDESIGN 4b] sakto sa loob ng padding ng kanang panel (walang full-bleed margin) */
+
+
+/* section title sa kanang panel: hindi na sticky, kaya hindi na natatakpan ang options pag nag-scroll */
+html body #dressUpModule .dressup-right .section-title {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    box-shadow: none !important;
+}
+
+
+/* total sa plum bar (TOTAL lang, walang "estimated") */
+
+
+/* scroll ng options: full-width na guhit sa taas at baba, walang shadow */
+
+/* Parts: lahat ng nakikitang section (Gender/Skin + part na kasalukuyan) ay sumusunod sa taas ng laman
+   at ang buong panel ang nag-s-scroll, hindi nagpapaliit ng isa't isa */
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]) {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+}
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]) > .option-grid {
+    flex: none !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    grid-auto-rows: auto !important;
+}
+
+/* Skin Tone: nasa ilalim ng Gender sa daloy ng scroll (hindi naka-absolute sa ibabaw ng Gender) */
+html body #dressUpModule .dressup-right #figureDetailsContainer .option-section.skin-section:not([hidden]) {
+    position: static !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+/* Parts cards: parisukat at sakto ang laki sa daloy ng scroll */
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]) > .option-grid > .option-card {
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    min-width: 0;
+}
+html body #dressUpModule .dressup-right #figureDetailsContainer .option-section.skin-section .section-title,
+html body #dressUpModule .dressup-right #figureDetailsContainer .option-section.skin-section .skin-grid {
+    justify-content: flex-start !important;
+    text-align: left;
+}
+
+/* Parts: buong lapad ng panel ang bawat section at grid */
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]),
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]) > .option-grid {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Parts grid: row ay sukat ng laman (walang fixed na row na nagpapatong-patong ang cards) */
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]) > .option-grid {
+    grid-template-rows: none !important;
+    grid-auto-rows: max-content !important;
+    align-items: start !important;
+}
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > .option-section:not([hidden]) > .option-grid > .option-card {
+    align-self: start !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+
+
+
+/* ==========================================================================
+   DRESS UP - KANANG PANEL (.dressup-right)
+   Isang lugar na lang para sa layout ng panel. Tatlong bahagi, taas-gitna-baba:
+
+     ┌──────────────────────────────────────┐
+     │ HEADER  .wizard-pills                │  1 Style · 2 Parts · 3 Box · 4 Review
+     ├────────────── guhit ─────────────────┤
+     │ BODY    #dressUpRightScroll          │  mga pipiliin (dito lang nag-i-scroll)
+     ├────────────── guhit ─────────────────┤
+     │ FOOTER  #designStepNavigation        │  Total (kaliwa) · Back · Next (kanan)
+     └──────────────────────────────────────┘
+
+   Ang panel mismo ay walang padding; ang bawat bahagi ang may sariling
+   padding (30px sa gilid) kaya buo ang lapad ng mga guhit.
+   Ang mga lumang rule para sa panel na ito (nakakalat noon sa buong file) ay tinanggal na.
+   ========================================================================== */
+
+#dressUpModule {
+    --du-line: #E9C3D5;
+    --du-pad-x: 30px;
+}
+
+/* --- Panel (kahon) --- */
+html body #dressUpModule .dressup-right {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    /* sa desktop, ang taas ay galing sa full-viewport rule ng editor page (height: 100%);
+       ito ay pang-short screen lang */
+    height: clamp(540px, calc(100vh - 150px), 780px);
+    padding: 0;
+    overflow: hidden;
+}
+
+/* --- HEADER: pills + guhit sa baba --- */
+html body #dressUpModule .dressup-right .wizard-pills {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 22px var(--du-pad-x) 16px;
+    list-style: none;
+    border-bottom: 1px solid var(--du-line);
+}
+#dressUpModule .wizard-pills li {
+    display: flex;
+    align-items: center;
+}
+#dressUpModule .wizard-pills li span {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #FFEDF2;
+    color: #4A1D3B;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
+#dressUpModule .wizard-pills li.is-done span {
+    background: #FFFFFF;
+    border: 1px solid #F6BCCB;
+    color: #C2325F;
+}
+#dressUpModule .wizard-pills li.is-active span {
+    background: #C2325F;
+    color: #FFFFFF;
+}
+/* shortcut: pwedeng bumalik/lumipat sa mga step na naabot na */
+#dressUpModule .wizard-pills li.is-clickable {
+    cursor: pointer;
+}
+#dressUpModule .wizard-pills li.is-clickable span {
+    transition: background .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+#dressUpModule .wizard-pills li.is-clickable:hover span,
+#dressUpModule .wizard-pills li.is-clickable:focus-visible span {
+    background: #FFEDF2;
+    box-shadow: 0 2px 8px rgba(194, 50, 95, .18);
+    transform: translateY(-1px);
+}
+#dressUpModule .wizard-pills li.is-clickable:focus-visible {
+    outline: none;
+}
+#dressUpModule .wizard-pills li:not(.is-clickable):not(.is-active) {
+    cursor: default;
+}
+#dressUpModule .wizard-pills li + li::before {
+    content: "";
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin: 0 6px;
+    background: #F6BCCB;
+}
+
+/* --- BODY: dito lang nag-i-scroll --- */
+html body #dressUpModule .dressup-right #dressUpRightScroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 0;
+    padding: 20px var(--du-pad-x);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #e7b9cf #fbf1f6;
+}
+#dressUpModule .dressup-right #dressUpRightScroll::-webkit-scrollbar { width: 8px; }
+#dressUpModule .dressup-right #dressUpRightScroll::-webkit-scrollbar-track { background: #fbf1f6; border-radius: 8px; }
+#dressUpModule .dressup-right #dressUpRightScroll::-webkit-scrollbar-thumb { background: #e7b9cf; border-radius: 8px; }
+
+/* --- FOOTER: guhit sa taas, walang bg, walang kahon --- */
+html body #dressUpModule .dressup-right #designStepNavigation {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 16px var(--du-pad-x) 20px;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--du-line);
+    border-radius: 0;
+    box-shadow: none;
+}
+html body #dressUpModule .dressup-right #designStepNavigation:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+#dressUpModule #designStepNavigation .design-step-total {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-right: auto;
+}
+#dressUpModule #designStepNavigation .design-step-total span {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    color: #9f3d73;
+}
+#dressUpModule #designStepNavigation .design-step-total strong {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #4A1D3B;
+}
+
+/* dropdown ng "Design section" ay hindi na ginagamit */
+#dressUpModule .design-step-jump { display: none !important; }
+
+/* Back / Next */
+html body #dressUpModule .dressup-right #designStepNavigation .step-navigation-button,
+html body #dressUpModule .dressup-right #designStepNavigation .continue-btn {
+    flex: 0 0 120px;
+    width: 120px;
+    min-height: 40px;
+    margin: 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+}
+html body #dressUpModule .dressup-right #designStepNavigation #previousDesignStep {
+    background: #ffffff;
+    color: #C2325F;
+    border: 1.5px solid #e889bd;
+}
+html body #dressUpModule .dressup-right #designStepNavigation #previousDesignStep:hover {
+    background: #fff1f8;
+}
+html body #dressUpModule .dressup-right #designStepNavigation #nextDesignStep,
+html body #dressUpModule .dressup-right #designStepNavigation #continueBtn {
+    background: #C2325F;
+    color: #ffffff;
+    border: 0;
+}
+html body #dressUpModule .dressup-right #designStepNavigation #nextDesignStep:hover:not(:disabled),
+html body #dressUpModule .dressup-right #designStepNavigation #continueBtn:hover {
+    background: #a82651;
+}
+html body #dressUpModule .dressup-right #designStepNavigation #nextDesignStep:disabled {
+    opacity: .4;
+}
+
+/* ==========================================================================
+   MGA STEP (laman ng BODY)
+   Step 1: Figure Style / Product Type / Size / Gender / Skin Tone   (class: is-details-step)
+   Parts : Hair -> Top -> Bottom -> Shoes                            (class: is-grid-step)
+   ========================================================================== */
+
+/* Step 1 (Figure Details) = Figure Style, Product Type, Size, Gender, Skin Tone -
+   nasa Step 1 na ang Gender at Skin Tone (kasunod ng Size). Wala na ito sa Parts. */
+
+/* Step 2: header "GENDER" sa kaliwa, Skin Tone sa kanang dulo ng parehong hilera, cards sa ilalim */
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer > .category-panel:not([hidden]) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 16px !important;
+    row-gap: 18px !important;
+    align-items: center;
+    align-content: start;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer > .category-panel > [id$="ModelSection"]:not([hidden]) {
+    display: contents !important;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer > .category-panel > [id$="ModelSection"] > .section-title {
+    grid-column: 1;
+    grid-row: 1;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0;
+    background: none;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer > .category-panel > [id$="ModelSection"] > .section-title h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    color: #9f3d73;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer > .category-panel > [id$="ModelSection"] > .figure-model-grid {
+    grid-column: 1 / -1;
+    grid-row: 2;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .option-section.skin-section:not([hidden]) {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 12px;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section > .section-title {
+    display: flex !important;
+    width: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+    justify-content: flex-end !important;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section > .section-title h2 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    color: #9f3d73;
+    white-space: nowrap;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section .skin-grid {
+    justify-content: flex-end !important;
+    gap: 10px;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section .skin-card,
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section .skin-card:hover,
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section .skin-card.selected,
+html body #dressUpModule .dressup-right.is-gender-step #chibiPanel .skin-section .skin-card {
+    width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+}
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section .skin-card .skin-swatch,
+html body #dressUpModule .dressup-right.is-gender-step #figureDetailsContainer .skin-section .skin-card.selected .skin-swatch {
+    width: 30px;
+    height: 30px;
+}
+
+/* Cellphone / maliit na screen: ang page ang nag-i-scroll; nasa baba pa rin ang Total/Back/Next */
+@media (max-width: 800px) {
+    html body #dressUpModule .dressup-right {
+        position: static;
+        height: auto;
+        overflow: visible;
+    }
+    html body #dressUpModule .dressup-right #dressUpRightScroll {
+        overflow: visible;
+    }
+    html body #dressUpModule .dressup-right #designStepNavigation:not([hidden]) {
+        flex-wrap: wrap;
+    }
+}
+
+
+/* ==========================================================================
+   STEP 9 - ayos ng Figure Details, Gender cards, Hair grid at Custom color
+   (nasa dulo ng file para ito ang masunod)
+   ========================================================================== */
+
+/* 1. Sakto lang ang espasyo sa taas ng FIGURE STYLE.
+   Dati may walang-lamang unang row sa grid (wala nang h2) kaya may sobrang 30px sa taas.
+   Ngayon: Style = row 1, Type = row 2, Size = row 3, Gender + Skin = row 4. */
+html body #dressUpModule .dressup-right #dressUpRightScroll {
+    padding-top: 16px;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer:not([hidden]) {
+    row-gap: 22px !important;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureStyleSection {
+    grid-row: 1;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiTypeSection,
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoTypeSection {
+    grid-row: 2;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureSizeSection {
+    grid-row: 3;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoModelSection,
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoModelSection,
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiModelSection,
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) {
+    grid-row: 4;
+}
+/* walang sobrang espasyo sa ilalim ng FIGURE STYLE title */
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer .figure-style-kicker {
+    margin-bottom: 12px !important;
+}
+
+/* 3. Gender cards: lumaki ang BUONG card (lapad at taas, sabay),
+   hindi lang ang taas. 2 magkatabi, parisukat ang larawan kaya proporsyonal ang laki. */
+html body #dressUpModule .dressup-right #funkoModelSection:not([hidden]) .figure-model-grid,
+html body #dressUpModule .dressup-right #hironoModelSection:not([hidden]) .figure-model-grid,
+html body #dressUpModule .dressup-right #chibiModelSection:not([hidden]) .figure-model-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+}
+html body #dressUpModule .dressup-right #funkoModelSection .figure-model-card,
+html body #dressUpModule .dressup-right #hironoModelSection .figure-model-card,
+html body #dressUpModule .dressup-right #chibiModelSection .figure-model-card {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column;
+}
+html body #dressUpModule .dressup-right #funkoModelSection .figure-model-card .option-image,
+html body #dressUpModule .dressup-right #hironoModelSection .figure-model-card .option-image,
+html body #dressUpModule .dressup-right #chibiModelSection .figure-model-card .option-image {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 1 / 1;
+    padding: 8px !important;
+    box-sizing: border-box;
+}
+html body #dressUpModule .dressup-right #funkoModelSection .figure-model-card .option-image img,
+html body #dressUpModule .dressup-right #hironoModelSection .figure-model-card .option-image img,
+html body #dressUpModule .dressup-right #chibiModelSection .figure-model-card .option-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+html body #dressUpModule .dressup-right #funkoModelSection .figure-model-card > span,
+html body #dressUpModule .dressup-right #hironoModelSection .figure-model-card > span,
+html body #dressUpModule .dressup-right #chibiModelSection .figure-model-card > span {
+    font-size: 16px !important;
+    padding: 10px 2px 2px !important;
+    text-align: center;
+}
+
+/* 4a. Hair: walang dropdown, 4 na card magkakatabi sa isang row */
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > [id$="ShoesSection"]:not([hidden]) > .option-grid,
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > [id$="HairSection"]:not([hidden]) > .option-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    justify-content: stretch !important;
+}
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > [id$="ShoesSection"]:not([hidden]) > .option-grid > .option-card,
+html body #dressUpModule .dressup-right #figureDetailsContainer > .category-panel > [id$="HairSection"]:not([hidden]) > .option-grid > .option-card {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* 4b. Custom color: nasa taas-kanan ng title ng section (katabi ng HAIR / TOPS / BOTTOM / SHOES),
+   maliit at compact, kapareho ng itsura ng pink pills ng Dress Up. May Reset na per-part. */
+html body #dressUpModule .section-title:has(> .custom-color-control) {
+    display: flex !important;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+html body #dressUpModule .section-title:has(> .custom-color-control) > h2 {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+html body #dressUpModule .custom-color-control {
+    order: 0;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+    cursor: default;
+    text-transform: none;
+    letter-spacing: 0;
+}
+html body #dressUpModule .custom-color-control:hover {
+    border: 0;
+    box-shadow: none;
+    transform: none;
+}
+html body #dressUpModule .custom-color-control .custom-color-pick {
+    position: relative;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 3px 12px 3px 3px;
+    border: 1.5px solid #F6BCCB;
+    border-radius: 999px;
+    background: #FFFFFF;
+    cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+html body #dressUpModule .custom-color-control .custom-color-pick:hover {
+    border-color: #C2325F;
+    background: #FFF8F6;
+}
+html body #dressUpModule .custom-color-control .custom-color-pick:focus-within {
+    border-color: #C2325F;
+    box-shadow: 0 0 0 3px rgba(194, 50, 95, .15);
+}
+html body #dressUpModule .custom-color-control .custom-color-wheel {
+    display: block;
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, #ff6b6b, #ffd166, #f7f77b, #7ee787, #6bc9ff, #7d8bff, #d17dff, #ff6b6b);
+    box-shadow: 0 0 0 1.5px #E9C3D5;
+}
+html body #dressUpModule .custom-color-control .custom-color-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    min-width: 0;
+    text-align: left;
+    line-height: 1.15;
+}
+html body #dressUpModule .custom-color-control .custom-color-label {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #4A1D3B;
+    white-space: nowrap;
+}
+/* hex lang ang lalabas kapag may napili nang kulay (walang "Tap to pick" na sagabal) */
+html body #dressUpModule .custom-color-control .custom-color-hex {
+    display: none;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #9f3d73;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+html body #dressUpModule .custom-color-control.has-color .custom-color-hex {
+    display: block;
+}
+html body #dressUpModule .custom-color-control .custom-color-pick input[type="color"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+html body #dressUpModule .custom-color-control .custom-color-reset {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1.5px solid #C2325F;
+    border-radius: 999px;
+    background: #FFFFFF;
+    color: #C2325F;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+html body #dressUpModule .custom-color-control .custom-color-reset::before {
+    content: "\21BA";
+    font-size: 14px;
+    line-height: 1;
+}
+html body #dressUpModule .custom-color-control .custom-color-reset:hover,
+html body #dressUpModule .custom-color-control .custom-color-reset:focus-visible {
+    background: #C2325F;
+    color: #FFFFFF;
+    outline: none;
+}
+html body #dressUpModule .custom-color-control .custom-color-reset[hidden] {
+    display: none;
+}
+html body #dressUpModule .custom-color-control.color-unavailable {
+    display: none !important;
+}
+/* maliit na screen: bababa ang control sa ilalim ng title para hindi maipit */
+@media (max-width: 520px) {
+    html body #dressUpModule .section-title:has(> .custom-color-control) {
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+    html body #dressUpModule .custom-color-control {
+        flex: 1 1 100%;
+        margin: 0;
+    }
+    html body #dressUpModule .custom-color-control .custom-color-pick {
+        flex: 1 1 auto;
+    }
+}
+
+/* Gender + Skin Tone: nasa iisang row ang "GENDER" title at "SKIN TONE" (kanan),
+   para hindi tumatama sa malaking Gender card sa ilalim */
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer [id$="ModelSection"]:not([hidden]) > .section-title {
+    display: flex !important;
+    align-items: center;
+    min-height: 30px;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    align-self: start;
+    gap: 12px;
+    min-height: 30px;
+    margin: 0 !important;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer .skin-section > .section-title {
+    display: flex !important;
+    align-items: center;
+    margin: 0 !important;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer .skin-section .skin-grid {
+    margin: 0;
+}
+
+/* Skin Tone dapat nasa kanang dulo ng GENDER row (column 1, kapantay ng title);
+   may mas mabigat na rule sa taas na itinatapon ito sa column 2 na walang lapad kaya naputol */
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) {
+    grid-column: 1 !important;
+    grid-row: 4 !important;
+    justify-self: end;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) {
+    width: auto !important;
+    justify-self: end !important;
+    z-index: 5;
+}
+
+/* walang sobrang butas kapag nakatago ang Product Type / Size (Funko):
+   ang espasyo ay nasa bawat nakikitang section na lang, hindi sa walang-lamang row */
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer:not([hidden]) {
+    row-gap: 0 !important;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiTypeSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoTypeSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer > #figureSizeSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoModelSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoModelSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiModelSection:not([hidden]) {
+    margin-top: 24px !important;
+}
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #funkoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #hironoSkinSection:not([hidden]),
+html body #dressUpModule .dressup-right.is-details-step #figureDetailsContainer #chibiSkinSection:not([hidden]) {
+    margin-top: 24px !important;
+}
+
+/* FINAL SUMMARY: walang background ang Total Price at ang Back / Proceed to Payment;
+   Proceed to Payment ay 1 line lang. (Naka-scope sa Final Summary para hindi maapektuhan ang Dress Up) */
+body[data-page="finalSummary"] #dressUpModule .final-summary-details .final-summary-total,
+body[data-page="finalSummary"] #dressUpModule .final-summary-total {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 14px 2px 0 !important;
+    border-top: 1px dashed #efd6e4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-total span {
+    color: #4A1D3B !important;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-total strong {
+    color: #C2325F !important;
+    font-family: Fraunces, Georgia, serif;
+    font-size: 28px;
+}
+
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation.design-step-navigation {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    max-width: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px auto 0;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation .step-navigation-button {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 140px;
+    white-space: nowrap;
+    padding: 12px 30px;
+    font-size: 15px;
+    line-height: 1.2;
+    text-align: center;
+}
+body[data-page="finalSummary"] #dressUpModule .final-summary-navigation #finalSummaryContinueBtn {
+    min-width: 200px;
+    white-space: nowrap;
+}
+@media (max-width: 420px) {
+    body[data-page="finalSummary"] #dressUpModule .final-summary-navigation .step-navigation-button {
+        min-width: 0;
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+    body[data-page="finalSummary"] #dressUpModule .final-summary-navigation #finalSummaryContinueBtn {
+        min-width: 0;
+    }
+}
+
+/* GENDER cards (Funko / Hirono / Chibi): ang rule na "display:flex !important" ng card ay nananalo
+   laban sa pagtatago ng JS (card.hidden), kaya lumalabas ang Standee AT Keychain na Male/Female
+   (dalawang Male, dalawang Female). Ito ang nagbabalik ng pagtatago ng card na hindi kasama sa napiling Product Type. */
+html body #dressUpModule .dressup-right #funkoModelSection .figure-model-card[hidden],
+html body #dressUpModule .dressup-right #hironoModelSection .figure-model-card[hidden],
+html body #dressUpModule .dressup-right #chibiModelSection .figure-model-card[hidden] {
+    display: none !important;
+}
