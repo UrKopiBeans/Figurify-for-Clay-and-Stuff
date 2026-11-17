@@ -1,21 +1,23 @@
 <?php
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+/* ==========================================================================
+   OWNER: PROCESS REFUND   (owner/process_refund.php)
+   Nagre-record ng refund (Full, Partial o No Payment Received) mula sa Refunds page.
+   ========================================================================== */
+
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-define("ALL_IN_ONE_FUNCTIONS_ONLY", true); // [ALL-IN-ONE] pop up functions lang (walang HTML) - redirect file ito
-require_once __DIR__ . "/../Shared/all-in-one.php";
-require_once __DIR__ . "/../helpers/notification_helper.php";
-require_once __DIR__ . "/../helpers/access_helper.php";
-require_once __DIR__ . "/../helpers/order_workflow.php";
+require_once __DIR__ . "/../helpers/messaging_helper.php";
+require_once __DIR__ . "/../helpers/order_helper.php";
 
 // OWNER LANG ang makakagawa ng refund (pati ang workflow layer ay owner-only)
 figurify_require_role("admin");
 
-/* REFUND PROCESS - lahat dumadaan sa helpers/order_workflow.php
+/* REFUND PROCESS - lahat dumadaan sa helpers/order_helper.php
    action:
-   - start: start_refund (active/shipped/completed na may bayad -> Cancelled -> Refund Required)
+   - start: start_refund (Active Bookings, Shipments o Completed Orders na may bayad -> Refund Required)
    - complete: complete_refund (Refund Required -> Refunded, may halaga + ref no. + proof)
    - no_payment: refund_no_payment (Refund Required -> Cancelled, walang pumasok na bayad) */
 
@@ -51,10 +53,11 @@ if ($order_id <= 0 || !in_array($action, ["start", "complete", "no_payment"], tr
 
 if ($action === "start") {
 
-    $back = ($from === "completed") ? "completed.php" : "active-booking.php";
+    $backPages = ["completed" => "completed.php", "shipments" => "shipments.php"];
+    $back      = $backPages[$from] ?? "active-booking.php";
 
     $startReasonLabels = [
-        "not_completed_by_booking_date" => "Order Not Completed by the Booking Date",
+        "not_completed_by_ship_out_date" => "Order Not Completed by the Ship Out Date",
         "unable_to_fulfill"             => "Unable to Fulfill the Order",
         "customer_cancelled"            => "Customer Cancelled the Order",
         "defective_or_incorrect"        => "Defective or Incorrect Order",
@@ -78,25 +81,23 @@ if ($action === "start") {
         figurify_refund_redirect($conn, $back, $order_id);
     }
 
-    require_once __DIR__ . "/../helpers/email_template_helper.php";
     figurify_customer_notice(
         $conn,
         (int) $result["order"]["user_id"],
         (int) $order_id,
-        "Order #" . $order_id . " will be refunded: " . $reason . ". Expect your refund within 7–14 business days.",
+        "Order #" . $order_id . " will be refunded: " . $reason . ". Expect your refund within 7 to 14 business days.",
         "Refund for your Order #" . $order_id,
         [
-            "We’d like to let you know that <strong>Order #" . $order_id . "</strong> will be refunded.",
+            "<strong>Order #" . $order_id . "</strong> will be refunded.",
             "<strong>Reason:</strong> " . figurify_email_e($reason),
-            "Your refund will be sent to the refund account you provided within <strong>7–14 business days</strong>. We’ll notify you once it has been sent.",
+            "Expect it in your refund account within <strong>7 to 14 business days</strong>.",
             figurify_email_status_line(),
-            "Thank you for your patience and understanding!",
         ]
     );
 
-    figurify_notify_staff($conn, $order_id, "Order " . $order_id . " was moved to For Refund by the owner.", (int) $_SESSION["user_id"]);
+    figurify_notify_staff($conn, $order_id, "Order #" . $order_id . " was moved to For Refund by the owner.", (int) $_SESSION["user_id"]);
 
-    figurify_flash("Order " . $order_id . " moved to For Refund.", "success");
+    figurify_flash("Order #" . $order_id . " moved to For Refund.", "success");
     figurify_refund_redirect($conn, "refunds.php", $order_id, "for_refund");
 }
 
@@ -114,7 +115,6 @@ if ($action === "no_payment") {
 
     $reasonText = !empty($result["order"]["refund_reason"]) ? (" Reason: " . $result["order"]["refund_reason"] . ".") : "";
 
-    require_once __DIR__ . "/../helpers/email_template_helper.php";
     figurify_customer_notice(
         $conn,
         (int) $result["order"]["user_id"],
@@ -123,14 +123,12 @@ if ($action === "no_payment") {
         "Your Order #" . $order_id . " has been cancelled",
         [
             "<strong>Order #" . $order_id . "</strong> has been cancelled." . figurify_email_e($reasonText),
-            "We checked our GCash/BPI account and did not receive a payment for this order, so there is nothing to refund.",
-            "If you believe this is a mistake, please contact us.",
+            "We received no payment for this order, so there’s nothing to refund.",
             figurify_email_status_line(),
-            "Thank you for your understanding!",
         ]
     );
 
-    figurify_flash("Order " . $order_id . " cancelled.", "success");
+    figurify_flash("Order #" . $order_id . " cancelled.", "success");
     figurify_refund_redirect($conn, "refunds.php", 0, "for_refund");
 }
 
@@ -198,7 +196,6 @@ $refundType = strtolower(trim((string) $_POST["refund_type"]));
 $reference  = mb_substr(trim((string) $_POST["refund_reference"]), 0, 100);
 $methodText = !empty($order["refund_method"]) ? strtoupper((string) $order["refund_method"]) : "refund";
 
-require_once __DIR__ . "/../helpers/email_template_helper.php";
 figurify_customer_notice(
     $conn,
     (int) $order["user_id"],
@@ -210,12 +207,13 @@ figurify_customer_notice(
         "<strong>Amount:</strong> ₱" . number_format($amount, 2)
             . "<br><strong>Sent to:</strong> " . figurify_email_e($methodText) . " (" . figurify_email_e($order["refund_account_name"] ?? "") . ")"
             . "<br><strong>Reference No.:</strong> " . figurify_email_e($reference),
-        "You can view the proof of refund on the <strong>My Orders</strong> page. You can also view this notification on your <strong>Notifications</strong> page.",
-        "Thank you for your patience and understanding!",
+        "See the proof of refund in <strong>My Orders</strong>.",
     ]
 );
 
-figurify_notify_staff($conn, $order_id, "Order " . $order_id . " has been refunded by the owner.", (int) $_SESSION["user_id"]);
+figurify_notify_staff($conn, $order_id, "Order #" . $order_id . " has been refunded by the owner.", (int) $_SESSION["user_id"]);
 
 figurify_flash("Refund for order " . $order_id . " saved. The customer was notified.", "success");
 figurify_refund_redirect($conn, "refunds.php", $order_id, "refunded");
+
+/* ==================== END OWNER: PROCESS REFUND ==================== */

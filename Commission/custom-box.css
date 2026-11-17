@@ -1,0 +1,266 @@
+/* ==========================================================================
+   CUSTOM BOX (shared)   Commission/custom-box.css
+   Gamit ng image-submission.php at dress-up.php, para pareho ang itsura ng
+   Funko Pop at Hirono Custom Box sa dalawang page. Palitan dito = pareho na.
+   Page-specific lang (show/hide) ang nasa image-submission.css at dress-up.css.
+   ========================================================================== */
+
+/* walang check sa napiling card; highlight na lang (border + kulay) ang palatandaan */
+.image-check {
+    display:none;
+}
+
+/* ===== required star (*) - iisang itsura sa Image Submission at Dress Up =====
+   sariling font para hindi maging "bulaklak" ang * ng Fraunces sa Dress Up heading */
+.required-star {
+    margin-left:2px;
+    color:#D92D20;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-style:normal;
+    font-weight:800;
+}
+
+.field {
+    width:100%;
+    padding:13px 16px;
+    border:1px solid #F0CFDD;
+    border-radius:13px;
+    background:#fff;
+    color:#4A1D3B;
+    font-size:16px;
+}
+
+.box-title,
+.style-addon-section > label {
+    display:block;
+    margin-bottom:6px;
+    color:#4A1D3B;
+    font-size:16px;
+    font-weight:800;
+}
+
+.addon-hint {
+    margin-bottom:14px;
+    color:#8a6479;
+    font-size:14px;
+}
+
+.box-type-grid {
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px;
+}
+
+.box-type-option {
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    padding:0;
+    border:2px solid #F3DCE3;
+    border-radius:16px;
+    overflow:visible;
+    background:#fff;
+    text-align:left;
+    transition:border-color .15s ease, background-color .15s ease;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.box-type-option:hover {
+    border-color:#E9A9C4;
+}
+
+.box-type-option.selected {
+    border-color:#C2325F;
+    background:#FFF1F6;
+    box-shadow:0 0 0 3px rgba(194, 50, 95, .18);
+}
+
+/* buo ang larawan (hindi putol): contain sa loob ng kahon */
+.box-type-image {
+    display:block;
+    width:100%;
+    height:150px;
+    border-radius:14px 14px 0 0;
+    object-fit:contain;
+    background:#FBE9F1;
+}
+
+/* pangalan sa kaliwa, presyo sa kanan (Solo / Couple Box, Blind Box); note sa ilalim */
+.box-type-info {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:2px 10px;
+    padding:12px 14px;
+}
+
+.box-type-name {
+    color:#4A1D3B;
+    font-size:15px;
+    font-weight:800;
+}
+
+.box-type-price {
+    color:#C2325F;
+    font-size:14px;
+    font-weight:800;
+}
+
+.box-type-note {
+    flex-basis:100%;
+    color:#8a6479;
+    font-size:12px;
+}
+
+.blind-set-title {
+    margin-bottom:10px;
+    color:#8a6479;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.blind-set-grid {
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:12px;
+}
+
+/* larawan sa taas, pangalan sa kaliwa at presyo sa kanan (kagaya ng box cards) */
+.blind-set-item {
+    position:relative;
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) auto;
+    align-items:center;
+    gap:6px;
+    padding:10px 10px 12px;
+    border:2px solid #F3DCE3;
+    border-radius:16px;
+    background:#fff;
+    text-align:left;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.blind-set-item:hover {
+    border-color:#E9A9C4;
+}
+
+.blind-set-item.selected {
+    border-color:#C2325F;
+    background:#FFF1F6;
+    box-shadow:0 0 0 3px rgba(194, 50, 95, .18);
+}
+
+.blind-set-item img {
+    grid-column:1 / -1;
+    width:100%;
+    height:100px;
+    border-radius:11px;
+    object-fit:contain;
+    background:#FBE9F1;
+}
+
+.blind-set-item-name {
+    color:#4A1D3B;
+    font-size:13px;
+    font-weight:800;
+}
+
+.blind-set-item-price {
+    color:#C2325F;
+    font-size:13px;
+    font-weight:800;
+}
+
+.box-locked-message {
+    margin-top:12px;
+    color:#a5748e;
+    font-size:13px;
+}
+
+.box-locked-message.hide {
+    display:none;
+}
+
+.box-detail-fields label {
+    display:block;
+    margin-bottom:6px;
+    color:#4A1D3B;
+    font-size:14px;
+    font-weight:700;
+}
+
+.field-group-full {
+    grid-column:1 / -1;
+}
+
+.optional-tag {
+    color:#a5748e;
+    font-weight:500;
+}
+
+.box-detail-fields textarea.field {
+    min-height:96px;
+    resize:vertical;
+}
+
+.box-detail-fields {
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px;
+    margin-top:18px;
+}
+
+/* ===== OPTIONAL NA CUSTOM BOX: iba ang kulay (lavender, may putol-putol na border)
+   para alam ng customer na hindi required. Gamit ng Image Submission (Box & Add-ons +
+   Order Summary) at Dress Up (Funko Box / Blind Box). ===== */
+.optional-box-area {
+    padding:22px;
+    border:2px dashed #CDBFEA;
+    border-radius:18px;
+    background:#F6F2FD;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.optional-badge {
+    padding:3px 10px;
+    border-radius:999px;
+    background:#E6DDF8;
+    color:#6B4BB0;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+}
+
+.field:focus {
+    outline:none;
+    border-color:#C2325F;
+    box-shadow:0 0 0 3px rgba(194, 50, 95, .12);
+}
+
+@media (max-width:640px) {
+
+    .optional-box-area {
+        padding:14px;
+    }
+
+    .box-detail-fields {
+        grid-template-columns:minmax(0, 1fr);
+    }
+
+    .box-type-grid { gap:10px; }
+    .box-type-image { height:100px; }
+    .box-type-info { padding:8px 10px; }
+    .box-type-name { font-size:13px; }
+    .box-type-price { font-size:12.5px; }
+    .box-type-note { font-size:11px; }
+
+    .blind-set-grid { gap:8px; }
+    .blind-set-item { padding:6px 6px 8px; border-radius:12px; }
+    .blind-set-item img { height:64px; }
+    .blind-set-item-name,
+    .blind-set-item-price { font-size:11px; }
+
+}

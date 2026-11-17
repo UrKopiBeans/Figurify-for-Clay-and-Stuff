@@ -1,11 +1,27 @@
 <?php
+/* ==========================================================================
+   PAYMENT & SHIPPING PAGE   (my-order/payment-shipping.php)
+   Style: my-order/payment-shipping.css      Script: nasa dulo ng file na ito ([3] SCRIPT)
+   Bukas lang kapag "awaiting_payment" ang order. Isinusumite sa submit_payment.php.
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+   LAMAN (taas pababa):
+     [1] SETUP + DATA   helpers, session, order ng customer, bawal kung hindi pa puwedeng bayaran,
+                        naka-save na Shipping/Refund details (auto-fill, galing sa My Profile / huling order)
+     [2] HTML           navbar, page hero, Shipping / Refund / Payment cards, QR lightbox, footer
+     [3] SCRIPT         submit, numbers lang, preview ng proof, QR lightbox, refund method,
+                        payment option (Half / Full)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   [1] SETUP + DATA
+   ========================================================================== */
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-require_once __DIR__ . "/../helpers/order_status_helper.php";
-
+require_once __DIR__ . "/../helpers/order_helper.php";
+require_once __DIR__ . "/../helpers/saved_details_helper.php";
 
 /* must be logged in */
 
@@ -20,8 +36,10 @@ $order_id = isset($_GET["order_id"]) ? (int) $_GET["order_id"] : 0;
 
 /* get this order - must belong to this customer */
 
+figurify_wf_ensure_schema($conn);   // may payment_option column na
+
 $stmt = $conn->prepare(
-    "SELECT order_id, total_amount, status
+    "SELECT order_id, total_amount, status, payment_option
      FROM orders
      WHERE order_id = ? AND user_id = ?"
 );
@@ -33,12 +51,11 @@ $result = $stmt->get_result();
 $order   = $result->fetch_assoc();
 
 $stmt->close();
-$conn->close();
 
-
-/* invalid o hindi na awaiting_payment -> balik sa My Orders */
+/* invalid o hindi na awaiting_payment -> balik sa My Orders (bago gamitin ang $order sa baba) */
 
 if (!$order) {
+    $conn->close();
     header("Location: my-orders.php?notice=order_not_found");
     exit();
 }
@@ -49,6 +66,8 @@ if ($order["status"] !== "awaiting_payment") {
        click ang Submit) - diretso na lang sa order, walang babala */
     $notYetPayableStatuses = ["pending", "quoted", "cancelled"];
 
+    $conn->close();
+
     if (!in_array(figurify_status_key($order["status"]), $notYetPayableStatuses, true)) {
         header("Location: my-orders.php?order_id=" . $order_id);
         exit();
@@ -58,27 +77,56 @@ if ($order["status"] !== "awaiting_payment") {
     exit();
 }
 
-$hasError = isset($_GET["error"]) && $_GET["error"] === "1";
+/* auto-fill: naka-save na details; Full Name = pangalan sa account (Sign Up / My Profile) */
+$saved = figurify_saved_details_get($conn, (int) $user_id);
+$accountName = (string) ($_SESSION["full_name"] ?? "");
 
+/* Payment option: Half (50% downpayment) o Full - kwenta galing sa helpers/order_helper.php.
+   Naka-select ang dati nang pinili (hal. ibinalik ng staff ang bayad para ayusin). */
+$paymentOptions = [];
+foreach (["half" => "Pay the remaining balance before your order ships.", "full" => "Pay everything now, with no balance to pay later."] as $optionKey => $optionNote) {
+    $optionOrder = ["total_amount" => $order["total_amount"], "payment_option" => $optionKey];
+    $paymentOptions[$optionKey] = [
+        "label"  => figurify_wf_downpayment_label($optionOrder),
+        "amount" => figurify_wf_downpayment_amount($optionOrder),
+        "note"   => $optionNote,
+    ];
+}
+$chosenOption = figurify_wf_is_full_payment($order) ? "full" : "half";
+
+$savedMethodIsOther = $saved["refund_method"] !== "" && !in_array($saved["refund_method"], ["gcash", "bpi"], true);
+
+$conn->close();
+
+
+$hasError = isset($_GET["error"]) && $_GET["error"] === "1";
+/* ====================== END SETUP + DATA ====================== */
+
+
+/* ==========================================================================
+   [2] HTML
+   ========================================================================== */
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Payment & Shipping Details | Clay and Stuff</title>
     <link rel="icon" type="image/png" href="../Image/brand/logo.png">
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Payment & Shipping Details — Clay and Stuff</title>
-
-<link rel="stylesheet" href="payment-shipping.css?v=1">
-
+    <?php include __DIR__ . "/../Shared/popup-and-security.php"; ?>
+    <link rel="stylesheet" href="payment-shipping.css">
 </head>
+
 <body>
 
-<?php include "../Shared/navbar.php"; ?>
+<!-- ====================== NAVBAR (Shared/navbar.php) ====================== -->
+<?php include __DIR__ . "/../Shared/navbar.php"; ?>
+<!-- ====================== END NAVBAR ====================== -->
 
+
+<!-- ====================== PAGE HERO (css: payment-shipping.css [2]) ====================== -->
 <header class="ps-hero">
     <div class="ps-hero-inner">
         <span class="ps-eyebrow">Almost there</span>
@@ -86,7 +134,10 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
         <p>Please fill out your shipping details and complete payment below.</p>
     </div>
 </header>
+<!-- ====================== END PAGE HERO ====================== -->
 
+
+<!-- ====================== PAYMENT FORM (css: payment-shipping.css [3]-[7]) ====================== -->
 <main class="ps-page">
 
     <?php if ($hasError): ?>
@@ -110,7 +161,7 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
             value="<?php echo (int) $order["order_id"]; ?>"
         >
 
-        <!-- left column: shipping + refund -->
+        <!-- ====================== LEFT: SHIPPING + REFUND ====================== -->
 
         <div class="ps-col">
 
@@ -119,33 +170,37 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                 <h2>Shipping Details</h2>
 
                 <div class="payment-form-group">
-                    <label for="shippingName">Full Name (Last Name, First Name, Middle Name)</label>
+                    <label for="shippingName">Full Name <span class="required-star">*</span></label>
                     <input
                         type="text"
                         name="shipping_name"
                         id="shippingName"
-                        placeholder="e.g. Santos, Maria L."
+                        placeholder="e.g. Maria Santos"
+                        value="<?php echo e($accountName); ?>"
                         required
                     >
                 </div>
 
                 <div class="payment-form-group">
-                    <label for="shippingAddressLine1">Full Address</label>
+                    <label for="shippingAddressLine1">Full Address <span class="required-star">*</span></label>
                     <div class="address-stack">
                         <input
                             type="text"
+                            name="shipping_address_line1"
                             id="shippingAddressLine1"
-                            placeholder="House / Building / Street"
+                            placeholder="House No. / Building / Street / Brgy"
+                            value="<?php echo e($saved["address_line1"]); ?>"
                             required
                         >
                         <input
                             type="text"
+                            name="shipping_address_line2"
                             id="shippingAddressLine2"
-                            placeholder="Barangay / City / Province"
+                            placeholder="City / Province"
+                            value="<?php echo e($saved["address_line2"]); ?>"
                             required
                         >
                     </div>
-                    <input type="hidden" name="shipping_address" id="shippingAddress">
                 </div>
 
                 <div class="payment-form-group">
@@ -155,11 +210,12 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                         name="pin_address"
                         id="pinAddress"
                         placeholder="Paste Google Maps pin link or landmark"
+                        value="<?php echo e($saved["pin_address"]); ?>"
                     >
                 </div>
 
                 <div class="payment-form-group">
-                    <label for="shippingContact">Contact Number</label>
+                    <label for="shippingContact">Contact Number <span class="required-star">*</span></label>
                     <input
                         type="text"
                         name="shipping_contact"
@@ -168,21 +224,21 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                         pattern="[0-9]{11}"
                         maxlength="11"
                         placeholder="e.g. 09171234567"
-                        onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
+                        value="<?php echo e($saved["shipping_contact"]); ?>"
+                        data-digits-only
                         required
                     >
                 </div>
 
                 <div class="payment-form-group">
-                    <label for="courier">Courier</label>
+                    <label for="courier">Courier <span class="required-star">*</span></label>
                     <p class="courier-note">
                         Artist Location: Brgy. Palingon, Calamba City, Laguna
                     </p>
                     <select name="courier" id="courier" required>
-                        <option value="">-- Select courier -- (LBC / Lalamove)</option>
-                        <option value="lbc">LBC</option>
-                        <option value="lalamove">Lalamove</option>
+                        <option value="">Select courier (LBC / Lalamove)</option>
+                        <option value="lbc"<?php echo $saved["courier"] === "lbc" ? " selected" : ""; ?>>LBC</option>
+                        <option value="lalamove"<?php echo $saved["courier"] === "lalamove" ? " selected" : ""; ?>>Lalamove</option>
                     </select>
                 </div>
 
@@ -200,49 +256,53 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                     return smoothly if ever needed.
                 </p>
 
-                <div class="payment-form-group">
-                    <label for="refundAccountName">Account Name</label>
-                    <input
-                        type="text"
-                        name="refund_account_name"
-                        id="refundAccountName"
-                        required
-                    >
+                <div class="ps-row">
+
+                    <div class="payment-form-group">
+                        <label for="refundAccountName">Account Name <span class="required-star">*</span></label>
+                        <input
+                            type="text"
+                            name="refund_account_name"
+                            id="refundAccountName"
+                            value="<?php echo e($saved["refund_account_name"]); ?>"
+                            required
+                        >
+                    </div>
+
+                    <div class="payment-form-group">
+                        <label for="refundAccountNumber">Account Number / E-Wallet Number <span class="required-star">*</span></label>
+                        <input
+                            type="text"
+                            name="refund_account_number"
+                            id="refundAccountNumber"
+                            inputmode="numeric"
+                            pattern="[0-9]+"
+                            placeholder="e.g. 09171234567"
+                            value="<?php echo e($saved["refund_account_number"]); ?>"
+                            data-digits-only
+                            required
+                        >
+                    </div>
+
                 </div>
 
                 <div class="payment-form-group">
-                    <label for="refundAccountNumber">Account Number / E-Wallet Number</label>
-                    <input
-                        type="text"
-                        name="refund_account_number"
-                        id="refundAccountNumber"
-                        inputmode="numeric"
-                        pattern="[0-9]{1,11}"
-                        maxlength="11"
-                        placeholder="e.g. 09171234567"
-                        onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
-                        required
-                    >
-                </div>
-
-                <div class="payment-form-group">
-                    <span class="ps-label">Preferred Bank / Method</span>
+                    <span class="ps-label">Preferred Bank / Method <span class="required-star">*</span></span>
 
                     <div class="refund-method-options" id="refundMethodOptions">
 
                         <label class="refund-method-option">
-                            <input type="radio" name="refund_method" value="gcash" onchange="toggleRefundMethodOther(this)" required>
+                            <input type="radio" name="refund_method" value="gcash" onchange="toggleRefundMethodOther(this)"<?php echo $saved["refund_method"] === "gcash" ? " checked" : ""; ?> required>
                             GCash
                         </label>
 
                         <label class="refund-method-option">
-                            <input type="radio" name="refund_method" value="bpi" onchange="toggleRefundMethodOther(this)">
+                            <input type="radio" name="refund_method" value="bpi" onchange="toggleRefundMethodOther(this)"<?php echo $saved["refund_method"] === "bpi" ? " checked" : ""; ?>>
                             BPI
                         </label>
 
                         <label class="refund-method-option">
-                            <input type="radio" name="refund_method" value="other" onchange="toggleRefundMethodOther(this)">
+                            <input type="radio" name="refund_method" value="other" onchange="toggleRefundMethodOther(this)"<?php echo $savedMethodIsOther ? " checked" : ""; ?>>
                             Other
                         </label>
 
@@ -253,6 +313,8 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                         name="refund_method_other"
                         id="refundMethodOther"
                         placeholder="Please specify bank/method (Other)"
+                        value="<?php echo $savedMethodIsOther ? e($saved["refund_method"]) : ""; ?>"
+                        <?php echo $savedMethodIsOther ? "" : "hidden"; ?>
                     >
                 </div>
 
@@ -263,13 +325,39 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
         </div>
 
 
-        <!-- right column: payment -->
+        <!-- ====================== END LEFT ====================== -->
+
+
+        <!-- ====================== RIGHT: PAYMENT ====================== -->
 
         <div class="ps-col">
 
             <section class="ps-card payment-details-container">
 
                 <h2>Payment</h2>
+
+                <div class="payment-form-group">
+                    <span class="ps-label">Payment Option <span class="required-star">*</span></span>
+
+                    <div class="payment-option-list">
+                        <?php foreach ($paymentOptions as $optionKey => $option): ?>
+                            <label class="payment-option-card">
+                                <input
+                                    type="radio"
+                                    name="payment_option"
+                                    value="<?php echo $optionKey; ?>"
+                                    data-amount="₱<?php echo number_format($option["amount"], 2); ?>"
+                                    onchange="selectPaymentOption(this)"
+                                    <?php echo $optionKey === $chosenOption ? "checked" : ""; ?>
+                                    required
+                                >
+                                <span class="payment-option-name"><?php echo e($option["label"]); ?></span>
+                                <span class="payment-option-amount">₱<?php echo number_format($option["amount"], 2); ?></span>
+                                <small class="payment-option-note"><?php echo e($option["note"]); ?></small>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
 
                 <div class="price-breakdown-list">
 
@@ -279,14 +367,14 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                     </div>
 
                     <div class="price-row downpayment-row">
-                        <span>50% Downpayment</span>
-                        <span>₱<?php echo number_format($order["total_amount"] / 2, 2); ?></span>
+                        <span>Amount to Pay Now</span>
+                        <span id="amountToPay">₱<?php echo number_format($paymentOptions[$chosenOption]["amount"], 2); ?></span>
                     </div>
 
                 </div>
 
                 <div class="notice-box">
-                    Please make sure the downpayment amount you pay is complete and correct. An incorrect payment may cause your order to be cancelled.
+                    Make sure you pay the exact amount. A wrong amount may get your order cancelled.
                 </div>
 
                 <div class="payment-form-group">
@@ -294,45 +382,43 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
 
                     <div class="qr-code-row">
 
-                        <div class="qr-code-item">
-                            <img
-                                src="../Image/payment/qr-gcash.jpg"
-                                alt="GCash QR Code"
-                                class="qr-code-img"
-                                onclick="openQrLightbox(this.src, 'GCash QR Code')"
-                            >
+                        <!-- buong container ang clickable (hindi lang ang QR) -->
+                        <div class="qr-code-item" onclick="openQrLightbox('../Image/payment/qr-gcash.jpg', 'GCash QR Code')">
+                            <img src="../Image/payment/qr-gcash.jpg" alt="GCash QR Code" class="qr-code-img">
                             <span class="qr-code-caption">GCash</span>
+                            <span class="qr-code-account">Account Name: Rosemarie P.</span>
+                            <span class="qr-code-account">Number: 0963 786 2263</span>
                         </div>
 
-                        <div class="qr-code-item">
-                            <img
-                                src="../Image/payment/qr-bpi.jpg"
-                                alt="BPI QR Code"
-                                class="qr-code-img"
-                                onclick="openQrLightbox(this.src, 'BPI QR Code')"
-                            >
+                        <div class="qr-code-item" onclick="openQrLightbox('../Image/payment/qr-bpi.jpg', 'BPI QR Code')">
+                            <img src="../Image/payment/qr-bpi.jpg" alt="BPI QR Code" class="qr-code-img">
                             <span class="qr-code-caption">BPI</span>
+                            <span class="qr-code-account">Account Name: Rosemarie Pia</span>
+                            <span class="qr-code-account">Number: 2669304997</span>
                         </div>
 
                     </div>
 
-                    <p class="payment-form-hint">Tap a QR code to enlarge it for scanning.</p>
+                    <p class="payment-form-hint">Tap a GCash or BPI box to enlarge the QR code for scanning.</p>
                 </div>
 
                 <div class="payment-form-group">
-                    <label for="paymentReference">Reference / Transaction Number</label>
+                    <label for="paymentReference">Reference / Transaction Number <span class="required-star">*</span></label>
                     <input
                         type="text"
                         name="payment_reference"
                         id="paymentReference"
+                        inputmode="numeric"
+                        pattern="[0-9]+"
                         placeholder="e.g. GCash reference number"
+                        data-digits-only
                         required
                     >
                 </div>
 
                 <div class="payment-form-group">
 
-                    <label for="paymentProof">Proof of Payment (Screenshot / QR Receipt)</label>
+                    <label for="paymentProof">Proof of Payment (Screenshot / QR Receipt) <span class="required-star">*</span></label>
 
                     <div class="payment-proof-upload" id="paymentProofUpload">
 
@@ -341,13 +427,13 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                             <span class="payment-proof-placeholder">
                                 Click to upload your payment screenshot
                                 <br>
-                                <span style="font-size:11px;">JPG, PNG, WEBP up to 5MB</span>
+                                <span class="payment-proof-format">JPG, PNG, WEBP up to 5MB</span>
                             </span>
 
                             <img
                                 id="paymentProofPreviewImg"
                                 alt="Payment proof preview"
-                                style="display:none;"
+                                hidden
                             >
 
                         </div>
@@ -376,13 +462,13 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
 
                 <div class="payment-actions-row">
 
+                    <!-- Back: bumabalik sa My Orders (magkatabi sila ng Submit Payment) -->
+                    <a href="my-orders.php" class="payment-back-btn">
+                        Back
+                    </a>
+
                     <button type="submit" class="payment-submit-btn">
                         Submit Payment
-                    </button>
-
-                    <!-- submits the separate cancel form below (forms can't be nested) -->
-                    <button type="submit" form="cancelOrderForm" class="payment-cancel-btn" formnovalidate>
-                        Cancel
                     </button>
 
                 </div>
@@ -390,41 +476,42 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
             </section>
 
         </div>
+        <!-- ====================== END RIGHT ====================== -->
 
-    </form>
-
-    <form
-        id="cancelOrderForm"
-        method="POST"
-        action="confirm_order.php"
-        class="payment-shipping-cancel-form"
-        onsubmit="return csConfirmSubmit(this, 'Cancel this order?\nThis can\'t be undone.', {okText: 'Cancel Order', cancelText: 'Keep Order'});"
-    >
-        <input type="hidden" name="order_id" value="<?php echo (int) $order["order_id"]; ?>">
-        <input type="hidden" name="action" value="cancel">
     </form>
 
 </main>
+<!-- ====================== END PAYMENT FORM ====================== -->
 
 
-<!-- qr code lightbox -->
-
+<!-- ====================== QR LIGHTBOX (css: payment-shipping.css [8] | js: [3c]) ====================== -->
 <div class="qr-lightbox-overlay" id="qrLightboxOverlay" onclick="closeQrLightbox(event)">
 
     <div class="qr-lightbox-box">
-        <button type="button" class="qr-lightbox-close" aria-label="Close" onclick="closeQrLightbox()">&times;</button>
-        <img id="qrLightboxImg" alt="">
+        <!-- larawan + close (X) sa loob ng larawan, kanang itaas (kapareho ng ibang image viewer) -->
+        <div class="qr-lightbox-frame">
+            <img id="qrLightboxImg" alt="">
+            <button type="button" class="qr-lightbox-close" aria-label="Close" onclick="closeQrLightbox()"></button>
+        </div>
         <p id="qrLightboxLabel"></p>
         <p class="qr-lightbox-hint">Scan this QR code using your GCash / BPI app</p>
     </div>
 
 </div>
+<!-- ====================== END QR LIGHTBOX ====================== -->
 
 
+<!-- ====================== FOOTER (Shared/footer.php) ====================== -->
+<?php include __DIR__ . "/../Shared/footer.php"; ?>
+<!-- ====================== END FOOTER ====================== -->
+
+
+<!-- ====================== [3] SCRIPT ====================== -->
 <script>
 
-/* combine the 2 address fields into 1 hidden field before submit -
-   yun lang ang binabasa ng submit_payment.php */
+/* ==========================================================================
+   [3a] SUBMIT  (confirm bago isumite; iwas double click)
+   ========================================================================== */
 
 var paymentFormSubmitting = false;
 
@@ -435,7 +522,7 @@ function prepareShippingAddress() {
         return false;
     }
 
-    /* tanong muna bago i-submit ang bayad (shared pop up - Shared/all-in-one.php) */
+    /* tanong muna bago i-submit ang bayad (shared pop up - Shared/popup-and-security.php) */
     var paymentForm = document.getElementById("paymentDetailsForm");
 
     if (window.csConfirmSubmit && !csConfirmSubmit(
@@ -445,11 +532,6 @@ function prepareShippingAddress() {
     )) {
         return false;
     }
-
-    var line1 = document.getElementById("shippingAddressLine1").value.trim();
-    var line2 = document.getElementById("shippingAddressLine2").value.trim();
-
-    document.getElementById("shippingAddress").value = line1 + ", " + line2;
 
     paymentFormSubmitting = true;
 
@@ -463,6 +545,15 @@ function prepareShippingAddress() {
     return true;
 
 }
+
+/* ====================== END SUBMIT ====================== */
+
+
+/* ==========================================================================
+   [3b] FIELDS  (numbers lang, preview ng proof of payment)
+   ========================================================================== */
+
+/* Contact No., Account No. at Reference No.: numbers lang - data-digits-only (Shared/popup-and-security.php [6]) */
 
 
 function previewPaymentProof(input) {
@@ -479,10 +570,10 @@ function previewPaymentProof(input) {
     reader.onload = function (event) {
 
         previewImg.src = event.target.result;
-        previewImg.style.display = "block";
+        previewImg.hidden = false;
 
         if (placeholder) {
-            placeholder.style.display = "none";
+            placeholder.hidden = true;
         }
 
     };
@@ -491,8 +582,12 @@ function previewPaymentProof(input) {
 
 }
 
+/* ====================== END FIELDS ====================== */
 
-/* click a QR code to enlarge it */
+
+/* ==========================================================================
+   [3c] QR LIGHTBOX  (click ng QR = palakihin)
+   ========================================================================== */
 
 function openQrLightbox(src, label) {
 
@@ -512,7 +607,7 @@ function openQrLightbox(src, label) {
     }
 
     overlay.classList.add("show");
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("no-scroll");
 
 }
 
@@ -530,7 +625,7 @@ function closeQrLightbox(event) {
     }
 
     overlay.classList.remove("show");
-    document.body.style.overflow = "";
+    document.body.classList.remove("no-scroll");
 
 }
 
@@ -542,8 +637,12 @@ document.addEventListener("keydown", function (event) {
 
 });
 
+/* ====================== END QR LIGHTBOX ====================== */
 
-/* highlight picked refund method, show "Other" field lang kapag Other */
+
+/* ==========================================================================
+   [3d] REFUND METHOD  (highlight ng napili; "Other" field lang kapag Other)
+   ========================================================================== */
 
 function toggleRefundMethodOther(selectedRadio) {
 
@@ -567,7 +666,7 @@ function toggleRefundMethodOther(selectedRadio) {
         return;
     }
 
-    otherInput.style.display = otherSelected ? "block" : "none";
+    otherInput.hidden = !otherSelected;
     otherInput.required      = otherSelected;
 
     if (!otherSelected) {
@@ -576,9 +675,21 @@ function toggleRefundMethodOther(selectedRadio) {
 
 }
 
-</script>
+/* ==========================================================================
+   [3e] PAYMENT OPTION  (Half / Full - pinapalitan ang "Amount to Pay Now")
+   ========================================================================== */
 
-<?php include "../Shared/footer.php"; ?>
+function selectPaymentOption(radio) {
+    document.getElementById("amountToPay").textContent = radio.dataset.amount;
+}
+/* ====================== END PAYMENT OPTION ====================== */
+
+/* auto-fill: ipakita agad ang naka-save na refund method (highlight + "Other" field) */
+toggleRefundMethodOther(document.querySelector('#refundMethodOptions input[name="refund_method"]:checked'));
+/* ====================== END REFUND METHOD ====================== */
+</script>
+<!-- ====================== END SCRIPT ====================== -->
 
 </body>
 </html>
+<!-- ====================== END HTML ====================== -->

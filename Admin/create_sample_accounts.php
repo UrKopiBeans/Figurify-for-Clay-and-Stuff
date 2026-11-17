@@ -10,24 +10,23 @@ if (php_sapi_name() !== "cli") {
 require_once __DIR__ . "/database.php";
 
 $accounts = [
-    ["Figurify Owner", "admin@figurify.com", "password", "admin"],
-    ["Figurify Staff", "staff@figurify.com", "password", "staff"],
-    ["Test Customer", "customer@figurify.com", "password", "customer"]
+    ["Figurify", "Owner", "owner@gmail.com", "clayandstuffowner12345", "admin"],
+    ["Figurify", "Staff", "staff@gmail.com", "clayandstuffstaff12345", "staff"]
 ];
 
 $created = 0;
 
 foreach ($accounts as $account) {
-    [$fullName, $email, $plainPassword, $role] = $account;
+    [$firstName, $lastName, $email, $plainPassword, $role] = $account;
     $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare(
-        "INSERT INTO users (full_name, email, password, role) 
-         VALUES (?, ?, ?, ?) 
-         ON DUPLICATE KEY UPDATE full_name = VALUES(full_name), password = VALUES(password), role = VALUES(role)"
+        "INSERT INTO users (first_name, last_name, email, password, role) 
+         VALUES (?, ?, ?, ?, ?) 
+         ON DUPLICATE KEY UPDATE first_name = VALUES(first_name), last_name = VALUES(last_name), password = VALUES(password), role = VALUES(role)"
     );
 
-    $stmt->bind_param("ssss", $fullName, $email, $hashedPassword, $role);
+    $stmt->bind_param("sssss", $firstName, $lastName, $email, $hashedPassword, $role);
 
     if ($stmt->execute()) {
         $created++;
@@ -42,15 +41,46 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
+    <?php /* [POP UP AT SECURITY] pop up at security script lang (walang CSS) - Shared/popup-and-security.php */ include __DIR__ . "/../Shared/popup-and-security.php"; ?>
     <link rel="icon" type="image/png" href="../Image/brand/logo.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1400">
     <title>Sample Accounts Created</title>
     <style>
+/* ==========================================================================
+   FONT AT BACKGROUND - sariling kopya ng page na ito
+   (dating nasa shared file; ngayon ay hindi na shared)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT - Fraunces (heading) + Plus Jakarta Sans (body) ----- */
+
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+/* form controls - hindi sila nagmamana ng font by default */
+
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* ----- BACKGROUND - cream #FFF8F6 ----- */
+
+
+/* ===== katapusan ng sariling kopya ===== */
+
+
         body {
-            
-            
+
+
             color: #7a3157;
             display: flex;
             align-items: center;
@@ -73,9 +103,8 @@ $conn->close();
         <h1>Sample accounts are ready</h1>
         <p>These accounts were created or updated successfully:</p>
         <ul>
-            <li><strong>Admin:</strong> <code>admin@figurify.com</code> / <code>password</code></li>
-            <li><strong>Staff:</strong> <code>staff@figurify.com</code> / <code>password</code></li>
-            <li><strong>Customer:</strong> <code>customer@figurify.com</code> / <code>password</code></li>
+            <li><strong>Owner:</strong> <code>owner@gmail.com</code> / <code>clayandstuffowner12345</code></li>
+            <li><strong>Staff:</strong> <code>staff@gmail.com</code> / <code>clayandstuffstaff12345</code></li>
         </ul>
         <p>You can now log in from the login page.</p>
     </div>

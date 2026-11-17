@@ -1,48 +1,36 @@
 <?php
+/* ==========================================================================
+   LOG OUT   (Login/logout.php)
+   Backend lang: burahin ang session + Remember me ng portal na ito lang, tapos redirect sa Home.
+   Tinatawag nang direkta (?portal=customer|staff|owner) ng Log Out link
+   sa Shared/navbar.php (customer) at Shared/sidebar.php (owner/staff).
+   Walang pop up.
+   ========================================================================== */
+require_once __DIR__ . "/../helpers/security_helper.php";
 
-require_once __DIR__ . "/../helpers/session_helper.php";
 
-/* Start whichever portal's session this logout link belongs to
-   (?portal=customer|staff|owner, passed by the logout link) so we
-   clear the correct cookie instead of always the customer one. */
-figurify_start_session();
+/* ==========================================================================
+   [PHP] BACKEND  (direktang tawag lang, hindi kapag ini-include)
+   strcasecmp = hindi apektado ng laki/liit ng letra ng path (Windows / XAMPP)
+   ========================================================================== */
+if (strcasecmp((string) realpath($_SERVER["SCRIPT_FILENAME"]), __FILE__) === 0) {
 
-/* Remember me token ng portal na ito - burahin din */
-require_once __DIR__ . "/../helpers/remember_helper.php";
-figurify_remember_forget(figurify_session_portal());
+    /* log out ng portal na ito LANG (galing sa ?portal= ng logout link). Hiwalay ang login ng
+       customer, staff at owner, kaya ang ibang naka-login sa parehong browser ay hindi nagagalaw. */
+    $portal = figurify_session_portal();
 
-/* Clear all session variables */
-$_SESSION = array();
+    figurify_end_portal_session($portal);
 
-/* Delete session cookie */
-if (ini_get("session.use_cookies")) {
+    $portalNames = ["customer" => "", "staff" => " of the Staff panel", "owner" => " of the Owner panel"];
 
-    $params = session_get_cookie_params();
+    // pop up sa Home (customer session lang ang nababasa doon)
+    figurify_start_session("customer");
+    figurify_flash("You logged out" . $portalNames[$portal] . ".", "info");
 
-    setcookie(
-        session_name(),
-        "",
-        time() - 42000,
-        $params["path"],
-        $params["domain"],
-        $params["secure"],
-        $params["httponly"]
-    );
+    // Staff / Owner: bubukas ang Log In pop up sa Home (kung walang naka-login na customer); Customer: Home lang
+    header("Location: ../Home/Home.php" . ($portal !== "customer" && !isset($_SESSION["user_id"]) ? "?auth=login" : ""));
+
+    exit();
 }
-
-/* Destroy session */
-session_destroy();
-
-/* Staff/Owner go back to the login page; Customer goes to the
-   public Home page */
-$portal = $_GET["portal"] ?? "customer";
-
-if ($portal === "staff" || $portal === "owner") {
-    header("Location: ../Login/Login.php");
-} else {
-    header("Location: ../Home/Home.php");
-}
-
-exit();
-
+/* ====================== END BACKEND ====================== */
 ?>

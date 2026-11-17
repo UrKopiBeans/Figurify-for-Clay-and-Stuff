@@ -1,0 +1,1691 @@
+/* ==========================================================================
+   FONT AT BACKGROUND - sariling kopya ng page na ito
+   (dating nasa shared file; ngayon ay hindi na shared)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT - Fraunces (heading) + Plus Jakarta Sans (body) ----- */
+/* form controls - hindi sila nagmamana ng font by default */
+
+button, input, select, textarea, optgroup { font-family: inherit; }
+
+/* mga heading ng page na ito */
+
+body .app .qv-right-col .qv-total-line-value,
+body .portal-title,
+body .app .qv-shell .qv-right-col .qv-total-line-value,
+.notif-panel-header { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+/* ----- BACKGROUND - cream #FFF8F6 ----- */
+
+html, body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+
+/* ----- TABLE - laki ng left/right container, Previous / Next ----- */
+/* ---------- parehong laki ng container sa lahat ng page ---------- */
+
+@media (min-width: 1181px) {
+    html body .app .qv-shell { grid-template-columns: minmax(0, 1fr) 460px; gap: 20px; }
+}
+
+html body .app .qv-shell > .qv-list-panel, html body .app .qv-shell > .qv-right-col { min-width: 0; }
+
+/* ---------- table: kasya sa lapad, walang slide (bumababa sa 2 linya kapag kulang ang lapad) ---------- */
+
+html body .app .qv-shell .qv-list-panel .qv-list { overflow-x: hidden; overflow-y: auto; }
+
+html body .app .qv-shell .qv-list-panel .qv-table { width: 100%; }
+
+html body .app .qv-shell .qv-list-panel .qv-table :is(th, td) { white-space: normal; overflow-wrap: normal; }
+
+/* Email lang ang puwedeng hatiin kahit saan (mahaba); ang ibang column ay bumababa sa 2 linya sa espasyo lang */
+html body .app .qv-shell .qv-list-panel .qv-table tbody td:nth-child(2) { overflow-wrap: anywhere; }
+
+html body .app .qv-shell .qv-list-panel .qv-table thead th { padding-left: 10px; padding-right: 10px; }
+
+html body .app .qv-shell .qv-list-panel .qv-table tbody td { padding-left: 10px; padding-right: 10px; }
+
+/* ---------- PREVIOUS / NEXT ---------- */
+
+tr.cs-pg-off { display: none; }
+
+.cs-pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+    min-height: 52px;
+    padding: 12px 2px 0;
+}
+
+.cs-pager[hidden] { display: none; }
+
+.cs-pager-btn {
+    border: 0;
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
+    font-weight: 700;
+    transition: background .15s ease, opacity .15s ease;
+}
+
+.cs-pager-btn.cs-pager-next { justify-self: end; }
+
+.cs-pager-btn:hover:not(:disabled) { background: #ffd9e3; }
+
+.cs-pager-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.cs-pager-btn svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cs-pager-info { text-align: center; font-size: 12px; line-height: 1.35; color: #7c6670; }
+
+.cs-pager-info strong { display: block; font-size: 13px; color: #4a1d3b; }
+
+/* kapalit ng lumang "Showing x of y" - nasa pager na */
+
+.qv-list-panel .cs-pager ~ .qv-list-footer { display: none; }
+
+/* ----- PANEL - kulay ng filter at header, Payment & Shipping ----- */
+/* ---------- 1. FILTER (left container): laging PUTI sa lahat ng page ---------- */
+/* ---------- 2. HEADER sa right container: kulay ng sidebar, full width ---------- */
+
+html body .app .qv-shell .qv-right-col.qv-right-col :is( .qv-details-head, .qv-box-info-head, .qv-summary-head, .staff-payment-details-title, .pay-section-head, .rf-title, .dressup-design-title) {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    align-self: stretch;
+    margin: 0 0 10px;
+    padding: 10px 14px;
+    background: #f6bdd1;
+    border: 1px solid #eba5c0;
+    border-radius: 12px;
+    box-shadow: none;
+    color: #5b2a45;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+/* title na nasa loob ng pay-section-head: huwag mag-doble ang band */
+/* walang doble: itago ang "Payment & ..." header kung may sariling title na ang unang section */
+
+html body .app .qv-shell .qv-right-col.qv-right-col .qv-summary-head:has(+ .qv-summary-body > .staff-payment-details:first-child > .staff-payment-details-title) {
+    display: none;
+}
+
+/* spacing sa pagitan ng mga section */
+
+html body .app .qv-shell .qv-right-col.qv-right-col :is(.qv-details-head, .qv-box-info-head, .staff-payment-details-title, .pay-section-head, .rf-title):not(:first-child) {
+    margin-top: 16px;
+}
+
+/* ---------- 3. PAYMENT & SHIPPING: walang container (bg/border/shadow) ---------- */
+
+html body .app .qv-shell .qv-right-col.qv-right-col :is( .qv-summary, .qv-summary-body, .staff-payment-details, .staff-payment-details-grid, .staff-payment-proof, .pv-proofs, .rf-box, .pay-section) {
+    background: transparent;
+    background-image: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+html body .app .qv-shell .qv-right-col.qv-right-col :is(.qv-summary, .qv-summary-body, .staff-payment-details) {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* ---------- 5. PREVIOUS / NEXT: parehong laki ---------- */
+
+html body .cs-pager .cs-pager-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 108px;
+    max-width: 108px;
+    height: 36px;
+    padding: 0;
+    white-space: nowrap;
+    font-size: 13px;
+    line-height: 1;
+}
+
+@media (max-width: 520px) {
+    .cs-pager { grid-template-columns: auto 1fr auto; gap: 8px; }
+
+    html body .cs-pager .cs-pager-btn { min-width: 96px; max-width: 96px; }
+}
+
+/* ===== katapusan ng sariling kopya ===== */
+/* shared owner/staff dashboard styles - owner.css/staff.css just @import this now */
+/* owner dashboard styles */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body { min-height: 100vh; }
+
+button, a { cursor: pointer; }
+
+/* app */
+
+.app { min-height: 100vh; }
+
+/* sidebar */
+/* main */
+/* topbar */
+
+.welcome p { color: #81777d; font-size: 12px; margin-top: 5px; }
+
+/* date time */
+
+#currentDate { color: #765f68; }
+
+#currentTime { color: #a4476d; font-weight: 900; }
+
+/* top actions */
+
+.notification-btn { position: relative; border-radius: 999px; font-size: 17px; }
+
+.notification-btn:hover { background: #fff0f9; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+/* cards */
+/* statistics */
+
+.stats {
+    display: grid;
+    grid-template-columns: 3fr 1.1fr;
+    align-items: start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+/* dashboard layout - left col: stats + calendar + recent bookings, right col: shipment card */
+/* dashboard grid */
+/* card header */
+/* orders */
+
+.customer { display: flex; align-items: center; gap: 8px; }
+
+.customer strong { display: block; font-size: 11px; }
+
+.customer small { display: block; color: #9a8c94; font-size: 9px; margin-top: 2px; }
+
+/* status */
+
+.status {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 99px;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+/* status colors - same as Staff Dashboard, Calendar, and My Orders. Single source: Admin/order_status_helper.php. */
+/* calendar controls */
+/* calendar */
+
+.day {
+    height: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: .2s;
+}
+
+.day:hover { background: #fff0f9; cursor: pointer; }
+
+.day.empty { background: transparent; }
+
+.day.today { background: #f78fd4; color: #29252a; font-weight: 900; }
+
+.day.booked { background: #ffc4e8; color: #a4476d; font-weight: 800; }
+
+.day.selected { outline: 2px solid #f78fd4; outline-offset: 1px; }
+
+/* calendar legend */
+/* shipments */
+
+.shipment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff8fa;
+    border: 1px solid #f3e4e9;
+    padding: 10px 11px;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.shipment strong { font-size: 11px; }
+
+.shipment small { display: block; color: #9b8f95; font-size: 9px; margin-top: 3px; }
+
+/* overview */
+/* quick actions */
+/* empty */
+/* modal */
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(10px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* responsive */
+
+@media (max-width: 1100px) {
+    .stats { grid-template-columns: 1fr; }
+}
+
+/* inner page */
+/* booking table */
+/* completed orders page - same qv- layout as Quotation/Verification/Shipments, no filter tabs */
+/* .qv-workspace = transparent wrapper lang; .qv-list-panel/.qv-right-col na lang ang may card look. */
+
+.qv-workspace { background: transparent; border: none; border-radius: 0; box-shadow: none; }
+
+.qv-shell { display: grid; }
+
+@media (min-width: 1181px) {
+    html, body.quotation-page { overflow: hidden; }
+
+    body.quotation-page .main { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    body.quotation-page .qv-workspace {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+}
+
+.qv-list-panel { display: flex; flex-direction: column; overflow: hidden; }
+
+.qv-search input { border: none; }
+
+.qv-list { flex: 1 1 auto; min-height: 0; }
+
+.qv-table { border-spacing: 0; font-size: 12.5px; }
+
+/* parehong % width ng bawat column - Order / Email / Order Type /
+   Order Method / Ship Out Date / Status, sunod sa pagkakasunod nila sa
+   <thead> */
+
+.qv-table th:nth-child(1), .qv-table td:nth-child(1) { width: 8%; }
+
+.qv-table th:nth-child(2), .qv-table td:nth-child(2) { width: 30%; }
+
+.qv-table th:nth-child(3), .qv-table td:nth-child(3) { width: 14%; }
+
+.qv-table th:nth-child(4), .qv-table td:nth-child(4) { width: 18%; }
+
+.qv-table th:nth-child(5), .qv-table td:nth-child(5) { width: 14%; }
+
+.qv-table th:nth-child(6), .qv-table td:nth-child(6) { width: 16%; }
+
+/* Email column lang ang pwedeng lumampas sa laki niya (pinakamahaba),
+   kaya dito lang ilalagay ang ellipsis kapag hindi na kasya */
+
+.qv-table thead th { text-align: left; border-right: 1px solid #eee7ea; }
+
+.qv-table thead th:last-child { border-right: none; }
+
+.qv-row { transition: .15s ease; }
+
+.qv-row td:last-child { border-right: none; }
+
+.qv-table tbody tr:last-child td { border-bottom: none; }
+
+/* STATUS BADGE COLORS (single source: order_status_helper.php) -
+   kailangan dito para may rounded pill ang figurify_status_badge. */
+
+.order-status { flex-shrink: 0; letter-spacing: .4px; }
+
+.status-for_approval { background: #dff3e8; color: #2f8f67; }
+
+.status-processing { background: #ffedf2; color: #c2325f; }
+
+.status-awaiting_balance { background: #fdefbf; color: #9a6408; }
+
+.status-to_verify_balance { background: #dff3e8; color: #2f8f67; }
+
+.status-for_balance_approval { background: #dff3e8; color: #2f8f67; }
+
+.status-to_ship { background: #e3eafd; color: #3552a8; }
+
+.status-shipped { background: #e3eafd; color: #3552a8; }
+
+.status-completed { background: #dff3e8; color: #2f8f67; }
+
+.status-cancelled { background: #fbdada; color: #b83227; }
+
+.qv-row:hover { background: #f8f4f5; }
+
+.qv-row.active { background: #FFF3C4; }
+
+.qv-row.qv-hidden { display: none; }
+
+.qv-list-footer { margin-top: 14px; }
+
+.qv-right-col { display: flex; flex-direction: column; }
+
+.qv-detail-col { display: flex; flex-direction: column; }
+
+.qv-header-card h2 { font-size: 16px; color: #b23e82; margin-bottom: 12px; }
+
+.qv-summary { display: flex; flex-direction: column; flex-shrink: 0; }
+
+.qv-summary-head { flex-shrink: 0; }
+
+.qv-empty { padding: 40px 16px; text-align: center; font-size: 13px; }
+
+/* FIGURE DETAILS + PAYMENT - same classes as active-booking.php
+   (stacked Figure Details + Custom Box, hindi magkatabi). */
+
+.qv-figure-panels { display: flex; flex-direction: column; }
+
+.qv-figure-panel { display: none; flex-direction: column; gap: 14px; }
+
+.qv-figure-panel.active { display: flex; }
+
+.qv-viewer-column { min-width: 0; }
+
+.qv-viewer-column .qv-figure-card, .qv-viewer-column .qv-box-card { height: auto; }
+
+.qv-figure-tabs { align-items: center; flex-wrap: wrap; }
+
+.qv-figure-tab-pill { border: none; }
+
+.qv-figure-body { display: flex; flex-direction: column; }
+
+.qv-detail-item-image {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #ffc4e8;
+}
+
+.qv-detail-item-body { flex-direction: column; }
+
+.qv-spec-value { font-size: 12px; font-weight: 400; }
+
+.qv-spec-price { font-size: 11px; color: #b23e82; font-weight: 700; margin-top: 2px; }
+
+.qv-spec-full { grid-column: 1 / -1; }
+
+.qv-row-start { grid-column-start: 1; }
+
+.qv-letter-value { font-size: 11px; line-height: 1.5; }
+
+.qv-reference-label { display: flex; align-items: center; gap: 6px; }
+
+.qv-reference-thumbs { display: flex; flex-wrap: wrap; }
+
+.qv-ref-thumb {
+    background: linear-gradient(150deg, #ffe1ec, #ffc2d6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #b23e82;
+    border: none;
+}
+
+.qv-ref-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.qv-box-card { display: flex; flex-direction: column; }
+
+.qv-box-spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 12px 16px;
+}
+
+
+/* PAYMENT / SHIPPING DETAILS */
+
+.staff-payment-details-grid { font-size: 11px; color: #81777d; }
+
+.staff-payment-proof { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #f78fd4; }
+
+.staff-payment-proof-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: #b23e82;
+    margin-bottom: 8px;
+}
+
+.staff-payment-proof-thumb {
+    max-width: 220px;
+    max-height: 220px;
+    border-radius: 12px;
+    border: 2px solid white;
+    outline: 1px solid #e4d5df;
+    cursor: pointer;
+    object-fit: cover;
+    transition: .15s ease;
+}
+
+.staff-payment-proof-thumb:hover { transform: translateY(-2px); }
+
+/* IMAGE LIGHTBOX (click a photo to enlarge) */
+
+.image-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(60,30,45,.75);
+    z-index: 5000;
+    /* mas mataas sa navbar */
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.image-lightbox.show { display: flex; }
+
+.image-lightbox-content { position: relative; max-width: min(600px,92vw); text-align: center; }
+
+.image-lightbox-content img {
+    display: block;
+    max-width: 100%;
+    max-height: 78vh;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    object-fit: contain;
+    background: #fff;
+}
+
+.image-lightbox-label { position: absolute; top: 100%; left: 0; right: 0; margin-top: 12px; color: #fff0f7; font-size: 12px; font-weight: 700; }
+
+/* close (X): iisang itsura sa buong system - puting bilog, pink na X (dalawang guhit),
+   nasa loob ng larawan sa kanang itaas (kapareho ng Image Submission) */
+.image-lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #C2325F;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.image-lightbox-close::before,
+.image-lightbox-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+.image-lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.image-lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.image-lightbox-close:hover { background: #FFF1F6; }
+
+
+
+/* full calendar */
+/* responsive inner pages */
+/* RIGHT-SIDE CONTAINERS - iisang border para sa lahat ng container sa
+   right panel (pareho ng .qv-header-card / .qv-figure-card / .qv-box-card),
+   para kita ang border ng Box & Add-ons, summary, at iba pa. */
+/* PARE-PAREHONG PAGITAN (16px) ng lahat ng container sa right panel -
+   para walang magkadikit na box. */
+
+.qv-right-col .qv-detail-col, .qv-right-col .qv-figure-panels, .qv-right-col .qv-viewer-grid { gap: 16px; }
+
+.qv-right-col .qv-figure-panel.active { gap: 16px; }
+
+.qv-right-col .qv-viewer-column { flex-direction: column; }
+
+.qv-right-col .qv-summary-body > :is(.staff-payment-details, .rf-box, .qv-price-breakdown, .qv-line-list, .qv-note-box, details) + :is(.staff-payment-details, .rf-box, .qv-price-breakdown, .qv-line-list, .qv-note-box, details) {
+    margin-top: 16px;
+}
+
+/* Payment & Shipping: iisang container lang (walang container sa loob ng container) */
+
+.qv-right-col .qv-summary .staff-payment-details + .staff-payment-details { padding-top: 14px; }
+
+/* Total Amount: nasa baba ng Customer Notes / ng 3D figure */
+
+.qv-total-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #E6D5DF;
+}
+
+.qv-total-label { font-size: 12px; font-weight: 700; color: #7b315b; }
+
+.qv-total-value { font-size: 18px; font-weight: 800; color: #7b315b; }
+
+.dressup-3d-column .qv-total-box { margin-top: 10px; }
+
+/* [RIGHT PANEL] Ayos ng right-side container (owner/staff):
+   - walang border at bg sa presyo, presyo nasa kanan
+   - row: label kaliwa | value gitna | presyo kanan
+   - Quotation / summary sa baba: may bg */
+
+html body .app .qv-shell .qv-right-col .qv-detail-item-card { flex-wrap: nowrap; }
+
+html body .app .qv-shell .qv-right-col .qv-detail-item-body {
+    flex: 1 1 0;
+    grid-template-columns: 150px minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+}
+
+html body .app .qv-shell .qv-right-col .qv-box-spec-grid > div {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr) 110px;
+    align-items: center;
+    column-gap: 12px;
+    padding: 9px 0;
+    border: 0;
+    background: none;
+}
+
+html body .app .qv-shell .qv-right-col .qv-detail-item-price,
+html body .app .qv-shell .qv-right-col .qv-detail-item-price-muted,
+html body .app .qv-shell .qv-right-col .qv-spec-price,
+html body .app .qv-shell .qv-right-col .qv-box-spec-grid .qv-spec-price { flex: 0 0 110px; }
+
+html body .app .qv-shell .qv-right-col .qv-box-spec-grid .qv-spec-price::before { content: none; }
+
+/* Quotation / summary sa baba: may bg, pare-parehong heading */
+/* label ng notes / reference: ibalik ang sariling style */
+
+html body .app .qv-shell .qv-right-col .qv-notes-row .qv-spec-label,
+html body .app .qv-shell .qv-right-col .qv-reference-label {
+    color: #c2325f;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+}
+
+html body .app .qv-shell .qv-right-col .qv-summary { padding: 16px 18px; }
+
+/* ==============================================================
+   [RIGHT-PANEL-ROWS.CSS]  (dating Shared/right-panel-rows.css - nasa page na ito na)
+   ANO ITO: PANTAY-PANTAY NA ROWS AT HEADINGS ng kanang container (.qv-right-col). Blush ang background ng heading.
+   PAANO GUMAGANA: ROW = Label | Value | Presyo. Para baguhin ang lapad ng label: --rp-label sa taas. Ito dapat ang HULING CSS na naka-load kaya ito ang nasusunod.
+   ============================================================== */
+/* ==========================================================
+   RIGHT SIDE CONTAINER (.qv-right-col) - PANTAY-PANTAY NA ROWS AT HEADINGS
+   Para sa lahat ng Owner at Staff page na may right-side container
+   (Verification, For Approval, Active Bookings, Shipments, Completed,
+   Cancelled, Payments, Refunds, All Bookings, Quotation).
+
+   Iisang file lang ito at ito ang huling nilo-load ng bawat page, kaya ito
+   ang nasusunod. Para baguhin ang layout ng rows: ang --rp-label sa ibaba.
+
+   ROW  =  Label (kaliwa, pare-parehong lapad)  |  Value (kaliwa)  |  Presyo (kanan)
+        hal.  Size         4 inches                  ₱1,200.00
+   Pareho ito sa Figure Information, Dress Up Design, Custom Box at
+   Payment / Shipping details - kaya magkakatapat ang value ng lahat ng row.
+   ========================================================== */
+/* ---------- 1. HEADINGS: may kulay na background, pare-pareho sa lahat ng page ----------
+   (Figure 1 Information, Dress Up Design, Custom Box, Payment details, atbp.) */
+
+html body .qv-right-col :is( .qv-details-head, .qv-box-info-head, .qv-summary-head, .staff-payment-details-title, .rf-title, .dressup-design-title, .pay-section-head ):not(#rp) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: auto;
+    min-height: 0;
+    margin: 0 0 8px;
+    padding: 10px 14px;
+    background: #ffedf2;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: none;
+    color: #c2325f;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    line-height: 1.3;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+html body .qv-right-col .qv-summary-head h2:not(#rp) { font: inherit; }
+
+
+/* "Dress Up Design" = bahagi ng Figure Information; may sapat na pagitan sa taas */
+
+html body .qv-right-col .dressup-design:not(.dressup-viewer-block):not(#rp) {
+    display: block;
+    margin: 22px 0 0;
+    padding: 0;
+    gap: 0;
+}
+
+/* ---------- 2. ROWS: Label | Value | Presyo ---------- */
+
+html body .qv-right-col :is( .qv-detail-item-list, .dressup-picks, .qv-box-spec-grid, .staff-payment-details-grid ):not(#rp) {
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+}
+
+html body .qv-right-col :is( .qv-detail-item-card, .dressup-pick, .qv-box-spec-grid > div, .staff-payment-details-grid > span ):not(#rp) {
+    display: grid;
+    grid-template-columns: 128px minmax(0, 1fr) auto;
+    grid-auto-flow: row;
+    column-gap: 14px;
+    row-gap: 2px;
+    align-items: baseline;
+    justify-items: start;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 9px 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    flex-direction: row;
+    text-align: left;
+}
+
+/* ang body (label + value) ay hindi na hiwalay na kahon - kasama na sa grid ng row */
+
+html body .qv-right-col :is(.qv-detail-item-body, .dressup-pick-body):not(#rp) { display: contents; }
+
+/* LABEL */
+
+html body .qv-right-col :is( .qv-detail-item-label, .dressup-pick-label, .qv-box-spec-grid .qv-spec-label, .staff-payment-details-grid > span > strong ):not(#rp) {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    margin: 0;
+    padding: 0;
+    color: #7c6670;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.4;
+    text-align: left;
+    text-transform: none;
+    overflow-wrap: anywhere;
+}
+
+/* VALUE */
+
+html body .qv-right-col :is( .qv-detail-item-value, .dressup-pick-value, .qv-box-spec-grid .qv-spec-value ):not(#rp) {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    color: #4a1d3b;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+}
+
+/* payment / shipping details: ang value ay text mismo ng row (nasa column 2) */
+
+html body .qv-right-col .staff-payment-details-grid > span:not(#rp) {
+    color: #4a1d3b;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+/* kulay (Dress Up) - nasa ilalim ng value, nakahanay sa value */
+
+html body .qv-right-col .dressup-pick-color:not(#rp) {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    margin: 0;
+    color: #7c6670;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+/* PRESYO - laging sa pinakakanan, magkakatapat ang mga digit */
+
+html body .qv-right-col :is( .qv-detail-item-price, .dressup-pick-price, .qv-box-spec-grid .qv-spec-price ):not(#rp) {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: #4a1d3b;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+html body .qv-right-col .qv-box-spec-grid .qv-spec-price:not(#rp)::before { content: none; }
+
+html body .qv-right-col .dressup-pick-price.is-included:not(#rp) { color: #7c6670; font-weight: 600; }
+
+/* walang presyo = walang ipapakita (hindi kukuha ng espasyo) */
+
+html body .qv-right-col :is(.qv-detail-item-price, .dressup-pick-price):empty:not(#rp),
+html body .qv-right-col .qv-detail-item-price-muted:not(#rp) { display: none; }
+
+/* mga row na buong lapad (hal. Notes sa Custom Box) */
+
+html body .qv-right-col .qv-box-spec-grid > div.qv-spec-full:not(#rp) { grid-column: auto; }
+
+/* ---------- 3. BUTTONS sa baba ng right container: walang guhit sa taas ---------- */
+
+html body .qv-right-col :is( .verify-actions, .ab-bottom-actions, .qv-summary, .qv-summary-body, .qv-quote-actions, .qv-actions, .qv-order-actions, [class*="-actions"] ):not(#rp) {
+    border-top: 0;
+    box-shadow: none;
+}
+
+html body .qv-right-col .qv-summary:not(#rp)::before { display: none; }
+
+html body .qv-right-col .qv-summary:not(#rp) { padding-top: 0; }
+
+/* ---------- phone ---------- */
+/* ==============================================================
+   [PAGE-TRANSITION.CSS]  (dating Shared/page-transition.css - nasa page na ito na)
+   ANO ITO: WALANG BLINK kapag nagpalit ng order o page.
+   PAANO GUMAGANA: Gamit ang @view-transition (Chrome/Edge). Sa ibang browser, normal na load lang - walang masisira.
+   ============================================================== */
+/* ==========================================================
+   WALANG BLINK kapag nagpalit ng order / page sa owner at staff
+   Habang naglo-load ang bagong page, nananatili sa screen ang lumang page
+   (walang puting flash, walang crossfade), tapos agad na pinapalitan
+   pag handa na ang bago. Gumagana sa Chrome / Edge (browser na walang suporta
+   ay normal na pag-load lang - walang masisira).
+   ========================================================== */
+
+@view-transition { navigation: auto; }
+
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* ==============================================================
+   [RECEIPT-PANELS.CSS]  (dating Shared/receipt-panels.css - nasa page na ito na)
+   ANO ITO: ITSURA NG ORDER DETAILS sa kanang container na parang resibo: label sa kaliwa, value, presyo sa kanan, putol-putol na guhit.
+   PAANO GUMAGANA: Tina-target nito ang .qv-right-col at .order-figure. Para baguhin ang kulay: ang --rc-* variables sa taas.
+   ============================================================== */
+/* Itsurang resibo ng order details (My Orders at mga Owner/Staff page na may .qv-right-col).
+   Listahan lang: label sa kaliwa, value, presyo sa kanan, may putol-putol na guhit. */
+/* section titles */
+/* containers -> plain sections */
+
+body .qv-right-col .qv-figure-card,
+body .qv-right-col .qv-box-card,
+body .qv-right-col .qv-summary,
+body .qv-right-col .staff-payment-details,
+body .qv-right-col .qv-total-box,
+body .qv-right-col .qv-header-card { outline: 0; }
+
+/* bawat section: putol-putol na guhit sa itaas (resibo), maliban sa una */
+
+body .qv-right-col .qv-viewer-column { display: block; gap: 0; }
+
+body .qv-right-col .qv-figure-card > * + *, body .qv-right-col .qv-figure-body > * + * { margin-top: 10px; }
+
+/* My Orders: isang column lang (Figure Details, sunod Custom Box) - parang resibo */
+/* rows */
+
+body .qv-right-col .qv-detail-item-card,
+body .qv-right-col .dressup-pick,
+body .qv-right-col .qv-box-spec-grid > div,
+body .qv-right-col .staff-payment-details-grid > span { border: 0; border-bottom: 1px dashed #efd9e4; }
+
+/* label | value (sa loob ng body) */
+
+body .qv-right-col .qv-detail-item-body, body .qv-right-col .dressup-pick-body {
+    column-gap: 12px;
+    row-gap: 2px;
+    width: 100%;
+}
+
+body .qv-right-col .dressup-pick-color { grid-column: 2; }
+
+/* walang presyo -> walang ipapakita */
+/* box spec rows: label | value | price */
+
+body .qv-right-col .qv-box-spec-grid > div.qv-spec-full { grid-column: auto; }
+
+/* staff payment details: "Ship To: value" -> label | value */
+/* walang decorative na larawan */
+
+body .qv-right-col .qv-detail-item-image { display: none; }
+
+/* Custom Box na wala */
+
+
+/* notes / reference photos */
+
+body .qv-right-col .qv-notes-row, body .qv-right-col .qv-reference-row { padding: 0; border: 0; }
+
+/* Dress Up */
+
+body .qv-right-col .dressup-design:not(.dressup-viewer-block) { margin-top: 6px; gap: 0; }
+
+body .dressup-grid > :first-child .detail-item-list,
+body .dressup-grid > :first-child .qv-detail-item-list { display: block; }
+
+body .dressup-grid > :first-child .detail-item-card,
+body .dressup-grid > :first-child .qv-detail-item-card { padding: 8px 0; }
+
+body .dressup-grid > :first-child .detail-item-label,
+body .dressup-grid > :first-child .qv-detail-item-label { font-size: 12.5px; }
+
+body .dressup-grid > :first-child .detail-item-value,
+body .dressup-grid > :first-child .qv-detail-item-value { font-size: 13px; }
+
+body .dressup-grid > :first-child .detail-item-price,
+body .dressup-grid > :first-child .qv-detail-item-price { font-size: 13px; text-align: right; }
+
+
+/* order summary lines (owner/staff) */
+/* pay-section-head: may badge sa loob (Paid / Not Yet Due) */
+/* nakatagong pop up (modal overlay) sa unahan - hindi kasama sa guhit */
+
+body .qv-right-col .qv-detail-col > [class*="-overlay"] + :not([class*="-overlay"]),
+body .qv-right-col > [class*="-overlay"] + :not([class*="-overlay"]),
+body .qv-right-col > style + *,
+body .qv-right-col > input[type="hidden"] + * { padding-top: 0; border-top: 0; }
+body .qv-right-col > [class*="-overlay"] + :not([class*="-overlay"]), body .qv-right-col > style + *, body .qv-right-col > input[type="hidden"] + * { margin-top: 0; }
+
+/* walang Custom Box: isang simpleng linya lang */
+
+
+/* Owner/Staff - pink na header band, full width, walang
+   border-radius, walang guhit sa ilalim ng text (border lang) */
+
+body .qv-right-col .qv-details-head,
+body .qv-right-col .qv-box-info-head,
+body .qv-right-col .qv-summary-head,
+body .qv-right-col .staff-payment-details-title,
+body .qv-right-col .dressup-design-title {
+    border: 0;
+    border-top: 1px solid #f7a8cf;
+    border-bottom: 1px solid #f7a8cf;
+}
+
+/* header na nasa loob na ng pink band (payments: title + badge) */
+/* Dress Up Design (nasa loob ng Figure Information) - mas maliit na sub-header */
+
+body .qv-right-col .dressup-design:not(.dressup-viewer-block) > .dressup-design-title {
+    background: #fff0f7;
+    border-top-color: #fbd3e6;
+    border-bottom-color: #fbd3e6;
+}
+
+/* pink band na ang naghihiwalay ng sections - wala nang putol-putol na guhit */
+
+body .qv-right-col > * + *,
+body .qv-right-col .qv-detail-col > * + *,
+body .qv-right-col .qv-viewer-grid > * + *,
+body .qv-right-col .qv-summary { border-top: 0; padding-top: 0; margin-top: 16px; }
+
+body .qv-right-col .qv-detail-col > [class*="-overlay"] + :not([class*="-overlay"]) { margin-top: 0; }
+
+/* My Orders - resibo pa rin ang listahan, pero may
+   sariling container ang Figure Details at Custom Box (magkatabi),
+   at pati ang Payment / Refund details */
+/* Dress Up 3D: walang guhit sa ilalim / walang hint line */
+
+body .dressup-3d-stage .dressup-3d-hint { display: none; }
+
+/* Payment & Shipping / Refund - kanya-kanyang container */
+/* My Orders containers: mas makitid na label para hindi mag-wrap ang value */
+/* Proof of Payment / Refund - nasa LOOB na ng container (sa baba ng details),
+   walang sariling box at walang guhit sa itaas */
+
+body .customer-payment-proof-inline .customer-payment-proof-thumb {
+    width: 120px;
+    height: 120px;
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: cover;
+}
+
+/* Total Amount - huling linya ng Figure Information (walang box) o ng Custom Box */
+
+body .qv-right-col .qv-total-line { gap: 12px; }
+
+body .qv-right-col .qv-total-line-value { font-weight: 800; white-space: nowrap; }
+
+/* subtotal ng bawat figure (at Rush Fee) bago ang Total Amount */
+
+body .qv-right-col .qv-sub-line { gap: 12px; }
+
+body .qv-right-col .qv-sub-line span:last-child { font-weight: 700; color: #3b1f2e; }
+
+body .qv-right-col .qv-total-breakdown .qv-total-line { margin-top: 0; }
+
+/* pink na header sa pinakataas - walang puting puwang sa itaas */
+
+body .qv-right-col .qv-figure-card > * { order: 2; }
+
+body .qv-right-col .qv-figure-card > .qv-details-head { order: 0; }
+
+/* rush fee kada figure - nakapasok sa ilalim ng figure niya */
+
+/* mas malayo ang "Customer Notes" sa reference photos */
+/* My Orders: kasing taas ng Figure Details ang Custom Box container (kahit walang laman) */
+/* buong value ang kita (hal. "Head Only Keychain"), hindi naka-"..." */
+/* mas maliit na text sa listahan para hindi magbanggaan ang value at presyo */
+
+body .qv-right-col .qv-box-spec-grid > div { grid-template-columns: 96px minmax(0, 1fr) auto; }
+
+/* My Orders: kasing taas ng Payment & Shipping Details ang Refund / Return Details */
+/* Customer Notes - naka-container para kita agad kung nasaan
+   (owner / staff right panel at My Orders) */
+
+body .qv-right-col .qv-notes-row .qv-note-box {
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ==========================================================
+   Figurify redesign - Owner at Staff PAGE STYLES (hindi sidebar)
+   (dating Shared/panel-pages.css - may sariling kopya na ang bawat owner/staff page): iisang topbar,
+   font, kulay, cards, table, buttons at status chips.
+   Sundin ang Design System: Fraunces (headings) + Plus Jakarta Sans (body)
+   Primary #C2325F | Plum #4A1D3B | Blush #FFEDF2 | Cream #FFF8F6 | Coral #E8707E
+   Success #2F8F67 | Warning #9A6408 | Danger #B83227
+
+   Font at background ng page: nasa pinaka-itaas ng CSS ng page na ito. Kapag offline,
+   awtomatikong Georgia / system font ang gagamitin - hindi masisira ang layout.
+   ========================================================== */
+
+html body { color: #4a1d3b; }
+
+/* ---------- TOPBAR (pareho sa lahat ng page) ---------- */
+
+body .app > main.main { padding: 0 clamp(14px, 2.2vw, 28px) 22px; }
+
+body .app > main.main > .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    min-height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+    flex: 0 0 auto;
+    /* hindi lumiliit ang topbar kahit mahaba ang laman ng page - walang "galaw" kapag pumili ng row */
+}
+
+body .portal-title { font-size: 24px; line-height: 1.2; letter-spacing: 0; }
+
+body .app .top-actions { display: flex; align-items: center; gap: 14px; }
+
+@media (max-width: 800px) {
+    body .portal-title { font-size: 20px; }
+}
+
+/* ---------- CARDS ---------- */
+
+body .app :is(.card:not(.qv-workspace), .st-card) {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ---------- TABLES (qv / user / activity) ---------- */
+/* pare-parehong taas ng header/row ng listahan (hindi gumagalaw kapag lumipat ng page) */
+/* ---------- STATUS CHIPS (Design System: Paid / Pending / Overdue / Shipped) ---------- */
+
+body .app :is(.order-status, .status) { border-radius: 999px; font-weight: 700; box-shadow: none; }
+
+body .app :is(.order-status, .status):is(.status-pending, .status-awaiting_payment, .status-awaiting_balance) {
+    background: #fdefbf;
+    color: #9a6408;
+}
+
+body .app :is(.order-status, .status):is(.status-quoted, .status-to_verify, .status-for_approval, .status-to_verify_balance, .status-for_balance_approval, .status-completed) {
+    background: #dff3e8;
+    color: #2f8f67;
+}
+
+body .app :is(.order-status, .status):is(.status-processing) { background: #ffedf2; color: #c2325f; }
+
+body .app :is(.order-status, .status):is(.status-to_ship, .status-shipped) {
+    background: #e3eafd;
+    color: #3552a8;
+}
+
+body .app :is(.order-status, .status).status-cancelled { background: #fbdada; color: #b83227; }
+
+/* ---------- FILTER + SEARCH ---------- */
+/* ---------- TABS (Content Management) - pill, kapareho ng Figure tabs ---------- */
+/* ---------- RIGHT PANEL BUTTONS: Primary (tuloy) + Secondary (tanggihan) ---------- */
+/* ---------- PAYMENT & SHIPPING / REFUND rows: label kaliwa, value kanan ---------- */
+/* ---------- pare-parehong pagitan ng mga container sa kanang panel ---------- */
+/* ==========================================================
+   LISTA (kaliwa) + DETALYE (kanan) - All Bookings, Quotation, Verification, atbp.
+   ========================================================== */
+/* ---------- two white cards ---------- */
+
+body .app .qv-list-panel, body .app .qv-right-col {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ---------- left: toolbar ---------- */
+/* ---------- left: table ---------- */
+
+body .app .qv-table thead th { border: 0; border-bottom: 1.5px solid #ecd9e0; }
+
+body .app .qv-table tbody td { border: 0; border-bottom: 1px solid #f6e8ed; }
+
+body .app .qv-table tbody tr:hover td { background: #fff8fa; }
+
+body .app .qv-table tbody td :is(.order-status, .pay-badge) {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+body .app .qv-empty { color: #7c6670; }
+
+/* ---------- right: head (title + status) ---------- */
+/* inner cards become plain sections of the single right card */
+
+body .app .qv-right-col .qv-detail-col { gap: 14px; }
+
+/* section headings */
+/* figure tabs */
+
+body .app .qv-figure-tab-pill:hover { border-color: #e9a6bd; color: #c2325f; }
+
+/* ---------- key / value rows ---------- */
+
+body .app .qv-detail-item-list { flex-direction: column; }
+
+body .app .qv-detail-item-image { display: none; }
+
+/* box spec rows */
+
+body .app .qv-box-spec-grid { display: flex; flex-direction: column; gap: 0; }
+
+body .app .qv-box-spec-grid > div {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 0;
+    grid-column: auto;
+}
+
+body .app .qv-spec-value { font-size: 14px; font-weight: 800; color: #4a1d3b; text-align: right; }
+
+body .app .qv-spec-price { font-size: 13px; font-weight: 800; color: #4a1d3b; }
+
+/* reference images */
+
+body .app .qv-reference-thumbs { gap: 8px; }
+
+/* customer notes */
+
+body .app .qv-note-box { border-radius: 14px; }
+
+/* ---------- quotation lines ---------- */
+/* ---------- buttons: Decline (outline) + Send Quotation (filled) ---------- */
+/* ---------- decline pop-up ---------- */
+/* ==========================================================
+   LISTAHAN SA KALIWA - pare-pareho sa LAHAT ng owner/staff page
+   (All Bookings, Quotation, Verification, For Approval, Active Bookings,
+   Shipments, Completed, Cancelled, Refunds, Payments)
+   - Filter sa kaliwa, Search sa kanan (sakto ang haba)
+   - Kasya ang buong table sa card: walang pahalang na scroll
+   ========================================================== */
+/* toolbar */
+
+body .app .qv-list-panel .qv-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 14px;
+}
+
+body .app .qv-list-panel .qv-search {
+    flex: 0 1 280px;
+    /* search: laging nasa kanan, sakto ang haba */
+    width: 280px;
+    max-width: 55%;
+    min-width: 160px;
+    height: 42px;
+    margin: 0 0 0 auto;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ecd9e0;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+body .app .qv-list-panel .qv-search svg { flex: 0 0 auto; color: #9a8c94; }
+
+body .app .qv-list-panel .qv-search input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-size: 13.5px;
+    color: #4a1d3b;
+}
+
+@media (max-width: 800px) {
+    /* iPhone: 16px para hindi mag-zoom kapag tinype */
+
+    body .app .qv-list-panel .qv-search input { font-size: 16px; }
+}
+
+body .app .qv-list-panel .qv-search input::placeholder { color: #8f7d86; }
+
+body .app .qv-list-panel .qv-search:focus-within { border-color: #c2325f; }
+
+/* table - kasya sa card */
+
+body .app .qv-list-panel .qv-list { overflow-x: hidden; overflow-y: auto; border: 0; border-radius: 0; }
+
+body .app .qv-list-panel .qv-table { border-collapse: collapse; }
+
+body .app .qv-list-panel .qv-table :is(th, td) {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    white-space: normal;
+    overflow-wrap: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+body .app .qv-list-panel .qv-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 34px;
+    background: #ffffff;
+    border: 0;
+    border-bottom: 1.5px solid #ecd9e0;
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    line-height: 1.2;
+    color: #7c6670;
+    text-transform: uppercase;
+}
+
+body .app .qv-list-panel .qv-table tbody td {
+    height: 40px;
+    padding: 6px 5px;
+    border: 0;
+    border-bottom: 1px solid #f6e8ed;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+body .app .qv-list-panel .qv-table tbody td:first-child { font-weight: 800; }
+
+body .app .qv-list-panel .qv-table tbody td :is(.order-status, .status, .op-chip, .pay-badge) {
+    display: inline-block;
+    max-width: none;
+    padding: 3px 8px;
+    font-size: 10.5px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+body .app .qv-list-panel .qv-table tbody tr { cursor: pointer; }
+
+body .app .qv-list-panel .qv-table tbody tr:hover td { background: #fff8fa; }
+
+body .app .qv-list-panel .qv-table tbody tr.active td { background: #ffe9ee; }
+
+body .app .qv-list-panel .qv-list-footer {
+    padding: 12px 0 0;
+    text-align: left;
+    font-size: 12px;
+    color: #7c6670;
+}
+
+@media (max-width: 600px) {
+    body .app .qv-list-panel .qv-search { flex: 1 1 100%; max-width: none; }
+}
+
+/* ==============================================================
+   [ORDER-PAGES.CSS]  (dating Shared/order-pages.css - nasa page na ito na)
+   ANO ITO: LAYOUT NG ORDER PAGES: listahan sa kaliwa (.qv-list-panel), detalye sa kanan (.qv-right-col), pareho ang taas.
+   PAANO GUMAGANA: Gamit ng Shipments, Completed, Cancelled, Refunds, Payments. Ang laman ng bawat container ang nag-i-scroll, hindi ang buong page.
+   ============================================================== */
+/* ==========================================================
+   Figurify redesign - ORDER PAGES (listahan sa kaliwa + detalye sa kanan)
+   Shipments, Completed Orders, Cancelled / Declined, Refunds, Payments
+   (owner at staff). Naka-load PAGKATAPOS ng receipt-panels.css at
+   page styles (dating panel-pages.css) kaya dito na ang huling salita sa itsura.
+
+   Design System: Fraunces (headings) + Plus Jakarta Sans (body)
+   Primary #C2325F | Plum #4A1D3B | Blush #FFEDF2 | Cream #FFF8F6
+   Success #2F8F67 | Warning #9A6408 | Danger #B83227
+   ========================================================== */
+/* ---------- LAYOUT: left at right container pareho ang taas (naka-fix, kasing-taas ng page) ----------
+   Hindi na lumiliit ang left container kahit kaunti ang laman. Sa desktop, ang shell ay
+   sakop ang buong natitirang taas ng page at ang laman ng bawat container ang nag-i-scroll. */
+
+body .app .qv-shell { gap: 22px; align-items: stretch; }
+
+body .app .qv-list-panel { align-self: stretch; padding: 18px; }
+
+@media (max-width: 1180px) {
+    body .app .qv-shell { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* (Toolbar at table ng listahan sa kaliwa: nasa page styles ng bawat owner/staff page) */
+/* chips sa listahan (Payments: Fully paid / Balance due) */
+/* ==========================================================
+   RIGHT PANEL
+   ========================================================== */
+
+body .app .qv-right-col { padding: 26px 26px 26px; gap: 0; }
+
+/* title + status chip */
+/* tabs (Shipments: All / To Ship / Shipped, Refunds: For Refund / Refunded) */
+/* Payments: "Payment Status: ..." chip sa ilalim ng title */
+/* Cancelled: dahilan */
+/* ---------- section headings: walang pink band - pink na uppercase text lang ---------- */
+
+body .app .qv-right-col .qv-details-head,
+body .app .qv-right-col .qv-box-info-head,
+body .app .qv-right-col .qv-summary-head,
+body .app .qv-right-col .qv-summary-head h2,
+body .app .qv-right-col .staff-payment-details-title,
+body .app .qv-right-col .dressup-design-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 0;
+}
+
+/* lahat ng inner container = simpleng section (walang sariling card/border) */
+
+body .app .qv-right-col :is(.qv-figure-card, .qv-box-card, .qv-summary, .qv-summary-body, .staff-payment-details, .staff-payment-proof, .pv-proofs, .rf-box, .qv-header-card, .pay-section) {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+body .app .qv-right-col .qv-viewer-grid { display: flex; flex-direction: column; gap: 0; }
+
+/* ---------- figure tabs ---------- */
+
+body .app .qv-right-col .qv-figure-tabs { display: flex; gap: 8px; }
+
+body .app .qv-right-col .qv-figure-tab-pill {
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid #f3dce3;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #4a1d3b;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+body .app .qv-right-col .qv-figure-tab-pill.active {
+    background: #c2325f;
+    border-color: #c2325f;
+    color: #ffffff;
+}
+
+/* ---------- key / value rows (label kaliwa, value + presyo kanan) ---------- */
+
+body .app .qv-right-col .qv-detail-item-card { grid-template-columns: auto 1fr auto; }
+
+body .app .qv-right-col .qv-detail-item-price:empty,
+body .app .qv-right-col .qv-detail-item-price-muted:empty { display: none; }
+
+/* custom box rows */
+
+body .app .qv-right-col .qv-box-spec-grid > div { padding: 7px 0; border: 0; }
+
+body .app .qv-right-col .qv-spec-value { font-size: 14px; font-weight: 800; color: #4a1d3b; }
+
+
+/* reference images */
+
+body .app .qv-right-col .qv-ref-thumb {
+    width: 68px;
+    height: 68px;
+    border: 1px solid #f3dce3;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+/* customer notes - blush box */
+
+body .app .qv-right-col .qv-notes-row {
+    margin: 16px 0 0;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 14px;
+    background: #fff4f6;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+body .app .qv-right-col .qv-note-box { font-size: 14.5px; color: #4a1d3b; }
+
+/* presyo kada figure + Total Amount */
+
+body .app .qv-right-col .qv-total-breakdown {
+    margin: 16px 0 0;
+    padding: 12px 0 0;
+    border: 0;
+    border-top: 1.5px dashed #ecd9e0;
+}
+
+body .app .qv-right-col .qv-sub-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border: 0;
+    font-size: 13.5px;
+    color: #7c6670;
+}
+
+/* + RUSH FEE: nasa kaliwa ng presyo ng Figure (hal. + ₱500.00 Rush Fee   ₱1,200.00) */
+.qv-right-col .qv-sub-rush-plus { margin-right: 8px; color: #7c6670; font-size: 12px; font-weight: 600; }
+
+body .app .qv-right-col .qv-total-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 8px 0 0;
+}
+
+body .app .qv-right-col .qv-total-line-label { font-size: 14px; font-weight: 800; color: #4a1d3b; }
+
+body .app .qv-right-col .qv-total-line-value { font-size: 22px; color: #c2325f; }
+
+/* ---------- Payment & Shipping / Refund account rows ---------- */
+
+body .app .qv-right-col .staff-payment-details-grid { flex-direction: column; }
+
+body .app .qv-right-col .staff-payment-details-grid > span { border: 0; word-break: break-word; }
+
+body .app .qv-right-col .staff-payment-details-grid a { color: #c2325f; }
+
+/* Proof of payment / receipt - dashed na kahon */
+
+body .app .qv-right-col :is(.staff-payment-proof-title, .pv-proofs .staff-payment-proof-title) {
+    margin: 10px 0 6px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #4a1d3b;
+}
+
+body .app .qv-right-col .pv-proofs { margin-top: 6px; }
+
+body .app .qv-right-col :is(img.staff-payment-proof-thumb, .pv-proof img) {
+    width: 120px;
+    height: 120px;
+    padding: 4px;
+    object-fit: cover;
+    border: 2px dashed #f1c4d2;
+    border-radius: 14px;
+    background: #fff8fa;
+    cursor: zoom-in;
+}
+
+body .app .qv-right-col .pv-proof figcaption { font-size: 11.5px; color: #7c6670; }
+
+/* qv-line rows (Customer, Total Amount, Shipment Details...) */
+/* ---------- forms (Ship Out / Refund) ---------- */
+/* Refund: Full / Partial na pills */
+/* buttons - nasa kanan, Primary sa dulo */
+
+@media (max-width: 600px) {
+    body .app .qv-list-panel .qv-toolbar { flex-wrap: wrap; }
+}
+
+/* label ng Payment & Shipping rows - kapareho ng laki ng value */
+/* Figure 1 / Figure 2 pills sa itaas ng "FIGURE 1 INFORMATION" */
+
+body .app .qv-right-col .qv-figure-card { display: flex; flex-direction: column; }
+
+body .app .qv-right-col .qv-figure-card > .qv-figure-tabs { order: -1; margin: 0 0 4px; }
+
+/* Refunds: "Payment & Refund" na header ay doble - itago kung may sariling title na ang unang section */
+
+body .app .qv-right-col .qv-summary-head:has(+ .qv-summary-body > .staff-payment-details:first-child > .staff-payment-details-title) {
+    display: none;
+}
+
+/* Ship Out form: label sa itaas, input sa ilalim */
+/* buttons: kasing-laki lang ng text, nasa kanan */
+/* upload (Proof of Refund) - dashed na kahon */
+/* Reason box at mga section na magkakasunod - tamang pagitan, walang putol-putol na guhit */
+
+body .app .qv-right-col .qv-summary-body > * { padding-top: 0; }
+
+body .app .qv-right-col .qv-summary-body > *, body .app .qv-right-col .staff-payment-details {
+    padding-bottom: 0;
+}
+
+body .app .qv-right-col .staff-payment-details::before,
+body .app .qv-right-col .staff-payment-details::after { display: none; }
+
+.cs-tb-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.cs-tb-datetime .cs-tb-date { color: #85506b; font-weight: 800; }
+
+.cs-tb-datetime .cs-tb-dot { color: #c7aeb8; }
+
+.cs-tb-datetime .cs-tb-time { color: #43142f; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+    .cs-tb-datetime .cs-tb-date, .cs-tb-datetime .cs-tb-dot { display: none; }
+}
+
+.qv-right-col.qv-right-col--blank > * { display: none; }
+
+/* ---------- PROOF OF PAYMENT (dating nasa helpers/content_helper.php) ---------- */
+
+.pv-proofs {
+    margin-top: 12px;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.pv-proof-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.pv-proof { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.pv-proof img {
+    width: 120px;
+    height: 120px;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #f1dbe7;
+    cursor: zoom-in;
+    background: #faf5f8;
+}
+
+.pv-proof figcaption { font-size: 11px; font-weight: 700; color: #8a6878; text-align: center; }
+
+@media (max-width: 700px) {
+    html body .qv-right-col :is( .qv-detail-item-card, .dressup-pick, .qv-box-spec-grid > div, .staff-payment-details-grid > span ):not(#rp) {
+        grid-template-columns: 104px minmax(0, 1fr) auto;
+        column-gap: 10px;
+    }
+}
+
+body .qv-right-col .qv-reference-row { margin-top: 12px; }
+
+@media (min-width: 1181px) {
+    body .app .qv-shell { flex: 1 1 auto; min-height: 0; height: 100%; }
+
+    body .app .qv-list-panel { min-height: 0; height: 100%; }
+
+    body .app .qv-right-col { min-height: 0; overflow-y: auto; height: 100%; }
+}
+
+/* ===== MODAL BUKAS: hindi gumagalaw ang page sa likod ===== */
+
+body.no-scroll { overflow: hidden; }
+
+/* ===== kulay ng bagong status badges (Needs Correction / For Refund / Refunded) ===== */
+
+body .app .order-status.status-needs_correction,
+body .app .order-status.status-address_returned { background: #fde2d2; color: #b4532a; }
+
+body .app .order-status.status-for_refund { background: #fbdada; color: #b83227; }
+
+body .app .order-status.status-refunded { background: #efe3f3; color: #6b2f7a; }
+
+/* ======== PROCESS REFUND (owner lang) ======== */
+.qv-refund-start-desc { margin: 0 0 12px; font-size: 13px; color: #7a5a6c; line-height: 1.5; }
+.qv-refund-start-form { display: flex; flex-direction: column; gap: 10px; }
+.qv-refund-start-form select,
+.qv-refund-start-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #f0d4de;
+    border-radius: 12px;
+    background: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    color: #4a1d3b;
+}
+.qv-refund-start-form textarea { min-height: 80px; resize: vertical; }
+.qv-refund-start-form textarea[hidden] { display: none; }
+.qv-refund-start-btn {
+    align-self: flex-end;
+    height: 44px;
+    padding: 0 22px;
+    border: 1.5px solid #d92d20;
+    border-radius: 999px;
+    background: #d92d20;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.qv-refund-start-btn:hover { background: #b42318; border-color: #b42318; }
+/* ======== END PROCESS REFUND ======== */
+

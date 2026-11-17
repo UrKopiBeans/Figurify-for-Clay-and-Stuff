@@ -1,221 +1,100 @@
 <?php
+/* ==========================================================================
+   PRIVACY POLICY   (Legal/privacy-policy.php)
+   Style: Legal/legal.css      Script: Legal/legal.js   (pareho sa ibang legal page)
+   Ang laman ay ine-edit ng owner sa Content Management > Legal Pages (helpers/content_helper.php SECTION 5).
+   TODO: palitan ang mga .legal-placeholder ng totoong detalye (hal. DTI number) bago i-live.
 
-// static read-only page, no DB query, uses the shared navbar/footer
-// TODO: fill in the legal-placeholder spans with real details
-// (e.g. DTI registration number) before this goes live
+   LAMAN (taas pababa):
+     [1] SETUP   session (para sa navbar)
+     [2] HTML    navbar, page hero, Contents + sections, footer
+   ========================================================================== */
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+
+/* ==========================================================================
+   [1] SETUP
+   ========================================================================== */
+require_once __DIR__ . "/../helpers/security_helper.php";
+require_once __DIR__ . "/../helpers/content_helper.php";
+require_once __DIR__ . "/../Admin/database.php";
 figurify_start_session();
 
+/* laman ng page: galing sa Content Management (Legal Pages), default kung wala pang na-save */
+$legal = figurify_legal_page(figurify_get_all_content($conn), "privacy");
+/* ====================== END SETUP ====================== */
+
+
+/* ==========================================================================
+   [2] HTML
+   ========================================================================== */
 ?>
 <!doctype html>
 <html lang="en">
 
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
-    <link rel="icon" type="image/png" href="../Image/brand/logo.png">
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Clay and Stuff — Privacy Policy</title>
-
-
-    <link rel="stylesheet" href="legal.css?v=3">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clay and Stuff | Privacy Policy</title>
+    <link rel="icon" type="image/png" href="../Image/brand/logo.png">
+    <?php include __DIR__ . "/../Shared/popup-and-security.php"; ?>
+    <link rel="stylesheet" href="legal.css">
 </head>
 
 <body>
 
-<?php include "../Shared/navbar.php"; ?>
+<!-- ====================== NAVBAR (Shared/navbar.php) ====================== -->
+<?php include __DIR__ . "/../Shared/navbar.php"; ?>
+<!-- ====================== END NAVBAR ====================== -->
 
+
+<!-- ====================== PAGE HERO (css: legal.css [2]) ====================== -->
 <header class="page-hero">
     <div class="page-wrap">
-        <span class="page-eyebrow">YOUR INFORMATION</span>
-        <h1>Privacy Policy</h1>
-        <p>What we collect, why we collect it, and how we protect it. Last updated: <?php echo date("M Y"); ?></p>
+        <span class="page-eyebrow"><?php echo e($legal["eyebrow"]); ?></span>
+        <h1><?php echo e($legal["title"]); ?></h1>
+        <p><?php echo e($legal["subtitle"]); ?> Last updated: <?php echo date("M Y"); ?></p>
     </div>
 </header>
+<!-- ====================== END PAGE HERO ====================== -->
 
+<!-- ====================== CONTENTS + SECTIONS (css: legal.css [3]-[5] | js: legal.js) ====================== -->
 <main class="legal-page page-wrap">
-
     <div class="legal-layout">
-
         <aside class="legal-toc" aria-label="Contents">
             <p class="legal-toc-title">Contents</p>
             <nav>
-                <a href="#sec-1">1. Who We Are</a>
-                <a href="#sec-2">2. Information We Collect</a>
-                <a href="#sec-3">3. How We Use Your Information</a>
-                <a href="#sec-4">4. How We Store and Protect Your Information</a>
-                <a href="#sec-5">5. Who We Share Information With</a>
-                <a href="#sec-6">6. Cookies</a>
-                <a href="#sec-7">7. Your Rights</a>
-                <a href="#sec-8">8. Data Retention</a>
-                <a href="#sec-9">9. Children's Privacy</a>
-                <a href="#sec-10">10. Changes to This Policy</a>
+                <?php foreach ($legal["sections"] as $i => $section): ?>
+                    <a href="#<?php echo e($section["id"]); ?>"><?php echo ($i + 1) . ". " . e($section["title"]); ?></a>
+                <?php endforeach; ?>
             </nav>
         </aside>
-
         <div class="legal-content">
+            <?php if (trim($legal["intro"]) !== ""): ?>
+                <div class="legal-intro"><?php echo figurify_legal_html($legal["intro"]); ?></div>
+            <?php endif; ?>
 
-            
+            <?php foreach ($legal["sections"] as $i => $section): ?>
+                <section class="legal-section" id="<?php echo e($section["id"]); ?>">
+                    <h2><?php echo ($i + 1) . ". " . e($section["title"]); ?></h2>
+                    <?php echo figurify_legal_html($section["body"]); ?>
+                </section>
+            <?php endforeach; ?>
 
-        <section class="legal-section" id="sec-1">
-            <h2>1. Who We Are</h2>
-        <p>
-            Clay and Stuff ("we", "us", "our") operates this website to offer
-            custom clay/figure commission services to customers in the
-            Philippines. This Privacy Policy explains what personal
-            information we collect through this website, why we collect it,
-            how we use and protect it, and what rights you have over it.
-        </p>
-        <p>
-            Business address: <span class="legal-placeholder">Brgy. Palingon, Calamba City, Laguna</span> ·
-            Contact email: <span class="legal-placeholder">clayandstuff@gmail.com</span> ·
-            Contact number: <span class="legal-placeholder">+63 910 281 4331</span>
-        </p>
-        </section>
-        <section class="legal-section" id="sec-2">
-            <h2>2. Information We Collect</h2>
-        <p>When you create an account, place a commission order, or contact us, we may collect:</p>
-        <ul>
-            <li><strong>Account information</strong> — your full name, email address, and password (stored in encrypted/hashed form, never in plain text).</li>
-            <li><strong>Order and commission details</strong> — the figure style, size, add-ons, box options, and any reference images you upload for your commission.</li>
-            <li><strong>Shipping information</strong> — recipient name, delivery address, and contact number.</li>
-            <li><strong>Payment-related information</strong> — your payment reference number and a screenshot/photo of your proof of payment (e.g. GCash or bank transfer receipt). We do <strong>not</strong> collect or store your full card number, CVV, or online banking password — these are handled directly by your bank or e-wallet app, not by us.</li>
-            <li><strong>Refund details</strong> — if you request a refund, the account name, account number, and preferred method (e.g. GCash, BPI) you provide so we can send the refund.</li>
-            <li><strong>Reviews</strong> — any rating, review text, and photos you choose to submit about a completed order.</li>
-                <li><strong>Security records</strong> — failed log-in attempts, verification code requests, and a record of important actions on orders, used only to protect accounts and stop spam or fake orders.</li>
-            <li><strong>Communications</strong> — emails we send you for account verification, order updates, and notifications.</li>
-        </ul>
-        </section>
-        <section class="legal-section" id="sec-3">
-            <h2>3. How We Use Your Information</h2>
-        <ul>
-            <li>To create and manage your customer account.</li>
-            <li>To process, produce, and ship your commission order.</li>
-            <li>To verify your payment and, when needed, process a refund.</li>
-            <li>To send order status updates and account-related notifications.</li>
-            <li>To respond to questions or concerns you send us.</li>
-            <li>To improve our website, catalog, and commission process.</li>
-        </ul>
-        </section>
-        <section class="legal-section" id="sec-4">
-            <h2>4. How We Store and Protect Your Information</h2>
-        <p>
-            Your information is stored in our database and is only accessible
-            to authorized staff and the business owner for the purposes
-            described above. Passwords are never stored as plain text — they
-            are hashed before saving. Uploaded images (reference images and
-            proof-of-payment screenshots) are stored on our server and are
-            only viewable through your own account or by our staff who are
-            verifying your order.
-        </p>
-        </section>
-        <section class="legal-section" id="sec-5">
-            <h2>5. Who We Share Information With</h2>
-        <p>
-            We do not sell your personal information. We may share limited
-            information with:
-        </p>
-        <ul>
-            <li>Our email delivery service, used only to send account verification codes and order notifications.</li>
-            <li>Our shipping courier (e.g. LBC, Lalamove), limited to the shipping name, address, and contact number needed to deliver your order.</li>
-            <li>Government authorities, only if required by law.</li>
-        </ul>
-        </section>
-        <section class="legal-section" id="sec-6">
-            <h2>6. Cookies</h2>
-        <p>
-            This website uses a basic session cookie so you can stay logged
-            in while you browse. If you tick <strong>Remember me</strong> when
-            logging in, a secure cookie keeps you signed in on that device for
-            up to 30 days; logging out removes it. We do not use third-party
-            advertising or analytics cookies. If that changes in the future,
-            this policy will be updated and, where required, you will be
-            asked for consent first.
-        </p>
-        </section>
-        <section class="legal-section" id="sec-7">
-            <h2>7. Your Rights</h2>
-        <p>
-            Under the Philippine Data Privacy Act of 2012 (Republic Act No.
-            10173), you have the right to:
-        </p>
-        <ul>
-            <li>Be informed that your personal data is being collected and processed (this policy).</li>
-            <li>Access the personal data we hold about you.</li>
-            <li>Request correction of inaccurate personal data.</li>
-            <li>Request deletion of your personal data, subject to legal or legitimate business retention needs (e.g. order/transaction records).</li>
-            <li>Object to certain uses of your personal data.</li>
-        </ul>
-        <p>
-            To exercise any of these rights, contact us at
-            <span class="legal-placeholder">clayandstuff@gmail.com</span>.
-        </p>
-        </section>
-        <section class="legal-section" id="sec-8">
-            <h2>8. Data Retention</h2>
-        <p>
-            We keep account and order information for as long as your account
-            is active, and for a reasonable period afterward to comply with
-            recordkeeping, dispute resolution, and legal obligations.
-        </p>
-        </section>
-        <section class="legal-section" id="sec-9">
-            <h2>9. Children's Privacy</h2>
-        <p>
-            This website is not directed at children under 13. If we learn
-            that we have unintentionally collected personal information from
-            a child under 13 without parental consent, we will delete it.
-        </p>
-        </section>
-        <section class="legal-section" id="sec-10">
-            <h2>10. Changes to This Policy</h2>
-        <p>
-            We may update this Privacy Policy from time to time. Material
-            changes will be reflected by updating the "Last updated" date
-            above.
-        </p>
-        </section>
+            <div class="legal-note"><?php echo figurify_legal_html($legal["note"]); ?></div>
 
-            <div class="legal-note">
-            This page is provided for transparency and general compliance
-            purposes. It is not a substitute for formal legal advice.
+            <a class="legal-back-link" href="../Home/Home.php">Back to Home</a>
         </div>
-
-            <a class="legal-back-link" href="../Home/Home.php">&larr; Back to Home</a>
-
-        </div>
-
     </div>
-
 </main>
+<!-- ====================== END CONTENTS + SECTIONS ====================== -->
 
-<?php include "../Shared/footer.php"; ?>
+<!-- ====================== FOOTER (Shared/footer.php) ====================== -->
+<?php include __DIR__ . "/../Shared/footer.php"; ?>
+<!-- ====================== END FOOTER ====================== -->
 
-
-<script>
-// i-highlight ang kasalukuyang section sa Contents
-(function () {
-    var links = document.querySelectorAll(".legal-toc a");
-    var sections = document.querySelectorAll(".legal-section");
-    if (!links.length || !("IntersectionObserver" in window)) { return; }
-
-    function setActive(id) {
-        links.forEach(function (a) {
-            a.classList.toggle("active", a.getAttribute("href") === "#" + id);
-        });
-    }
-
-    var obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { if (e.isIntersecting) { setActive(e.target.id); } });
-    }, { rootMargin: "-15% 0px -70% 0px" });
-
-    sections.forEach(function (sec) { obs.observe(sec); });
-    setActive(sections[0].id);
-})();
-</script>
+<!-- ====================== SCRIPT (Legal/legal.js) ====================== -->
+<script src="legal.js"></script>
 
 </body>
 </html>
+<!-- ====================== END HTML ====================== -->

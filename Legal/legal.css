@@ -1,62 +1,139 @@
-/* Legal pages (Terms, Privacy) — Figurify redesign.
-   Navbar & footer live in Shared/. */
+/* ==========================================================================
+   LEGAL PAGES - CSS   (Legal/legal.css)
+   Iisang style ng Legal/privacy-policy.php at Legal/terms-and-conditions.php
+   (pareho ang ayos ng dalawang page). Ang navbar at footer ay may sariling
+   style sa Shared/navbar.php at Shared/footer.php.
 
-:root {
-    --primary: #c2325f;
-    --plum: #4a1d3b;
-    --blush: #ffedf2;
-    --cream: #fff8f6;
-    --ink-soft: #7a5a6c;
-    --line: #f3dde5;
+   LAMAN (taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              reset, text, lapad ng page
+     [2] PAGE HERO         banner sa taas (peach -> cream -> pink)
+     [3] LAYOUT            Contents sa kaliwa, sections sa kanan
+     [4] CONTENTS          sidebar na listahan  (highlight: Legal/legal.js)
+     [5] SECTION CARDS     bawat section, note, "Back to Home"
+     [6] RESPONSIVE        phone / tablet
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
 }
 
+/* form controls - hindi sila nagmamana ng font by default */
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+.page-hero h1,
+.legal-section h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE
+   ========================================================================== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
 
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
 body {
-    
-    color: var(--plum);
-    
+    color: #4a1d3b;
     line-height: 1.6;
 }
 
+/* lapad ng laman ng page */
 .page-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+/* ====================== END BASE ====================== */
 
-/* ---------- page hero ---------- */
+
+/* ==========================================================================
+   [2] PAGE HERO  (dating nasa sariling <style> ng bawat legal page)
+   ========================================================================== */
 .page-hero {
-    padding: 44px 0 26px;
-    background: linear-gradient(100deg, #fff4f6 0%, #ffe9ef 100%);
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom: 3px solid #ead9f0;
 }
 
+/* hanay ng sparkle sa kanang-itaas */
+.page-hero::after {
+    content: "\2726   \2606   \2727   \2661   \2726";
+    position: absolute;
+    top: 25px;
+    right: 7%;
+    font-size: 19px;
+    letter-spacing: 7px;
+    white-space: nowrap;
+    color: #e8bd4d;
+    pointer-events: none;
+}
+
+/* lalagyan ng text (mas makitid kaysa .page-wrap ng laman) */
+.page-hero .page-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    padding: 30px 20px;
+}
+
+/* "YOUR INFORMATION" - body font ang gamit (namamana sa body) */
 .page-eyebrow {
-    display: inline-block;
-    
-    font-style: italic;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: .3px;
-    color: var(--primary);
-    margin-bottom: 2px;
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a04a78;
 }
 
 .page-hero h1 {
-    
+    margin-top: 8px;
+    font-size: clamp(34px, 5vw, 55px);
     font-weight: 700;
-    font-size: clamp(34px, 4vw, 48px);
-    line-height: 1.1;
-    color: var(--plum);
+    line-height: 1.05;
+    letter-spacing: -.5px;
+    color: #86365f;
 }
 
 .page-hero p {
-    margin-top: 10px;
-    max-width: 760px;
-    font-size: 16px;
-    color: var(--ink-soft);
+    max-width: 720px;
+    margin: 15px auto 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #8a5870;
 }
+/* ====================== END PAGE HERO ====================== */
 
-/* ---------- layout ---------- */
-.legal-page { padding: 48px 0 24px; }
+
+/* ==========================================================================
+   [3] LAYOUT
+   ========================================================================== */
+.legal-page { padding: 48px 0; }
 
 .legal-layout {
     display: grid;
@@ -65,7 +142,13 @@ body {
     align-items: start;
 }
 
-/* Contents sidebar */
+.legal-content { display: flex; flex-direction: column; gap: 16px; }
+/* ====================== END LAYOUT ====================== */
+
+
+/* ==========================================================================
+   [4] CONTENTS  (sidebar; ang .active ay nilalagay ng Legal/legal.js)
+   ========================================================================== */
 .legal-toc {
     position: sticky;
     top: 96px;
@@ -73,8 +156,9 @@ body {
     overflow-y: auto;
     padding: 24px 24px 20px;
     background: #fff;
-    border: 1px solid var(--line);
+    border: 1px solid #f3dde5;
     border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
 .legal-toc-title {
@@ -82,7 +166,7 @@ body {
     font-weight: 700;
     letter-spacing: .5px;
     text-transform: uppercase;
-    color: var(--plum);
+    color: #4a1d3b;
     margin-bottom: 10px;
 }
 
@@ -91,44 +175,40 @@ body {
 .legal-toc a {
     font-size: 14.5px;
     line-height: 1.45;
-    color: var(--plum);
+    color: #4a1d3b;
     text-decoration: none;
-    padding: 2px 0;
+    padding: 6px 0;
 }
-.legal-toc a:hover { color: var(--primary); }
-.legal-toc a.active { color: var(--primary); font-weight: 700; }
+.legal-toc a:hover { color: #c2325f; }
+.legal-toc a.active { color: #c2325f; font-weight: 700; }
 
 .legal-toc::-webkit-scrollbar { width: 6px; }
 .legal-toc::-webkit-scrollbar-thumb { background: #f0c6d4; border-radius: 6px; }
+/* ====================== END CONTENTS ====================== */
 
-/* ---------- section cards ---------- */
-.legal-content { display: flex; flex-direction: column; gap: 16px; }
 
-.legal-intro { font-size: 14.5px; color: var(--ink-soft); margin-bottom: 4px; }
-.legal-intro a { color: var(--primary); font-weight: 600; }
+/* ==========================================================================
+   [5] SECTION CARDS
+   ========================================================================== */
+/* intro sa taas (Terms lang) */
+.legal-intro { font-size: 14.5px; color: #7a5a6c; margin-bottom: 4px; }
+.legal-intro a { color: #c2325f; font-weight: 600; }
 
 .legal-section {
     scroll-margin-top: 96px;
     padding: 28px 28px 22px;
     background: #fff;
-    border: 1px solid var(--line);
+    border: 1px solid #f3dde5;
     border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
 .legal-section h2 {
-    
     font-size: 22px;
     font-weight: 600;
     line-height: 1.3;
-    color: var(--plum);
+    color: #4a1d3b;
     margin-bottom: 12px;
-}
-
-.legal-section h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--plum);
-    margin: 18px 0 8px;
 }
 
 .legal-section p,
@@ -140,35 +220,47 @@ body {
 .legal-section p { margin-bottom: 12px; }
 .legal-section ul { margin: 0 0 12px; padding-left: 22px; }
 .legal-section li { margin-bottom: 6px; }
-.legal-section strong { color: var(--plum); }
-.legal-section a { color: var(--primary); font-weight: 600; }
+.legal-section strong { color: #4a1d3b; }
+.legal-section a { color: #c2325f; font-weight: 600; }
 
-.legal-placeholder { font-weight: 600; color: var(--plum); }
+.legal-placeholder { font-weight: 600; color: #4a1d3b; }
 
 .legal-note {
     padding: 16px 20px;
-    background: var(--blush);
+    background: #ffedf2;
     border-radius: 16px;
     font-size: 13.5px;
-    color: var(--ink-soft);
+    color: #7a5a6c;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
 .legal-back-link {
     align-self: flex-start;
     font-size: 14.5px;
     font-weight: 700;
-    color: var(--primary);
+    color: #c2325f;
     text-decoration: none;
 }
 .legal-back-link:hover { text-decoration: underline; }
+/* ====================== END SECTION CARDS ====================== */
 
-/* ---------- responsive ---------- */
+
+/* ==========================================================================
+   [6] RESPONSIVE
+   ========================================================================== */
 @media (max-width: 960px) {
     .legal-layout { grid-template-columns: 1fr; gap: 20px; }
     .legal-toc { position: static; max-height: none; }
+}
+
+@media (max-width: 720px) {
+    .page-hero { min-height: 220px; }
+    .page-hero::after { top: 12px; right: 4%; font-size: 14px; letter-spacing: 4px; }
+    .page-hero .page-wrap { padding: 34px 16px 26px; }
 }
 
 @media (max-width: 600px) {
     .page-wrap { width: calc(100% - 32px); }
     .legal-section { padding: 22px 20px 16px; }
 }
+/* ====================== END RESPONSIVE ====================== */

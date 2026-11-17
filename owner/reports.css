@@ -1,0 +1,661 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   STATISTICS PAGE (owner) - lahat ng CSS ng page na ito ay nandito lang.
+   Design System: Fraunces (headings) + Plus Jakarta Sans (body)
+   Primary #C2325F | Plum #4A1D3B | Blush #FFEDF2 | Cream #FFF8F6
+   ========================================================================== */
+/* ---------- BASE: font, background, kulay ---------- */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+html { scroll-behavior: smooth; }
+
+body { min-height: 100vh; color: #4a1d3b; }
+
+button,
+input,
+select,
+textarea,
+optgroup { font-family: inherit; }
+
+button,
+a { cursor: pointer; }
+
+a { text-decoration: none; }
+
+.portal-title,
+.notif-panel-header,
+.st-card-title,
+.st-kpi-value { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+/* ---------- LAYOUT: app, main, topbar ---------- */
+
+.app { min-height: 100vh; }
+
+.main { padding: 0 clamp(14px, 2.2vw, 28px) 22px; }
+
+.topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    min-height: 56px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+}
+
+.portal-title { line-height: 1.2; }
+
+.top-actions { display: flex; align-items: center; gap: 14px; }
+
+/* petsa at oras sa taas, sa kaliwa ng notification bell */
+
+.cs-tb-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.cs-tb-date { color: #85506b; font-weight: 800; }
+
+.cs-tb-dot { color: #c7aeb8; }
+
+.cs-tb-time { color: #43142f; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* notification bell - ang natitirang itsura ay nasa Shared/notification-bell.php */
+
+.notification-btn { position: relative; border-radius: 999px; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+/* ---------- CARDS ---------- */
+
+.st-card {
+    min-width: 0;
+    padding: 22px 24px;
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.st-card-title { font-size: 21px; }
+
+.st-card-sub { margin: 4px 0 0; font-size: 14px; color: #7c6670; }
+
+.st-empty {
+    display: grid;
+    place-items: center;
+    min-height: 160px;
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #7c6670;
+}
+
+/* ---------- STATISTICS PAGE ---------- */
+
+.st-page { display: flex; flex-direction: column; gap: 22px; }
+
+/* range: 7 / 30 / 90 days / this month */
+
+.st-range { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+
+.st-range a {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
+    font-size: 14px;
+    font-weight: 700;
+    transition: background .15s ease;
+}
+
+.st-range a:hover { background: #ffd9e3; }
+
+.st-range a.active { background: #c2325f; color: #ffffff; }
+
+/* KPI cards */
+
+.st-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+
+.st-kpi { display: flex; flex-direction: column; gap: 6px; }
+
+.st-kpi-label { font-size: 13px; font-weight: 600; color: #7c6670; }
+
+.st-kpi-value { font-size: 34px; font-weight: 700; line-height: 1.15; word-break: break-word; }
+
+.st-kpi-foot { font-size: 12.5px; line-height: 1.5; color: #7c6670; }
+
+.st-pill {
+    align-self: flex-start;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.st-pill-up { background: #dff3e8; color: #2f8f67; }
+
+.st-pill-down { background: #fbdada; color: #b83227; }
+
+.st-pill-flat { background: #ffedf2; color: #7c6670; }
+
+.st-kpi-hero { background: #4a1d3b; }
+
+.st-kpi-hero .st-kpi-label,
+.st-kpi-hero .st-kpi-value { color: #ffffff; }
+
+.st-kpi-hero .st-pill { background: #ffffff; }
+
+/* grids */
+
+.st-grid-main { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 22px; }
+
+.st-grid-bottom { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
+
+/* sales overview: tabs, summary, chart, table */
+
+.st-metric-tabs { display: flex; gap: 8px; margin-top: 14px; }
+
+.st-metric-tabs button {
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid #f3dce3;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #4a1d3b;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.st-metric-tabs button:hover { border-color: #e9a6bd; }
+
+.st-metric-tabs button.active { background: #c2325f; border-color: #c2325f; color: #ffffff; }
+
+.st-sales-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.st-sum-label { display: block; font-size: 12.5px; color: #7c6670; }
+
+.st-sum-value { display: block; margin-top: 4px; font-size: 15px; font-weight: 800; }
+
+.st-chart-wrap { position: relative; height: 200px; margin-top: 18px; }
+
+.st-chart-wrap svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+.st-chart-line {
+    fill: none;
+    stroke: #c2325f;
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.st-chart-area { fill: #ffedf2; }
+
+.st-chart-guide { stroke: #e9c3d0; stroke-width: 1; stroke-dasharray: 3 3; }
+
+.st-chart-dot { fill: #ffffff; stroke: #c2325f; stroke-width: 2.5; }
+
+.st-tooltip {
+    position: absolute;
+    z-index: 2;
+    min-width: 150px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #4a1d3b;
+    color: #ffffff;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 12px));
+    transition: opacity .12s ease;
+}
+
+.st-tooltip.show { opacity: 1; }
+
+.st-tooltip b { display: block; margin-bottom: 4px; font-size: 12.5px; }
+
+.st-tt-row { display: flex; justify-content: space-between; gap: 14px; opacity: .9; }
+
+.st-table-toggle { margin-top: 10px; font-size: 12.5px; color: #7c6670; }
+
+.st-table-toggle summary { width: fit-content; cursor: pointer; }
+
+.st-table-toggle summary:hover { color: #c2325f; }
+
+.st-data-scroll { max-height: 240px; overflow-y: auto; }
+
+.st-data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.st-data-table th, .st-data-table td { padding: 8px 6px; border-bottom: 1px solid #f6e8ed; text-align: left; }
+
+.st-data-table th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #7c6670; }
+
+.st-data-table .num { text-align: right; }
+
+/* order mix at top products: bar list */
+
+.st-bar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin: 22px 0 0;
+    list-style: none;
+}
+
+.st-bar-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.st-bar-top b { font-weight: 800; white-space: nowrap; }
+
+.st-bar-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.st-bar-name strong { font-weight: 800; }
+
+/* bar = <progress> (haba galing sa value, walang inline style) */
+.st-bar { display: block; width: 100%; height: 10px; border: 0; border-radius: 999px; background: #ffedf2; overflow: hidden; appearance: none; }
+
+.st-bar::-webkit-progress-bar { background: #ffedf2; }
+
+.st-bar::-webkit-progress-value { border-radius: 999px; background: #c2325f; }
+
+.st-bar::-moz-progress-bar { border-radius: 999px; background: #c2325f; }
+
+/* orders by status: donut at legend */
+
+.st-status-body { display: flex; align-items: center; gap: 32px; margin-top: 18px; }
+
+.st-donut { flex: 0 0 auto; width: 150px; height: 150px; }
+
+.st-donut svg { display: block; width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.st-legend {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    list-style: none;
+}
+
+.st-legend li { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+
+.st-legend i { flex: 0 0 auto; width: 9px; height: 9px; border-radius: 50%; }
+
+.st-legend .st-dot-active { background: #C2325F; }
+
+.st-legend .st-dot-completed { background: #2F8F67; }
+
+.st-legend .st-dot-cancelled { background: #B83227; }
+
+.st-legend span { flex: 1 1 auto; }
+
+.st-legend b { font-weight: 800; }
+
+.st-legend .st-legend-rate { padding-left: 19px; }
+
+
+/* ---------- PREVIOUS / NEXT (table pager - Shared/sidebar.php) ---------- */
+
+tr.cs-pg-off { display: none; }
+
+.cs-pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+    min-height: 52px;
+    padding: 12px 2px 0;
+}
+
+.cs-pager[hidden] { display: none; }
+
+/* parehong laki ang Previous at Next */
+
+.cs-pager-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 108px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    transition: background .15s ease, opacity .15s ease;
+}
+
+.cs-pager-btn.cs-pager-next { justify-self: end; }
+
+.cs-pager-btn:hover:not(:disabled) { background: #ffd9e3; }
+
+.cs-pager-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.cs-pager-btn svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cs-pager-info { text-align: center; font-size: 12px; line-height: 1.35; color: #7c6670; }
+
+.cs-pager-info strong { display: block; font-size: 13px; color: #4a1d3b; }
+
+/* ==================== ORDER SUMMARY REPORT (audit) ====================
+   Card sa ilalim ng Statistics: filter, buod, table (may Previous / Next galing
+   Shared/sidebar.php dahil .st-data-table) at Preview & Print. */
+
+.st-report-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.st-report-btn {
+    height: 40px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: #1f9d55;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: background .15s ease;
+}
+
+.st-report-btn:hover { background: #187f44; }
+
+.st-report-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.st-report-btn-close { background: #d92d20; color: #fff; }
+
+.st-report-btn-close:hover { background: #b42318; }
+
+.st-report-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.st-report-filter label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #7c6670;
+}
+
+.st-report-filter input, .st-report-filter select {
+    height: 40px;
+    min-width: 160px;
+    padding: 0 12px;
+    border: 1px solid #f3dce3;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #4a1d3b;
+    font-size: 14px;
+}
+
+.st-report-scroll { overflow-x: auto; }
+
+.st-report-scroll .st-data-table { margin-top: 18px; white-space: nowrap; }
+
+.st-report-id { font-weight: 800; }
+
+.st-data-table td small { display: block; font-size: 11.5px; color: #7c6670; }
+
+.st-data-table tfoot td { border-top: 1.5px solid #f3dce3; border-bottom: 0; font-weight: 800; }
+
+.st-report-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: #ffedf2;
+    color: #c2325f;
+}
+
+.st-report-status-completed { background: #dff3e8; color: #2f8f67; }
+
+.st-report-status-cancelled { background: #fbdada; color: #b83227; }
+
+.st-report-note { margin-top: 10px; font-size: 12.5px; color: #7c6670; }
+
+/* ---------- PREVIEW (parang papel) ---------- */
+
+.st-preview {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    overflow-y: auto;
+    padding: 0 16px 32px;
+    background: rgba(41, 37, 42, .78);
+}
+
+body.st-preview-open { overflow: hidden; }
+
+.st-preview-bar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 -16px 24px;
+    padding: 12px 24px;
+    background: #4a1d3b;
+    color: #ffffff;
+}
+
+.st-preview-actions { display: flex; gap: 10px; }
+
+.st-paper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 40px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    color: #29252a;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.st-paper-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid #4a1d3b;
+}
+
+.st-paper-brand { display: flex; align-items: center; gap: 12px; }
+
+.st-paper-brand img { width: 52px; height: 52px; object-fit: contain; }
+
+.st-paper-brand h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 24px;
+    color: #4a1d3b;
+}
+
+.st-paper-brand p { font-size: 14px; font-weight: 700; color: #c2325f; }
+
+.st-paper-meta { display: grid; grid-template-columns: auto auto; gap: 4px 22px; font-size: 12.5px; }
+
+.st-paper-meta dt { color: #7c6670; }
+
+.st-paper-meta dd { font-weight: 700; }
+
+.st-paper-totals {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.st-paper-totals div { padding: 10px 12px; border: 1px solid #ecdde3; border-radius: 8px; }
+
+.st-paper-totals span { display: block; font-size: 11.5px; color: #7c6670; }
+
+.st-paper-totals b { display: block; margin-top: 3px; font-size: 15px; }
+
+.st-paper-table { overflow-x: auto; }
+
+.st-paper-table table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+
+.st-paper-table th, .st-paper-table td {
+    padding: 6px 6px;
+    border: 1px solid #ecdde3;
+    text-align: left;
+    vertical-align: top;
+}
+
+.st-paper-table th { background: #fbf1f4; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+
+.st-paper-table .num { text-align: right; white-space: nowrap; }
+
+.st-paper-table small { display: block; color: #7c6670; }
+
+.st-paper-table tfoot td { background: #fbf1f4; font-weight: 800; }
+
+.st-paper-table tr { break-inside: avoid; }
+
+.st-paper-note { margin-top: 10px; font-size: 11.5px; color: #7c6670; }
+
+.st-paper-sign {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-top: 40px;
+    font-size: 12px;
+    color: #7c6670;
+}
+
+.st-paper-sign div { flex: 0 1 260px; text-align: center; }
+
+.st-paper-sign span { display: block; margin-bottom: 6px; border-top: 1px solid #29252a; }
+
+/* PRINT: habang bukas ang preview, ang papel lang ang ipi-print (A4 landscape) */
+
+@media print {
+    @page { size: A4 landscape; margin: 12mm; }
+
+    html,
+    body.st-preview-open { background: #ffffff; }
+
+    body.st-preview-open > *:not(.st-preview),
+    body.st-preview-open .st-preview-bar { display: none; }
+
+    body.st-preview-open .st-preview { position: static; overflow: visible; padding: 0; background: #ffffff; }
+
+    body.st-preview-open .st-paper { max-width: none; padding: 0; border-radius: 0; box-shadow: none; }
+
+    body.st-preview-open .st-paper-table { overflow: visible; }
+}
+
+/* ==================== END ORDER SUMMARY REPORT ==================== */
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 900px) {
+    .cs-tb-date,
+    .cs-tb-dot { display: none; }
+}
+
+@media (max-width: 1200px) {
+    .st-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1000px) {
+    .st-grid-main,
+    .st-grid-bottom { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 800px) {
+    .portal-title { font-size: 20px; }
+}
+
+@media (max-width: 600px) {
+
+
+    .st-kpis { grid-template-columns: 1fr; }
+
+    .st-sales-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .st-status-body { flex-direction: column; align-items: stretch; }
+
+    .st-donut { align-self: center; }
+
+    .st-range { justify-content: flex-start; }
+
+    .st-report-filter label,
+    .st-report-filter input,
+    .st-report-filter select { width: 100%; }
+
+    .st-paper { padding: 22px 18px; }
+
+    .st-paper-totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+
+
+    .cs-pager { grid-template-columns: auto 1fr auto; gap: 8px; }
+
+    .cs-pager-btn { width: 96px; }
+}

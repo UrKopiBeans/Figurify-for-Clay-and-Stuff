@@ -1,0 +1,445 @@
+/* ==========================================================================
+   STYLE NG PAGE NA ITO (staff/staffdashboard.css)
+   Walang "important" na pilit, walang CSS variable (root / var). Bawat bahagi ay may sariling
+   ==== marker at END marker. Ang responsive (@media) ay nasa dulo ng bawat bahagi.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   BASE - font, background at reset ng page
+   ========================================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+html { scroll-behavior: smooth; }
+
+body { color: #4a1d3b; min-height: 100vh; }
+
+button,
+input,
+select,
+textarea,
+optgroup { font-family: inherit; }
+
+button,
+input { cursor: pointer; }
+
+a { text-decoration: none; }
+
+
+/* ==================== END BASE ==================== */
+/* ==========================================================================
+   PAGE LAYOUT - app, main area, topbar, petsa at oras
+   ========================================================================== */
+
+.app { min-height: 100vh; }
+
+.main { padding: 0 clamp(14px, 2.2vw, 28px) 18px; }
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    min-height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+}
+
+.datetime {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.datetime-dot { color: #c7aeb8; }
+
+.top-actions { display: flex; align-items: center; gap: 14px; }
+
+.notification-btn { position: relative; border-radius: 999px; font-size: 17px; color: #c2325f; }
+
+.notification-btn svg,
+.notification-btn svg path { stroke: #c2325f; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+/* phone: title + oras + bell sa iisang row; nakatago ang petsa para hindi lumampas */
+@media (max-width: 600px) {
+    .topbar { flex-wrap: nowrap; }
+    .welcome { min-width: 0; }
+    #currentDate,
+    .datetime-dot { display: none; }
+}
+
+@media (min-width: 1281px) and (min-height: 640px) {
+    .app > main.main { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* isang row na kasing-taas ng natitirang screen: hindi na hinahaba ng Upcoming Shipment ang page */
+
+    .app > main.main > .dashboard-layout { flex: 1; min-height: 0; margin-bottom: 0; }
+}
+
+/* ==================== END PAGE LAYOUT ==================== */
+/* ==========================================================================
+   OTHER PARTS - iba pang bahagi ng page
+   ========================================================================== */
+
+.portal-title,
+.card-header h3,
+.stat-card .stat-number,
+.ship-title,
+.notif-panel-header { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+#currentDate { color: #7c6670; font-weight: 800; }
+
+#currentTime { font-weight: 800; }
+
+.card {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    padding: 16px;
+}
+
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+
+.card-header h3 { font-size: 19px; }
+
+.view-link, .ship-link { font-size: 12.5px; font-weight: 700; color: #c2325f; }
+
+.stats-left { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+/* bawat stat card ay link papunta sa sariling page */
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    color: inherit;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.stat-card:hover { border-color: #e9b6c8; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); }
+
+.stat-label { font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
+
+.stat-number { margin-top: 6px; font-size: 30px; font-weight: 700; line-height: 1.1; }
+
+.stat-trend {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 6px;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #ffedf2;
+    color: #7c3a5a;
+}
+
+.pending-card .stat-trend { background: #fdefbf; color: #9a6408; }
+
+.active-card .stat-trend { background: #dff3e8; color: #2f8f67; }
+
+.dashboard-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 18px; margin-bottom: 18px; }
+
+.dashboard-left { display: flex; flex-direction: column; gap: 18px; min-height: 0; }
+
+.dashboard-right { display: flex; }
+
+.shipment-stat-card { flex: 1; display: flex; flex-direction: column; }
+
+.bottom-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+    /* mas malapad ang Recent Bookings */
+    gap: 18px;
+    align-items: stretch;
+    flex: 1;
+    /* Calendar at Recent Bookings: kasing-taas ng Upcoming Shipment */
+    min-height: 0;
+}
+
+.bottom-row > .card { display: flex; flex-direction: column; }
+
+.bottom-row > .card #orders { flex: 1; overflow: hidden; }
+
+/* walang scroll - kasya ang 6 na booking */
+/* Recent Bookings: totoong table - isang linya bawat salita, kusang lapad ayon sa laman */
+
+.recent-table { width: 100%; border-collapse: collapse; font-size: 11.5px; color: #4a1d3b; }
+
+.recent-table th {
+    padding: 5px 3px 7px;
+    border-bottom: 1.5px solid #f3dce3;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #7c6670;
+}
+
+.recent-table td {
+    padding: 7px 3px;
+    border-top: 1px solid #f8e6ec;
+    line-height: 1.3;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.recent-table tbody tr:first-child td { border-top: 0; }
+
+.recent-table .recent-order-id { font-weight: 800; }
+
+.status {
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-pending,
+.status-awaiting_payment,
+.status-awaiting_balance { background: #fdefbf; color: #9a6408; }
+
+.status-quoted,
+.status-to_verify,
+.status-for_approval,
+.status-to_verify_balance,
+.status-for_balance_approval,
+.status-completed { background: #dff3e8; color: #2f8f67; }
+
+.status-processing { background: #ffedf2; color: #c2325f; }
+
+.status-to_ship,
+.status-shipped { background: #e3eafd; color: #3552a8; }
+
+.status-cancelled,
+.status-for_refund { background: #fbdada; color: #b83227; }
+
+.status-refunded { background: #efe3f3; color: #6b2f7a; }
+
+.status-needs_correction,
+.status-address_returned { background: #fde2d2; color: #b4532a; }
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 8px;
+}
+
+.calendar-controls strong { font-size: 15px; font-weight: 800; }
+
+.calendar-arrow-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #f3dce3;
+    border-radius: 50%;
+    background: #ffedf2;
+    color: #c2325f;
+    transition: .15s;
+}
+
+.calendar-arrow-btn:hover:not(:disabled) { background: #c2325f; border-color: #c2325f; color: #ffffff; }
+
+.calendar-arrow-btn:disabled { background: #ececec; border-color: #9a9a9a; color: #7c6670; opacity: .4; }
+
+.calendar-arrow-icon { width: 16px; height: 16px; }
+
+.calendar-week, .calendar-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+
+/* paglipat ng buwan: dahan-dahang nawawala at dumudulas (kagaya ng Commission) */
+
+.calendar-days { transition: opacity .35s ease, transform .35s ease; }
+
+.calendar-days.days-next { opacity: 0; transform: translateX(-28px); }
+
+.calendar-days.days-prev { opacity: 0; transform: translateX(28px); }
+
+.calendar-week { margin-bottom: 5px; text-align: center; }
+
+.calendar-week div { font-size: 10.5px; font-weight: 700; }
+
+.day {
+    aspect-ratio: 1 / 1;
+    /* box na box ang bawat araw */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #f0d5e1;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: default;
+}
+
+.day.empty { border: 0; background: transparent; }
+
+/* parehong kulay ng Commission calendar */
+
+.day.available { border-color: #8fd0a3; background: #e8f7ec; color: #1d6b38; }
+
+.day.booked { border-color: #e88a8a; background: #fde6e6; color: #b3261e; }
+
+.day.unavailable { border-color: #dcdcdc; background: #efefef; color: #a0a0a0; }
+
+.day.today { border-color: #ffd66b; background: #ffd66b; color: #6b4200; }
+
+#calendarDays .day { pointer-events: none; }
+
+.calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: #7c6670;
+}
+
+.calendar-legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.legend-dot { width: 12px; height: 12px; border: 2px solid #e8cbd9; border-radius: 4px; }
+
+.available-dot { border-color: #8fd0a3; background: #e8f7ec; }
+
+.today-dot { border-color: #ffd66b; background: #ffd66b; }
+
+.booked-dot { border-color: #e88a8a; background: #fde6e6; }
+
+.unavailable-dot { border-color: #dcdcdc; background: #efefef; }
+
+.ship-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.ship-title {
+    font-size: 15px;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: #c2325f;
+}
+
+.shipment-summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.shipment-bucket-empty { padding: 26px 0; text-align: center; color: #7c6670; font-size: 13.5px; }
+
+.shipment-bucket-item {
+    padding: 8px 11px;
+    border: 1px solid #f3dce3;
+    border-radius: 14px;
+    background: #fffafb;
+    cursor: default;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.shipment-bucket-item-duesoon { background: #fffaf0; }
+
+.shipment-bucket-item-overdue { background: #fff6f5; }
+
+.shipment-bucket-item-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+.shipment-bucket-item-id { font-size: 12.5px; font-weight: 800; white-space: nowrap; color: #4a1d3b; }
+
+.shipment-bucket-item-badge {
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.shipment-bucket-item-badge-ready { background: #ffedf2; color: #c2325f; }
+
+.shipment-bucket-item-badge-tomorrow,
+.shipment-bucket-item-badge-soon { background: #fdefbf; color: #9a6408; }
+
+.shipment-bucket-item-badge-overdue { background: #fbdada; color: #b83227; }
+
+.shipment-bucket-item-details { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
+
+.shipment-bucket-item-field { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+
+.shipment-bucket-item-label {
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #7c6670;
+}
+
+.shipment-bucket-item-value {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4a1d3b;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.shipment-bucket-more { font-size: 9.5px; color: #7c6670; padding: 2px 2px 0; }
+
+.empty-state { padding: 30px 10px; text-align: center; color: #7c6670; font-size: 11px; }
+
+@media (max-width: 1280px) {
+    .dashboard-layout { grid-template-columns: 1fr; }
+
+    .bottom-row { grid-template-columns: 1fr; }
+    /* tablet: buong lapad na ang card, kaya hindi na palalakihin ang calendar (nasa gitna) */
+    .calendar-controls,
+    .calendar-week,
+    .calendar-days,
+    .calendar-legend { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; }
+}
+
+/* phone: isang card kada row para hindi masikip ang label */
+@media (max-width: 600px) {
+    .stats-left { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 1281px) and (min-height: 640px) {
+    .bottom-row > .card .calendar-days { flex: 0 0 auto; align-content: start; }
+}
+
+/* ==================== END OTHER PARTS ==================== */

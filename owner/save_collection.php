@@ -1,17 +1,21 @@
 <?php
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+/* ==========================================================================
+   OWNER: SAVE COLLECTION   (owner/save_collection.php)
+   Nagse-save ng mga item ng Collection mula sa Collection Management.
+   ========================================================================== */
+
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-require_once __DIR__ . "/../helpers/csrf_helper.php";
 
-/* CSRF - token galing sa Shared/all-in-one.php */
+/* CSRF - token galing sa Shared/popup-and-security.php */
 if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST" && !figurify_verify_csrf($_POST["csrf_token"] ?? null)) {
     http_response_code(403);
-    exit("Your session expired or the request was invalid. Please go back, reload the page, and try again.");
+    exit("Your session has expired. Please reload the page and try again.");
 }
-require_once __DIR__ . "/../helpers/collection_helper.php";
+require_once __DIR__ . "/../helpers/content_helper.php";
 
 // Owner access guard
 if (
@@ -37,8 +41,8 @@ $fixedGroups = [
     "chibi"  => ["section" => "normal", "category" => "chibi",  "style" => "Chibi"],
     "hirono" => ["section" => "normal", "category" => "hirono", "style" => "Hirono"],
     "funko"  => ["section" => "normal", "category" => "funko",  "style" => "Funko Pop"],
-    /* Custom Box lang (nasa Special Figures sa Collection page, filter "Custom Box") */
-    "custom" => ["section" => "special", "category" => "custom", "style" => "Custom Box"],
+    /* Custom Box lang (filter "Custom Box" sa Collection page) */
+    "custom" => ["section" => "special", "category" => "custom", "style" => "Box & Add-ons"],
 ];
 
 $items = $_POST["items"] ?? [];
@@ -66,9 +70,9 @@ foreach ($fixedGroups as $groupKey => $groupInfo) {
             continue;
         }
 
-        $type = trim((string) ($row["type"] ?? ""));
-        $size = trim((string) ($row["size"] ?? ""));
-        $price = trim((string) ($row["price"] ?? ""));
+        $type = figurify_db_text(trim((string) ($row["type"] ?? "")));
+        $size = figurify_db_text(trim((string) ($row["size"] ?? "")));
+        $price = figurify_db_text(trim((string) ($row["price"] ?? "")));
         $image = trim((string) ($row["image"] ?? ""));
         $bestseller = !empty($row["bestseller"]) ? 1 : 0;
 
@@ -146,11 +150,11 @@ if (isset($items["special"]) && is_array($items["special"])) {
             continue;
         }
 
-        $style = trim((string) ($row["style"] ?? ""));
+        $style = figurify_db_text(trim((string) ($row["style"] ?? "")));
         $category = trim((string) ($row["category"] ?? "special"));
-        $type = trim((string) ($row["type"] ?? ""));
-        $size = trim((string) ($row["size"] ?? ""));
-        $price = trim((string) ($row["price"] ?? ""));
+        $type = figurify_db_text(trim((string) ($row["type"] ?? "")));
+        $size = figurify_db_text(trim((string) ($row["size"] ?? "")));
+        $price = figurify_db_text(trim((string) ($row["price"] ?? "")));
         $image = trim((string) ($row["image"] ?? ""));
         $bestseller = !empty($row["bestseller"]) ? 1 : 0;
 
@@ -226,3 +230,5 @@ figurify_sync_category_images("collection", $freshImages);
 
 header("Location: collection-management.php?saved=1");
 exit();
+
+/* ==================== END OWNER: SAVE COLLECTION ==================== */

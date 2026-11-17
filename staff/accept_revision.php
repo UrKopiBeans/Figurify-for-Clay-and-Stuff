@@ -1,7 +1,15 @@
 <?php
 
-/* staff - shared logic: helpers/order_actions/accept_revision.php */
+/* ==========================================================================
+   STAFF: ACCEPT REVISION   (staff/accept_revision.php)
+   Maikling entry point: tanggapin ang revision. Nasa helpers/order_actions.php ang buong logic.
+   ========================================================================== */
 
-$figurifyPortalRole = "staff";
+/* staff - shared logic: helpers/order_actions.php (action: accept_revision) */
 
-require __DIR__ . "/../helpers/order_actions/accept_revision.php";
+$figurifyPortalRole  = "staff";
+$figurifyOrderAction = "accept_revision";
+
+require __DIR__ . "/../helpers/order_actions.php";
+
+/* ==================== END STAFF: ACCEPT REVISION ==================== */

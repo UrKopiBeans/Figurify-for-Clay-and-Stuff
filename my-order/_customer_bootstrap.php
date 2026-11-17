@@ -1,25 +1,24 @@
 <?php
-
-/* Shared bootstrap ng customer action endpoints (my-order/*.php).
-   Customer session lang; ang ownership at status ay sinusuri ng
-   helpers/order_workflow.php (hindi ng page). */
+/* ==========================================================================
+   CUSTOMER ACTION BOOTSTRAP   (my-order/_customer_bootstrap.php)
+   Shared na simula ng customer action endpoints (confirm_order, respond_progress,
+   order_received, submit_payment, submit_balance_payment). Customer session lang;
+   ang ownership at status ay sinusuri ng helpers/order_helper.php (hindi ng page).
+   Hindi puwedeng buksan nang direkta (404).
+   ========================================================================== */
 
 if (basename($_SERVER["SCRIPT_FILENAME"] ?? "") === basename(__FILE__)) {
     http_response_code(404);
     exit();
 }
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
 
-if (!defined("ALL_IN_ONE_FUNCTIONS_ONLY")) {
-    define("ALL_IN_ONE_FUNCTIONS_ONLY", true);
-}
-require_once __DIR__ . "/../Shared/all-in-one.php"; // [ALL-IN-ONE] pop up functions
-require_once __DIR__ . "/../helpers/notification_helper.php";
-require_once __DIR__ . "/../helpers/order_workflow.php";
+require_once __DIR__ . "/../helpers/messaging_helper.php";
+require_once __DIR__ . "/../helpers/order_helper.php";
 
 if (!isset($_SESSION["user_id"])) {
     header("Location: ../Login/Login.php");
@@ -89,3 +88,4 @@ function figurify_customer_delete_upload(?string $relativePath): void
         @unlink($abs);
     }
 }
+/* ====================== END CUSTOMER ACTION BOOTSTRAP ====================== */

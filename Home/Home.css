@@ -1,421 +1,955 @@
-/* Home page — Figurify redesign (navbar & footer live in Shared/) */
+/* ==========================================================================
+   HOME PAGE - CSS   (Home/Home.css)
+   Lahat ng style ng Home.php ay nandito lang. Ang navbar at footer ay may
+   sariling style sa Shared/navbar.php at Shared/footer.php.
+   Ang font at cream background ng page ay nasa [0]; ang pop up ay nasa Shared/popup-and-security.php.
 
-:root {
-    --primary: #c2325f;
-    --primary-dark: #a62a50;
-    --plum: #4a1d3b;
-    --blush: #ffedf2;
-    --cream: #fff8f6;
-    --coral: #e8707e;
-    --ink: #4a1d3b;
-    --ink-soft: #7a5a6c;
-    --line: #f3dde5;
-    --star: #f5b301;
-    --radius: 18px;
+   LAMAN (pareho ang ayos sa Home.php, taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              reset, text, button, lapad ng section, heading ng section
+     [2] HERO CAROUSEL     Home.php > HERO CAROUSEL   (galaw: Home.js [1])
+     [3] ABOUT US          Home.php > ABOUT US        (video: Home.js [2])
+     [4] HOW IT WORKS      Home.php > HOW IT WORKS
+     [5] COLLECTION STYLES Home.php > COLLECTION STYLES
+     [6] FEATURED ORDERS   Home.php > FEATURED ORDERS
+     [7] FEATURES BANNER   Home.php > FEATURES BANNER
+     [8] REVIEWS           Home.php > REVIEWS
+     [9] START AN ORDER    Home.php > START AN ORDER ("Have a figure in mind?")
+     [10] FAQ              Home.php > FAQ (isang card sa ilalim ng START AN ORDER, heading sa gitna)
+     [11] RESPONSIVE       tablet / phone
+
+   Kulay na ginamit:  pink #c2325f (hover #a62a50) · plum #4a1d3b · text #7a5a6c
+                      cream #fff8f6 · border #f3dde5 · malambot na pink #f39bc1 · dark plum #3b1530
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #fff;
 }
+
+/* form controls - hindi sila nagmamana ng font by default */
+
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+
+.page-home h1,
+.page-home h2,
+.page-home h3 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ==========================================================================
+   [1] BASE
+   ========================================================================== */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
 body {
-    
-    color: var(--ink);
-    
+    color: #4a1d3b;
     line-height: 1.6;
     overflow-x: hidden;
 }
 
-h1, h2, h3 {  color: var(--plum); }
 a { color: inherit; }
 
-.eyebrow {
-    display: inline-block;
-    
-    font-style: italic;
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--primary);
-    margin-bottom: 6px;
+/* lapad ng laman ng bawat section (kapantay ng navbar) */
+.wrap,
+.about-section {
+    max-width: 1232px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
+/* buong lapad na section: puti (default) o cream */
+.band { padding: 72px 0; background: #fff; }
+.band-cream { background: #fff8f6; }
+.band-tight { padding: 0 0 72px; }
+
+/* maliit na pink na text sa ibabaw ng heading (ABOUT US, HOW IT WORKS ...) */
+.section-eyebrow {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #c2325f;
+}
+
+/* heading sa gitna ng section */
+.section-heading { text-align: center; margin-bottom: 40px; }
+
+.section-heading h2 {
+    margin-bottom: 8px;
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.section-heading p:last-child { color: #7a5a6c; font-size: 15px; }
+
+/* mga button - iisang oblong at pula, .btn-light = puti na may border */
 .btn {
     display: inline-flex;
     align-items: center;
-    padding: 13px 26px;
-    border-radius: 12px;
-    background: var(--primary);
+    padding: 14px 26px;
+    border-radius: 999px;
+    background: #c2325f;
     color: #fff;
-    font-weight: 700;
     font-size: 14px;
+    font-weight: 700;
     text-decoration: none;
-    transition: background-color .15s ease;
     white-space: nowrap;
+    transition: background-color .15s ease;
 }
-.btn:hover { background: var(--primary-dark); }
 
-/* ---------- hero ---------- */
-.hero { position: relative; width: 100%; overflow: hidden; }
+.btn:hover { background: #a62a50; }
 
+.btn-light { background: #fff; color: #c2325f; border: 2px solid #c2325f; }
+.btn-light:hover { background: #ffedf2; }
+
+.btn-dark { padding: 10px 18px; font-size: 13px; }
+
+.btn-big { padding: 16px 30px; font-size: 15px; }
+.btn-small { padding: 9px 16px; font-size: 12.5px; }
+/* ====================== END BASE ====================== */
+
+
+/* ==========================================================================
+   [2] HERO CAROUSEL
+   ========================================================================== */
+/* LAHAT NG SCREEN (desktop, tablet, phone): buong slide ang larawan at nasa KALIWA ang text sa loob ng larawan.
+   Desktop: kasing-taas ng larawan ang slide (sakto sa picture, walang zoom).
+   Sa maliit na screen, humahaba ang slide para kasya ang text (nasa [10] RESPONSIVE ang pinaliit na sukat). */
+.hero { position: relative; width: 100%; overflow: hidden; background: #fff8f6; }
+
+/* lahat ng slide ay nakahanay pahiga; tinutulak ng Home.js pakaliwa */
 .carousel-track {
     display: flex;
     width: 100%;
     transition: transform .7s cubic-bezier(.65, 0, .35, 1);
 }
 
+/* tahimik na pagbalik sa slide 1 (walang animation) - ginagamit ng Home.js */
+.carousel-track.no-anim { transition: none; }
+
+/* slide: larawan at text sa iisang puwesto (grid). Ang taas = taas ng larawan;
+   humahaba lang kapag mas mataas ang text (hindi nalalampasan) */
 .carousel-slide {
     position: relative;
+    display: grid;
     min-width: 100%;
-    flex-shrink: 0;
-    min-height: 500px;
-    display: flex;
-    align-items: center;
-    background-size: cover;
-    background-position: center;
-    background-color: var(--plum);
+    background: #fff8f6;
 }
 
-.carousel-slide::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(100deg, rgba(74,29,59,.88) 0%, rgba(74,29,59,.62) 40%, rgba(74,29,59,.15) 72%, rgba(74,29,59,0) 90%);
+/* larawan ng slide (galing sa Content Management) - buong lapad, sariling sukat ng larawan */
+.carousel-image {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
+/* text ng slide - nasa kaliwa sa loob ng larawan, may malambot na pink sa likod para mabasa */
 .slide-inner {
+    grid-area: 1 / 1;
     position: relative;
     z-index: 1;
-    max-width: 1600px;
     width: 100%;
-    margin: 0 auto;
-    padding: 56px 5vw;
+    display: flex;
+    align-items: center;
+    padding: 56px 7vw;
+    text-align: left;
+    background: linear-gradient(90deg, rgba(255, 240, 244, .94) 0%, rgba(255, 240, 244, .75) 36%, rgba(255, 240, 244, 0) 62%);
 }
 
-.hero-copy { max-width: 600px; }
-.hero-copy .eyebrow { color: #ffc9d8; }
+.hero-copy { max-width: 560px; }
+
+/* pill sa itaas ng heading, may pink na tuldok */
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border: 1px solid #f3dde5;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #a62a50;
+}
+
+.hero-eyebrow::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c2325f;
+}
 
 .hero-copy h1 {
-    margin-top: 6px;
-    font-size: clamp(34px, 4.4vw, 56px);
-    line-height: 1.08;
+    margin-top: 22px;
+    font-size: clamp(34px, 3.4vw, 49px);
     font-weight: 700;
-    max-width: 12ch;
-    color: #fff;
+    line-height: 1.15;
+    color: #4a1d3b;
 }
 
-.hero-copy p.tagline {
-    margin-top: 16px;
-    color: #f6e3ea;
-    font-size: 16px;
+/* *salita* sa heading - pink (hindi italic) */
+.hero-copy h1 em { font-style: normal; color: #c2325f; }
+
+.tagline {
+    margin: 18px 0 0;
     max-width: 46ch;
+    font-size: 16px;
+    color: #7a5a6c;
 }
 
-.hero-actions { margin-top: 26px; display: flex; align-items: center; gap: 22px; }
+.hero-actions { margin-top: 28px; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 14px; }
 
+/* 3 maliit na text sa ilalim ng mga button */
+.hero-chips {
+    margin-top: 26px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 14px 24px;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a1d3b;
+}
+
+.hero-chips li { display: flex; align-items: center; gap: 8px; }
+.hero-chips span { color: #c2325f; }
+
+/* arrow sa kaliwa at kanan - nasa gitna ng slide */
+.carousel-arrow {
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    margin-top: -23px;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #c2325f;
+    cursor: pointer;
+    box-shadow: 0 6px 18px -6px rgba(74, 29, 59, .35);
+    transition: background-color .15s ease;
+}
+
+.carousel-arrow:hover { background: #ffedf2; }
+.carousel-prev { left: 22px; }
+.carousel-next { right: 22px; }
+
+/* tuldok sa ibaba (isa bawat slide) */
 .carousel-dots {
     position: absolute;
+    z-index: 5;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 7px;
-    z-index: 5;
 }
+
 .dot {
-    width: 22px;
-    height: 4px;
-    border-radius: 3px;
-    background: rgba(255,255,255,.55);
+    width: 10px;
+    height: 10px;
+    border-radius: 6px;
+    background: #fff;
     cursor: pointer;
     transition: background .3s, width .3s;
 }
-.dot.active { background: #fff; width: 34px; }
 
-/* ---------- shared layout ---------- */
-.page-container { background: var(--cream); }
+.dot.active { width: 32px; background: #c2325f; }
+/* ====================== END HERO CAROUSEL ====================== */
 
-/* ---------- about ---------- */
-.about-section {
-    max-width: 1280px;
-    margin: 72px auto 0;
-    padding: 0 28px;
-}
 
+/* ==========================================================================
+   [3] ABOUT US
+   ========================================================================== */
+.about-section { padding-top: 72px; padding-bottom: 72px; }
+
+/* video sa kaliwa, text sa kanan */
 .about-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 56px;
+    grid-template-columns: 5fr 7fr;
+    gap: 90px;
     align-items: center;
-    /* container card na may shadow */
-    background: #ffffff;
-    border: 1px solid var(--line);
-    border-radius: 28px;
-    padding: 36px;
-    box-shadow: 0 18px 44px rgba(74, 29, 59, 0.12);
 }
 
-.about-media { position: relative; }
+.about-media { position: relative; max-width: 340px; margin: 0 auto; }
 
-.about-video-box {
-    width: 100%;
-    aspect-ratio: 1.68 / 1;
-    border-radius: 24px;
-    overflow: hidden;
-    background: var(--blush);
-}
-.about-video-box video,
-.about-video-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* pill sa ibabang-kaliwa ng video */
-.about-badge {
+/* malambot na pink na hugis sa likod ng video */
+.about-blob {
     position: absolute;
-    left: 20px;
-    bottom: 20px;
-    display: inline-flex;
+    top: -34px;
+    left: 32px;
+    right: -32px;
+    bottom: -34px;
+    border-radius: 36px;
+    background: #fce4ec;
+}
+
+/* puting "phone" frame ng video */
+.about-phone {
+    position: relative;
+    aspect-ratio: 13 / 20;
+    padding: 8px;
+    border-radius: 36px;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+}
+
+.about-phone video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    object-fit: cover;
+    background: #ffedf2;
+}
+
+/* bilog na play button sa gitna - nawawala habang tumatakbo ang video */
+.about-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 78px;
+    height: 78px;
+    margin: -39px 0 0 -39px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .95);
+    cursor: pointer;
+    box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .5);
+}
+
+.about-play::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -14px 0 0 -9px;
+    border-style: solid;
+    border-width: 14px 0 14px 24px;
+    border-color: transparent transparent transparent #c2325f;
+}
+
+.about-phone.is-playing .about-play { opacity: 0; pointer-events: none; }
+
+/* progress bar at oras sa ilalim ng video */
+.about-controls {
+    position: absolute;
+    left: 26px;
+    right: 26px;
+    bottom: 22px;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 12px 22px;
-    border-radius: 12px;
-    background: var(--primary);
+    gap: 12px;
     color: #fff;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 700;
 }
-.about-badge::before { content: "\25B6"; font-size: 11px; }
 
-.about-content .eyebrow { font-size: 16px; margin-bottom: 4px; }
+.about-bar { flex: 1; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .45); cursor: pointer; }
+.about-bar span { display: block; width: 0; height: 100%; border-radius: 2px; background: #fff; }
+
+/* pink na nakatagilid na label sa itaas-kanan ng video */
+.about-badge {
+    position: absolute;
+    top: 28px;
+    right: -28px;
+    padding: 10px 20px;
+    border-radius: 14px;
+    background: #c2325f;
+    color: #fff;
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 15px;
+    font-weight: 600;
+    transform: rotate(6deg);
+    box-shadow: 0 12px 24px -12px rgba(194, 50, 95, .8);
+}
+
+/* puting pill sa ibabang-kaliwa ng video */
+.about-caption {
+    position: absolute;
+    left: -34px;
+    bottom: 56px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
 
 .about-content h2 {
-    font-size: clamp(28px, 3vw, 36px);
-    font-weight: 600;
-    line-height: 1.3;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    font-size: clamp(26px, 2.7vw, 38px);
+    font-weight: 700;
+    line-height: 1.35;
 }
 
-.about-content p {
-    color: var(--plum);
-    font-size: 15px;
-    margin-bottom: 14px;
+.about-text {
     max-width: 64ch;
+    margin-bottom: 14px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #7a5a6c;
 }
-.about-content p + p { color: var(--ink-soft); font-size: 14.5px; }
 
-/* ---------- section headings ---------- */
-.section-heading,
-.reviews-header { text-align: center; margin-bottom: 32px; }
+.about-text-soft { font-size: 15px; }
 
-.section-heading h2,
-.reviews-header h2 {
-    font-size: clamp(28px, 3vw, 36px);
-    font-weight: 600;
-    margin-bottom: 4px;
+/* 3 maliit na kahon: 100% / 1-of-1 / Laguna */
+.about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 26px 0 30px; }
+
+.about-stat {
+    padding: 18px 20px;
+    border: 1px solid #f3dde5;
+    border-radius: 16px;
+    background: #fff8f6;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
-.section-heading p,
-.reviews-header p { color: var(--ink-soft); font-size: 14.5px; }
 
-/* ---------- featured orders ---------- */
-.featured-section { max-width: 1280px; margin: 90px auto 0; padding: 0 28px; }
+.about-stat strong {
+    display: block;
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #a62a50;
+}
 
-.orders-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.about-stat span { font-size: 13px; color: #7a5a6c; }
+/* ====================== END ABOUT US ====================== */
+
+
+/* ==========================================================================
+   [4] HOW IT WORKS
+   ========================================================================== */
+.steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+.step-card {
+    position: relative;
+    padding: 26px 22px 28px;
+    border: 1px solid #f3dde5;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* maliit na pink na arrow sa pagitan ng mga card */
+.step-card:not(:last-child)::after {
+    content: "›";
+    position: absolute;
+    top: 50%;
+    right: -15px;
+    z-index: 1;
+    margin-top: -10px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    color: #f39bc1;
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    background: #c2325f;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.step-card h3 { margin-bottom: 6px; font-size: 19px; font-weight: 700; }
+.step-card p { font-size: 13.5px; color: #7a5a6c; }
+
+/* paalala sa ilalim ng mga hakbang (lalabas lang kung hindi naka-login) */
+.steps-note {
+    margin-top: 22px;
+    padding: 14px 20px;
+    border: 1px dashed #f39bc1;
+    border-radius: 14px;
+    background: #fdeaf1;
+    text-align: center;
+    font-size: 14px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.steps-note strong { color: #a62a50; }
+/* ====================== END HOW IT WORKS ====================== */
+
+
+/* ==========================================================================
+   [5] COLLECTION STYLES
+   ========================================================================== */
+.styles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+.style-card {
+    overflow: hidden;
+    border: 1px solid #f3dde5;
+    border-radius: 26px;
+    background: #fff8f6;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ang larawan (cover) ay kumpleto na ang disenyo: kulay, sparkle at litrato - kaya larawan lang ito */
+.style-media { position: relative; background: #ffedf2; }
+
+.style-media img { display: block; width: 100%; aspect-ratio: 1 / .7; object-fit: cover; }
+
+.style-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #a62a50;
+}
+
+.style-body { padding: 22px 24px 24px; }
+.style-body h3 { margin-bottom: 6px; font-size: 22px; font-weight: 700; }
+.style-body p { min-height: 44px; font-size: 14px; color: #7a5a6c; }
+
+.style-foot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px; }
+.style-price small { display: block; font-size: 12px; color: #7a5a6c; }
+.style-price strong { font-size: 18px; font-weight: 700; color: #a62a50; }
+
+/* 2 shortcut na card sa ilalim ng styles */
+.shortcuts-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 28px; }
+
+.shortcut-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px 28px;
+    border: 1px solid #f3c6d6;
+    border-radius: 22px;
+    background: linear-gradient(100deg, #fde7ef 0%, #fff0e8 100%);
+    text-decoration: none;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    transition: transform .2s ease;
+}
+
+.shortcut-card:hover { transform: translateY(-2px); }
+
+.shortcut-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 28px;
+}
+
+.shortcut-text { flex: 1; display: flex; flex-direction: column; }
+.shortcut-text strong { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: 700; }
+.shortcut-text span { font-size: 13.5px; color: #7a5a6c; }
+.shortcut-link { flex-shrink: 0; font-size: 13.5px; font-weight: 700; color: #a62a50; }
+/* ====================== END COLLECTION STYLES ====================== */
+
+
+/* ==========================================================================
+   [6] FEATURED ORDERS
+   ========================================================================== */
+.orders-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
 
 .order-card {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #f3dde5;
+    border-radius: 22px;
     background: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 14px;
-    box-shadow: 0 1px 2px rgba(74,29,59,.04);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
     transition: transform .2s ease, box-shadow .2s ease;
 }
-.order-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px -14px rgba(74,29,59,.25); }
 
-.order-media {
-    width: 100%;
-    aspect-ratio: 1 / .84;
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--blush);
-}
-.order-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.order-card:hover { transform: translateY(-3px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); }
 
-.order-body { display: flex; flex-direction: column; flex: 1; padding: 16px 2px 2px; }
+.order-media { width: 100%; aspect-ratio: 1 / .78; overflow: hidden; background: #ffedf2; }
+.order-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-.order-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--plum);
-    margin-bottom: 4px;
-}
-.order-caption { font-size: 14px; color: var(--ink-soft); margin-bottom: 14px; }
-.order-title + .order-foot { margin-top: 14px; }
+.order-body { display: flex; flex-direction: column; flex: 1; padding: 16px 18px 18px; }
 
-.order-foot {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-.order-btn {
-    display: inline-flex;
-    align-items: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: #fff;
-    text-decoration: none;
-    background: var(--primary);
-    padding: 10px 16px;
-    border-radius: 10px;
-    transition: background-color .15s ease;
-}
-.order-btn:hover { background: var(--primary-dark); }
-.order-price { color: var(--primary); font-size: 18px; font-weight: 800; white-space: nowrap; }
+/* body font ang pangalan ng produkto (hindi heading font) */
+.page-home .order-title { margin-bottom: 4px; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 15px; font-weight: 700; }
+.order-caption { margin-bottom: 8px; font-size: 13px; color: #7a5a6c; }
 
-/* ---------- features banner ---------- */
-.features-banner {
-    max-width: 1224px;
-    margin: 56px auto 0;
-    padding: 30px 28px;
-    background: var(--blush);
-    border-radius: 24px;
-}
-.features-banner-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+/* presyo sa kaliwa, button sa kanan */
+.order-foot { margin-top: auto; padding-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.order-price { font-size: 17px; font-weight: 700; color: #a62a50; white-space: nowrap; }
+/* ====================== END FEATURED ORDERS ====================== */
 
-.feature-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 4px;
-    padding: 4px 14px;
+
+/* ==========================================================================
+   [7] FEATURES BANNER  (buong lapad ng page ang pink na background)
+   ========================================================================== */
+.features-banner { padding: 34px 20px; background: #f39bc1; }
+
+.features-banner-inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1232px;
+    margin: 0 auto;
 }
 
+/* icon sa kaliwa, text sa kanan */
+.feature-item { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 4px 10px; }
+
+/* puting bilog na may icon */
 .feature-icon {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: #fff;
-    margin-bottom: 6px;
-}
-.feature-icon svg { width: 20px; height: 20px; }
-.feature-icon svg path,
-.feature-icon svg circle { stroke: var(--primary) !important; }
-.feature-icon svg path[fill],
-.feature-icon svg circle[fill] { fill: var(--primary) !important; }
-
-.feature-title-main { font-weight: 700; font-size: 15px; color: var(--plum);  }
-.feature-subtitle { font-size: 14px; color: var(--ink-soft); }
-
-/* ---------- reviews ---------- */
-.reviews-section { width: 100%; margin: 90px 0 0; padding: 0 0 90px; background: transparent; }
-
-.marquee-wrapper { width: 100%; overflow: hidden; padding: 8px 0 20px; }
-
-.marquee-track {
-    display: flex;
-    gap: 20px;
-    width: max-content;
-    padding-left: 28px;
-    animation: scrollMarquee 40s linear infinite;
-}
-.marquee-wrapper:hover .marquee-track { animation-play-state: paused; }
-
-.marquee-track.marquee-track-static {
-    animation: none;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding-left: 0;
 }
 
-@keyframes scrollMarquee {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+/* guhit ng icon */
+.feature-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #c2325f;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
+
+/* 3 tuldok sa loob ng "Friendly service" icon */
+.feature-icon svg .dot-fill { fill: #c2325f; }
+
+.feature-title { font-size: 15px; font-weight: 700; line-height: 1.3; color: #4a1d3b; }
+.feature-subtitle { font-size: 13px; color: #6e3a55; }
+/* ====================== END FEATURES BANNER ====================== */
+
+
+/* ==========================================================================
+   [8] REVIEWS
+   ========================================================================== */
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
 
 .review-card {
-    width: 440px;
-    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 26px 24px;
+    border: 1px solid #f3dde5;
+    border-radius: 22px;
     background: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-    box-shadow: 0 1px 2px rgba(74,29,59,.04);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-.review-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
-.review-author { display: flex; align-items: center; gap: 12px; }
+/* taas: avatar | pangalan + email | stars sa dulo kanan. Kapag masikip, bababa ang stars */
+.review-author { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+.review-stars { margin-left: auto; font-size: 14px; letter-spacing: 2px; color: #f5a50a; white-space: nowrap; }
+.review-text { flex: 1; font-size: 15px; line-height: 1.6; overflow-wrap: anywhere; }
+
+.review-images { display: flex; flex-wrap: wrap; gap: 8px; }
+.review-images img { width: 72px; height: 72px; object-fit: cover; border-radius: 10px; }
 
 .review-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--blush);
-    flex-shrink: 0;
+    border-radius: 50%;
     overflow: hidden;
+    background: #f39bc1;
 }
-.review-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.review-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* .avatar-initials - galing sa figurify_render_avatar() (helpers/content_helper.php) */
 .review-avatar .avatar-initials {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 16px;
     font-weight: 700;
-    font-size: 15px;
+    color: #fff;
 }
 
-.review-meta { display: flex; flex-direction: column; gap: 0; }
-.review-meta h4 { font-size: 15px; font-weight: 700; color: var(--plum); }
-.review-email { font-size: 12.5px; color: var(--ink-soft); word-break: break-all; }
+.review-meta { flex: 1 1 120px; min-width: 0; display: flex; flex-direction: column; line-height: 1.4; }
+.review-meta h4 { font-size: 14.5px; font-weight: 700; }
+.review-meta span { font-size: 12.5px; color: #7a5a6c; overflow-wrap: anywhere; }
 
-.review-stars { color: var(--primary); font-size: 14px; letter-spacing: 2px; flex-shrink: 0; }
+.reviews-empty { padding: 30px 20px; text-align: center; font-size: 14px; color: #7a5a6c; }
+/* ====================== END REVIEWS ====================== */
 
-.review-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.review-text {  font-style: normal; font-size: 15px; line-height: 1.55; color: var(--plum); flex: 1; }
-.review-thumb { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; flex-shrink: 0; cursor: default; }
 
-.reviews-empty { text-align: center; padding: 30px 20px; color: var(--ink-soft); font-size: 14px; }
+/* ==========================================================================
+   [9] START AN ORDER  ("Have a figure in mind?" - madilim na plum na card)
+   ========================================================================== */
+.start-order-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 44px 52px;
+    border-radius: 26px;
+    background: #f9cfe0;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
 
-/* lightbox (kung gagamitin sa ibang script) */
-.review-lightbox { position: fixed; inset: 0; z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(40,12,30,.78); }
-.review-lightbox.show { display: flex; }
-.review-lightbox-inner { position: relative; max-width: min(720px, 92vw); }
-.review-lightbox-inner img { display: block; max-width: 100%; max-height: 82vh; border-radius: 16px; background: #fff; }
-.review-lightbox-close { position: absolute; top: -14px; right: -14px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #fff; color: var(--plum); font-size: 20px; line-height: 34px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,.25); }
+.start-order-text h2 { font-size: clamp(24px, 2.6vw, 32px); font-weight: 700; line-height: 1.2; color: #4a1d3b; }
+.start-order-text p { margin-top: 6px; font-size: 15px; color: #7a5a6c; }
 
-/* ---------- responsive ---------- */
+.start-order-card .btn { flex-shrink: 0; }
+/* ====================== END START AN ORDER ====================== */
+
+
+/* ==========================================================================
+   [10] FAQ  (Home.php > FAQ) - isang puting card: heading sa gitna sa taas, mga tanong sa ilalim
+   ========================================================================== */
+.faq-card {
+    padding: 44px 52px;
+    border: 1px solid #f3dde5;
+    border-radius: 26px;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.faq-intro { margin-bottom: 28px; text-align: center; }
+.faq-intro h2 { margin-bottom: 8px; font-size: clamp(24px, 2.6vw, 32px); font-weight: 700; line-height: 1.2; }
+.faq-intro p:last-child { font-size: 15px; color: #7a5a6c; }
+
+/* mga tanong: 2 hiwalay na hanay (.faq-column) sa desktop; bawat tanong ay may manipis na guhit sa itaas */
+.faq-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-items: start; }
+.faq-item { border-top: 1px solid #f3dde5; transition: background .2s ease; }
+
+/* hover at bukas na tanong: light pink na background para mas kita */
+.faq-item:hover,
+.faq-item[open] { background: #fce9f0; }
+
+/* tanong: pindutan, may pink na + sa kanan (nagiging x kapag bukas) */
+.faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    font-size: 15.5px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+    transition: color .2s ease;
+}
+
+.faq-question::-webkit-details-marker { display: none; }
+
+/* hover at bukas na tanong: pink ang text, lumalaki nang kaunti ang + */
+.faq-question:hover,
+.faq-item[open] .faq-question { color: #c2325f; }
+.faq-question:hover::after { transform: scale(1.2); }
+
+.faq-question::after {
+    content: "+";
+    flex-shrink: 0;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    color: #c2325f;
+    transition: transform .2s ease;
+}
+
+.faq-item[open] .faq-question::after { transform: rotate(45deg); }
+.faq-item[open] .faq-question:hover::after { transform: rotate(45deg) scale(1.2); }
+
+.faq-answer { padding: 0 52px 18px 16px; font-size: 14.5px; line-height: 1.7; color: #7a5a6c; }
+/* ====================== END FAQ ====================== */
+
+
+/* ==========================================================================
+   [11] RESPONSIVE
+   ========================================================================== */
+@media (min-width: 1101px) and (max-width: 1399px) {
+    /* about us: KAPAREHO ng desktop (video sa kaliwa, text sa kanan), pinaliit lang (sukat sa desktop / 14) */
+    .about-section { max-width: none; padding: 5.14vw 7.43vw; }
+    .about-grid { gap: 6.43vw; }
+    .about-media { max-width: 24.3vw; }
+    .about-blob { top: -2.43vw; left: 2.29vw; right: -2.29vw; bottom: -2.43vw; border-radius: 2.57vw; }
+    .about-phone { padding: .57vw; border-radius: 2.57vw; }
+    .about-phone video { border-radius: 2.14vw; }
+    .about-play { width: 5.57vw; height: 5.57vw; margin: -2.79vw 0 0 -2.79vw; }
+    .about-play::before { margin: -1vw 0 0 -.64vw; border-width: 1vw 0 1vw 1.71vw; }
+    .about-controls { left: 1.86vw; right: 1.86vw; bottom: 1.57vw; gap: .86vw; font-size: max(11px, .86vw); }
+    .about-bar { height: .29vw; }
+    .about-badge { top: 2vw; right: -2vw; padding: .71vw 1.43vw; border-radius: 1vw; font-size: max(13px, 1.07vw); }
+    .about-caption { left: -2.43vw; bottom: 4vw; padding: .86vw 1.43vw; font-size: max(12px, .93vw); }
+    .about-content .section-eyebrow { margin-bottom: .57vw; font-size: max(11px, .86vw); letter-spacing: .11vw; }
+    .about-content h2 { margin-bottom: 1.43vw; font-size: 2.7vw; }
+    .about-text { margin-bottom: 1vw; font-size: max(15px, 1.21vw); }
+    .about-text-soft { font-size: max(14px, 1.07vw); }
+    .about-stats { gap: 1.14vw; margin: 1.86vw 0 2.14vw; }
+    .about-stat { padding: 1.29vw 1.43vw; border-radius: 1.14vw; }
+    .about-stat strong { font-size: max(18px, 1.43vw); }
+    .about-stat span { font-size: max(12px, .93vw); }
+    .about-content .btn { padding: 1vw 1.86vw; font-size: max(13px, 1vw); }
+}
+
+/* tablet at phone (1100px pababa): hero = text sa kaliwa sa loob ng larawan (pinaliit); about us = video sa taas, text sa ilalim.
+   Normal ang laki ng text kaya nababasa sa iPad, Android, iPhone. */
 @media (max-width: 1100px) {
-    .orders-grid { grid-template-columns: repeat(2, 1fr); }
+    /* hero: text sa KALIWA pa rin sa loob ng larawan; ang figure sa larawan ay nasa kanan para kita */
+    .carousel-slide { min-height: 440px; }
+    .carousel-image { object-position: 70% center; }
+    .slide-inner {
+        padding: 36px 52px 76px;
+        background: linear-gradient(90deg, rgba(255, 240, 244, .94) 0%, rgba(255, 240, 244, .78) 45%, rgba(255, 240, 244, 0) 78%);
+    }
+    .hero-copy { max-width: 520px; }
+    .hero-copy h1 { margin-top: 16px; font-size: clamp(26px, 6.5vw, 40px); }
+    .tagline { font-size: 15px; }
+    .hero-actions { margin-top: 22px; gap: 10px; }
+    .hero-chips { margin-top: 20px; gap: 10px 18px; font-size: 13px; }
+    /* arrow: nasa gitna pa rin ng slide (kaliwa at kanan), pinaliit; may puwang ang text para hindi matakpan */
+    .carousel-arrow { width: 36px; height: 36px; margin-top: -18px; }
+    .carousel-prev { left: 8px; }
+    .carousel-next { right: 8px; }
+
+    .steps-grid,
+    .orders-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    /* walang arrow sa pagitan kapag 2 hanay na */
+    .step-card::after { display: none; }
+
+    .about-section { padding: 48px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 56px; }
+    .about-media { max-width: 300px; }
+    .about-badge { right: -14px; }
+    .about-caption { left: -14px; }
 }
 
 @media (max-width: 860px) {
-    .slide-inner { text-align: center; }
-    .hero-copy { margin: 0 auto; }
-    .hero-copy h1 { max-width: none; }
-    .hero-copy p.tagline { margin-left: auto; margin-right: auto; }
-    .hero-actions { justify-content: center; }
+    .styles-grid,
+    .reviews-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 
-    .about-grid { grid-template-columns: 1fr; gap: 28px; padding: 22px; border-radius: 22px; }
-    .about-content { text-align: center; }
-    .about-content p { margin-left: auto; margin-right: auto; }
+    /* kapag kakaiba ang bilang, ang huli ay buong lapad */
+    .style-card:last-child:nth-child(odd),
+    .review-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-    .features-banner { margin: 48px 20px 0; }
+    /* features: 2 kada hanay */
     .features-banner-inner { grid-template-columns: repeat(2, 1fr); row-gap: 22px; }
+
+    /* start an order: text sa taas, button sa ilalim, nasa gitna */
+    .start-order-card { flex-direction: column; text-align: center; padding: 34px 26px; }
+
+    /* faq: isang hanay na lang ang mga tanong */
+    .faq-card { padding: 34px 26px; }
+    .faq-list { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 620px) {
-    .carousel-slide { min-height: 420px; }
-    .slide-inner { padding: 40px 20px; }
-    .about-section, .featured-section { padding: 0 18px; }
+    /* hero sa phone: halos buong lapad ang text, kaya mas makapal ang pink sa likod para mabasa */
+    .slide-inner { background: linear-gradient(90deg, rgba(255, 240, 244, .95) 0%, rgba(255, 240, 244, .85) 60%, rgba(255, 240, 244, .3) 100%); }
+
+    .band { padding: 52px 0; }
+
+    /* maliit na screen: magkatabi pa rin ang mga card, pinaliit ang laman para kasya at nababasa */
+    .steps-grid,
+    .orders-grid,
+    .styles-grid,
+    .reviews-grid,
+    .shortcuts-grid { gap: 12px; }
+
+    .step-card { padding: 16px 14px 18px; border-radius: 16px; }
+    .step-number { width: 32px; height: 32px; margin-bottom: 12px; border-radius: 10px; font-size: 14px; }
+    .step-card h3 { font-size: 15px; }
+    .step-card p { font-size: 12px; }
+
+    .order-card, .style-card, .review-card { border-radius: 16px; }
+    .order-body { padding: 12px; }
+    .page-home .order-title { font-size: 13px; }
+    .order-caption { font-size: 11.5px; }
+    .order-price { font-size: 14px; }
+    .order-foot, .style-foot { flex-wrap: wrap; gap: 8px; }
+
+    .style-body { padding: 14px; }
+    .style-body h3 { font-size: 16px; }
+    .style-body p { min-height: 0; font-size: 12px; }
+    .style-price strong { font-size: 15px; }
+    .style-badge { top: 8px; left: 8px; padding: 3px 8px; font-size: 10px; }
+
+    .review-card { padding: 16px 14px; gap: 10px; }
+    .review-text { font-size: 13px; }
+    .review-meta h4 { font-size: 13px; }
+    .review-meta span { font-size: 11.5px; }
+    .review-images img { width: 56px; height: 56px; }
+
+    .faq-card { padding: 26px 18px; border-radius: 20px; }
+    .faq-question { padding: 14px 12px; font-size: 14px; }
+    .faq-answer { padding: 0 12px 14px; font-size: 13px; }
+
+    .shortcut-card { flex-direction: column; text-align: center; gap: 8px; padding: 16px 10px; border-radius: 16px; }
+    .shortcut-icon { width: 44px; height: 44px; border-radius: 12px; font-size: 22px; }
+    .shortcut-text strong { font-size: 14px; }
+    .shortcut-text span { font-size: 12px; }
+    .shortcut-link { font-size: 12.5px; }
+
+    .about-blob { left: 16px; right: -16px; }
+    .about-badge { right: -8px; }
+    .about-stats { gap: 8px; }
+    .about-stat { padding: 12px 8px; text-align: center; }
+    .about-stat strong { font-size: 16px; }
+    .about-stat span { font-size: 11px; }
 }
 
-@media (max-width: 480px) {
-    .orders-grid { grid-template-columns: 1fr; }
-    .review-card { width: 300px; padding: 18px; }
-}
+/* ====================== END RESPONSIVE ====================== */
+
+/* ===== kulay ng bilog na may unang letra (galing sa figurify_render_avatar) ===== */
+.review-avatar .avatar-initials.avatar-color-0 { background: #e77fbd; }
+.review-avatar .avatar-initials.avatar-color-1 { background: #b9a0ef; }
+.review-avatar .avatar-initials.avatar-color-2 { background: #f472b6; }
+.review-avatar .avatar-initials.avatar-color-3 { background: #9b3f72; }
+.review-avatar .avatar-initials.avatar-color-4 { background: #db2777; }
+.review-avatar .avatar-initials.avatar-color-5 { background: #a88be5; }
+.review-avatar .avatar-initials.avatar-color-6 { background: #831843; }
+.review-avatar .avatar-initials.avatar-color-7 { background: #c026d3; }

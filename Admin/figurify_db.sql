@@ -1,17 +1,3 @@
---  Default accounts (password nilang lahat: password):
---    owner@gmail.com    -> admin
---    staff@gmail.com    -> staff
---    customer@gmail.com -> customer
--- =====================================================================
-
-DROP DATABASE IF EXISTS figurify_db;
-
-CREATE DATABASE figurify_db
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_general_ci;
-
-USE figurify_db;
-
 
 /* =========================================================
    1. USERS
@@ -19,14 +5,19 @@ USE figurify_db;
 
 CREATE TABLE users (
     user_id     INT AUTO_INCREMENT PRIMARY KEY,
-    full_name   VARCHAR(100) NOT NULL,
+    first_name  VARCHAR(50)  NOT NULL,
+    middle_name VARCHAR(50)  NULL,           -- optional, minsan walang middle name
+    last_name   VARCHAR(50)  NOT NULL,
+    full_name   VARCHAR(160) GENERATED ALWAYS AS (
+        TRIM(CONCAT_WS(' ', first_name, IF(middle_name IS NULL OR middle_name = '', NULL, CONCAT(UPPER(LEFT(middle_name, 1)), '.')), last_name))
+    ) VIRTUAL,   -- kusa itong nabubuo: Omar B. Hadji Abdulbari (huwag i-INSERT / i-UPDATE)
     email       VARCHAR(100) NOT NULL UNIQUE,
     password    VARCHAR(255) NOT NULL,
     role        ENUM('customer', 'staff', 'admin') NOT NULL DEFAULT 'customer',
     profile_picture VARCHAR(255) NULL,
-    contact_number VARCHAR(20) NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_seen   DATETIME NULL DEFAULT NULL
+    last_seen   DATETIME NULL DEFAULT NULL,
+    archived_at DATETIME NULL DEFAULT NULL   -- User Management "Archive" (hindi makakapag-login; NULL = active)
 );
 
 
@@ -58,7 +49,7 @@ CREATE TABLE orders (
 
     order_type           VARCHAR(20) NOT NULL,              -- rush / nonrush
     order_method         VARCHAR(30) NOT NULL DEFAULT 'reference', -- reference (Image Submission) / create_style (Dress Up)
-    booking_date         DATE NOT NULL,
+    ship_out_date        DATE NOT NULL,
 
     rush_fee             DECIMAL(10,2) NOT NULL DEFAULT 0,
     subtotal             DECIMAL(10,2) NOT NULL DEFAULT 0,
@@ -83,6 +74,7 @@ CREATE TABLE orders (
 
     payment_reference    VARCHAR(100) NULL,
     payment_proof        VARCHAR(255) NULL,
+    payment_option       VARCHAR(10) NOT NULL DEFAULT 'half',      -- Payment page: half = 50% downpayment, full = buong bayad agad (walang balance)
 
     balance_payment_reference  VARCHAR(100) NULL,  -- balance (bago i-ship out) — hiwalay sa unang downpayment sa itaas
     balance_proof               VARCHAR(255) NULL,
@@ -94,7 +86,7 @@ CREATE TABLE orders (
 
     /* REFUND PROCESS (owner lang) — napupuno kapag na-decline ang order na
        may bayad na, o kapag sinimulan ng owner ang refund (hal. lumampas sa
-       booking date). status: for_refund -> refunded (o cancelled kung walang
+       ship out date). status: for_refund -> refunded (o cancelled kung walang
        pumasok na bayad) */
     refund_reason           VARCHAR(255) NULL,
     refund_type             VARCHAR(10) NULL,      -- full / partial
@@ -134,7 +126,8 @@ CREATE TABLE order_figures (
 
     product_price        DECIMAL(10,2) NOT NULL DEFAULT 0,
     name_fee             DECIMAL(10,2) NOT NULL DEFAULT 0,
-    figure_total         DECIMAL(10,2) NOT NULL DEFAULT 0,
+    figure_total         DECIMAL(10,2) NOT NULL DEFAULT 0,   -- presyo ng ISANG piraso (hindi pa x quantity)
+    quantity             SMALLINT UNSIGNED NOT NULL DEFAULT 1, -- ilang piraso ng figure na ito
 
     /* Box add-on (Custom Funko Box / Hirono Blind Box) */
     box_addon_type       VARCHAR(30) NULL,
@@ -427,6 +420,17 @@ CREATE TABLE action_attempts (
 
 
 /* =========================================================
+   LOGIN LOCKOUTS (tagal ng lock: 5 min, tapos 10 min, tapos 20 min max)
+========================================================= */
+
+CREATE TABLE login_lockouts (
+    email        VARCHAR(255) NOT NULL PRIMARY KEY,
+    strikes      INT NOT NULL DEFAULT 0,
+    locked_until DATETIME NULL
+);
+
+
+/* =========================================================
    BANNED EMAILS (mga account na na-ban sa User Management)
 ========================================================= */
 
@@ -459,30 +463,56 @@ CREATE TABLE remember_tokens (
 
 
 /* =========================================================
+   CUSTOMER SAVED DETAILS (helpers/saved_details_helper.php)
+   Shipping at Refund details ng customer - auto-save mula sa Payment page
+   (Full Name = pangalan sa users table, hindi na inuulit dito),
+   makikita at ma-e-edit sa My Profile, auto-fill sa susunod na Payment.
+   (Kusang ginagawa rin ng helper kung wala pa ang table.)
+========================================================= */
+
+CREATE TABLE customer_saved_details (
+    user_id               INT PRIMARY KEY,
+    address_line1         VARCHAR(150) NULL,
+    address_line2         VARCHAR(150) NULL,
+    pin_address           VARCHAR(255) NULL,
+    shipping_contact      VARCHAR(20)  NULL,
+    courier               VARCHAR(30)  NULL,
+    refund_account_name   VARCHAR(150) NULL,
+    refund_account_number VARCHAR(50)  NULL,
+    refund_method         VARCHAR(50)  NULL,
+    updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_saved_details_user
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
    DEFAULT LOGIN ACCOUNTS
 ========================================================= */
 
-INSERT INTO users (full_name, email, password, role)
+INSERT INTO users (first_name, last_name, email, password, role)
 VALUES
 (
-    'Figurify Owner',
+    'Figurify',
+    'Owner',
     'owner@gmail.com',
-    '$2y$10$QBeMig9UVZV8QVCXFddiZuX8adHkbR1rBk.jmNVyWgfp5PQoRZU1S',
+    '$2y$10$/1xxeiM5aOTVTxXiJna4weHnws8tkhesENVswAgOEw28n7pYimc2O',
     'admin'
 ),
 (
-    'Figurify Staff',
+    'Figurify',
+    'Staff',
     'staff@gmail.com',
-    '$2y$10$QBeMig9UVZV8QVCXFddiZuX8adHkbR1rBk.jmNVyWgfp5PQoRZU1S',
+    '$2y$10$5VZWpUx2BNtpvoYvo5YqDOqn2mALHOrXXljhVr3is9TuAa3WN9XF2',
     'staff'
-),
-(
-    'Test Customer',
-    'customer@gmail.com',
-    '$2y$10$QBeMig9UVZV8QVCXFddiZuX8adHkbR1rBk.jmNVyWgfp5PQoRZU1S',
-    'customer'
 )
 ON DUPLICATE KEY UPDATE
-    full_name = VALUES(full_name),
-    password  = VALUES(password),
-    role      = VALUES(role);
+    first_name = VALUES(first_name),
+    last_name  = VALUES(last_name),
+    password   = VALUES(password),
+    role       = VALUES(role);
+
+-- tanggal na ang test customer account
+DELETE FROM users WHERE email IN ('customer@gmail.com', 'customer@figurify.com');

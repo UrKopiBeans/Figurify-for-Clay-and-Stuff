@@ -1,281 +1,371 @@
-/* ==========================================================
-   Clay and Stuff — Figurify redesign
-   Payment & Shipping Details (payment-shipping.php)
-   Standalone: does not need my-orders.css.
-   ========================================================== */
+/* ==========================================================================
+   PAYMENT & SHIPPING PAGE - CSS   (my-order/payment-shipping.css)
+   Lahat ng style ng payment-shipping.php ay nandito lang. Ang navbar at
+   footer ay may sariling style sa Shared/navbar.php at Shared/footer.php.
 
-:root{
-    --cs-primary:   #C2325F;
-    --cs-plum:      #4A1D3B;
-    --cs-blush:     #FFEDF2;
-    --cs-cream:     #FFF8F6;
-    --cs-success:   #2F8F67;
-    --cs-warning:   #9A6408;
-    --cs-danger:    #B83227;
-    --cs-line:      #F3DCE3;
-    --cs-line-soft: #F8E8EC;
-    --cs-muted:     #7C6670;
-    --cs-warn-bg:   #FDEFBF;
+   LAMAN (pareho ang ayos sa payment-shipping.php, taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              box-sizing, text
+     [2] PAGE HERO         banner sa taas (peach -> cream -> pink)
+     [3] LAYOUT            2 column + puting cards
+     [4] FIELDS            label, input, select, mga paliwanag, paalala
+     [5] PAYMENT CARD      payment option (Half / Full), presyo, QR code, upload ng proof
+     [6] REFUND METHOD     GCash / BPI / Other pills
+     [7] TERMS + BUTTONS   checkbox, Submit Payment, Back
+     [8] QR LIGHTBOX       pinalaking QR
+     [9] RESPONSIVE        phone / tablet
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
 }
 
-*{ box-sizing: border-box; }
+/* form controls - namamana ang buong font (pamilya, laki, kapal) ng page */
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
 
-body{
+optgroup { font-family: inherit; }
+
+/* mga heading ng page na ito */
+.ps-hero h1,
+.ps-card h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE  (walang global margin reset sa page na ito - sinadya)
+   ========================================================================== */
+* { box-sizing: border-box; }
+
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
+body {
     margin: 0;
-    
-    
-    color: var(--cs-plum);
+    color: #4A1D3B;
     line-height: 1.5;
 }
+/* ====================== END BASE ====================== */
 
-button, input, select, textarea{ font: inherit; }
 
-/* ---------- hero ---------- */
-
-.ps-hero{
-    padding: 44px 24px 38px;
-    background: linear-gradient(120deg, #FFEDF2 0%, var(--cs-cream) 70%);
-}
-
-.ps-hero-inner{
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.ps-eyebrow{
-    display: block;
-    
-    font-style: italic;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-    color: var(--cs-primary);
-}
-
-.ps-hero h1{
-    margin: 4px 0 6px;
-    
-    font-weight: 800;
-    font-size: 46px;
-    line-height: 1.1;
-    color: var(--cs-plum);
-}
-
-.ps-hero p{
-    margin: 0;
-    font-size: 15px;
-    color: var(--cs-muted);
-}
-
-/* ---------- layout ---------- */
-
-.ps-page{
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 32px 24px 64px;
-}
-
-.ps-layout{
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 24px;
-    align-items: start;
-}
-
-.ps-col{
+/* ==========================================================================
+   [2] PAGE HERO  (dating nasa sariling <style> ng payment-shipping.php)
+   ========================================================================== */
+.ps-hero {
+    position: relative;
+    min-height: 250px;
     display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom: 3px solid #ead9f0;
 }
 
-.ps-card{
-    background: #fff;
-    border: 1px solid var(--cs-line);
-    border-radius: 20px;
-    padding: 28px 24px 26px;
-    box-shadow: 0 1px 2px rgba(74,29,59,.04);
+/* hanay ng sparkle sa kanang-itaas (kapareho ng Commission page) */
+.ps-hero::after {
+    content: "\2726   \2606   \2727   \2661   \2726";
+    position: absolute;
+    top: 25px;
+    right: 7%;
+    font-size: 19px;
+    letter-spacing: 7px;
+    white-space: nowrap;
+    color: #e8bd4d;
+    pointer-events: none;
 }
 
-.ps-card h2{
-    margin: 0 0 18px;
-    
+/* lalagyan ng text */
+.ps-hero-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* maliit na caps sa taas ng title - body font ang gamit */
+.ps-eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a04a78;
+}
+
+.ps-hero h1 {
+    margin-top: 8px;
+    font-size: clamp(34px, 5vw, 55px);
     font-weight: 700;
-    font-size: 24px;
-    color: var(--cs-plum);
+    line-height: 1.05;
+    letter-spacing: -.5px;
+    color: #86365f;
 }
 
-.ps-error{
-    max-width: 1280px;
-    margin: 0 auto 16px;
-    padding: 12px 16px;
-    background: #FDE6E3;
-    color: var(--cs-danger);
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 600;
+.ps-hero p {
+    max-width: 720px;
+    margin: 15px auto 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #8a5870;
+}
+/* ====================== END PAGE HERO ====================== */
+
+
+/* ==========================================================================
+   [3] LAYOUT  (3 container magkatabi: Shipping, Refund, Payment)
+   ========================================================================== */
+.ps-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 36px 24px 48px;
 }
 
-/* ---------- fields ---------- */
-
-.payment-form-group{
-    margin-bottom: 18px;
+.ps-layout {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
 }
+
+/* ang 2 .ps-col ay hindi na kahon - ang 3 card na mismo ang magkakatabi sa .ps-layout */
+.ps-col {
+    display: contents;
+}
+
+/* puting card - Shipping, Refund, Payment */
+.ps-card {
+    padding: 28px;
+    background: #fff;
+    border: 1px solid #F3DCE3;
+    border-radius: 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.ps-card h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 16px;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+/* ====================== END LAYOUT ====================== */
+
+
+/* ==========================================================================
+   [4] FIELDS
+   ========================================================================== */
+.payment-form-group { margin-bottom: 15px; }
+
+/* Account Name + Account Number (isang column dahil 3 container ang magkatabi) */
+.ps-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+
+/* pulang * sa required na fill up */
+.required-star { color: #D92D20; }
 
 .payment-form-group > label,
-.payment-form-group > .ps-label{
+.payment-form-group > .ps-label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-size: 13px;
     font-weight: 700;
-    color: var(--cs-plum);
 }
 
 .payment-form-group input[type="text"],
-.payment-form-group select{
+.payment-form-group select {
     width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
     background: #fff;
-    border: 1px solid var(--cs-line);
+    border: 1.5px solid #F3DCE3;
     border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 14px;
-    color: var(--cs-plum);
+    font-size: 16px;
+    color: #4A1D3B;
     outline: none;
     transition: border-color .15s, box-shadow .15s;
 }
 
-.payment-form-group input::placeholder{ color: #A8949C; }
+.payment-form-group input::placeholder { color: #B9A3AD; }
 
 .payment-form-group input[type="text"]:focus,
-.payment-form-group select:focus{
-    border-color: var(--cs-primary);
-    box-shadow: 0 0 0 3px rgba(194,50,95,.12);
+.payment-form-group select:focus {
+    border-color: #C2325F;
+    box-shadow: 0 0 0 3px rgba(194, 50, 95, .12);
 }
 
-.address-stack{
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
+/* 2 linya ng address (pinagsasama ng script bago i-submit) */
+.address-stack { display: flex; flex-direction: column; gap: 10px; }
 
-.courier-note{
-    margin: -2px 0 8px;
-    font-size: 11.5px;
-    color: var(--cs-muted);
-}
+/* maliliit na paliwanag */
+.courier-note { margin: -2px 0 8px; font-size: 12px; color: #7C6670; }
+.refund-note { margin: 0 0 16px; font-size: 14px; color: #7C6670; }
+.payment-form-hint { margin: 8px 0 16px; font-size: 12px; color: #7C6670; }
+.ps-foot-note { margin: 2px 0 0; font-size: 13px; color: #7C6670; }
 
-.refund-note,
-.payment-form-hint{
-    margin: 0 0 16px;
-    font-size: 12.5px;
-    color: var(--cs-muted);
-}
-
-.payment-form-hint{
-    margin: 8px 0 0;
-    font-size: 11.5px;
-}
-
-.ps-foot-note{
-    margin: 2px 0 0;
-    font-size: 11.5px;
-    color: var(--cs-muted);
-}
-
-.notice-box{
-    margin: 4px 0 18px;
-    padding: 13px 16px;
+/* dilaw na paalala sa Payment card */
+.notice-box {
+    margin: 14px 0;
+    padding: 12px 14px;
     border-radius: 12px;
-    background: var(--cs-warn-bg);
-    color: var(--cs-warning);
-    font-size: 12.5px;
+    background: #FDEFBF;
+    font-size: 13px;
     font-weight: 500;
-    line-height: 1.5;
+    color: #9A6408;
+}
+/* ====================== END FIELDS ====================== */
+
+
+/* ==========================================================================
+   [5] PAYMENT CARD  (payment option, presyo, QR code, proof of payment)
+   ========================================================================== */
+
+/* Payment Option: 2 hanay (50% Downpayment / Full Payment) - may bilog na radio sa kaliwa */
+.payment-option-list { display: grid; gap: 10px; }
+
+.payment-option-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "dot name amount" ". note amount";
+    column-gap: 12px;
+    align-items: center;
+    padding: 16px 18px;
+    background: #fff;
+    border: 2px solid #F0D3DE;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-/* ---------- payment card ---------- */
+/* nakatagong radio sa loob ng card */
+.payment-option-card input { position: absolute; opacity: 0; pointer-events: none; }
 
-.price-row{
+/* bilog na radio (napupuno kapag napili) */
+.payment-option-card::before {
+    content: "";
+    grid-area: dot;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border: 2px solid #F0D3DE;
+    border-radius: 50%;
+}
+
+.payment-option-card:hover { background: #FFF5F8; }
+.payment-option-card:has(input:checked) { background: #FFEDF2; border-color: #C2325F; }
+.payment-option-card:has(input:checked)::before { border: 7px solid #C2325F; }
+.payment-option-card:focus-within { box-shadow: 0 0 0 3px rgba(194, 50, 95, .2); }
+
+.payment-option-name { grid-area: name; font-size: 15px; font-weight: 700; color: #4A1D3B; }
+.payment-option-amount { grid-area: amount; font-size: 22px; font-weight: 800; color: #C2325F; }
+.payment-option-note { grid-area: note; font-size: 12.5px; line-height: 1.35; color: #7C6670; }
+
+.price-breakdown-list { margin: 12px 0 4px; }
+
+.price-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    padding: 5px 0;
+    padding: 9px 0;
     font-size: 14px;
-    color: var(--cs-plum);
+    color: #7C6670;
 }
 
-.price-row span:last-child{ font-weight: 700; }
+.price-row span:last-child { font-weight: 700; color: #4A1D3B; }
 
-.downpayment-row span:last-child{
-    color: var(--cs-primary);
-}
+/* Amount to Pay Now - malaki, may putol-putol na guhit sa taas */
+.downpayment-row { margin-top: 6px; padding-top: 14px; border-top: 1.5px dashed #F3DCE3; }
+.downpayment-row span:last-child { font-size: 26px; color: #C2325F; }
 
-.price-breakdown-list{ margin-bottom: 14px; }
+/* GCash / BPI QR (click = palakihin, [8] QR LIGHTBOX) */
+.qr-code-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 
-.qr-code-row{
-    display: flex;
-    gap: 16px;
-}
-
-.qr-code-item{
+/* buong box ang clickable; may hover para alam na pwedeng i-click */
+.qr-code-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
+    padding: 14px;
+    background: #FFF8F6;
+    border: 1.5px dashed #F3DCE3;
+    border-radius: 16px;
+    cursor: zoom-in;
+    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-.qr-code-img{
+.qr-code-item:hover {
+    background: #FFEDF2;
+    border-color: #C2325F;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.qr-code-img {
     display: block;
-    width: 150px;
-    height: 150px;
+    width: 100%;
+    max-width: 190px;
+    aspect-ratio: 1;
     object-fit: contain;
     background: #fff;
-    border: 1px solid var(--cs-line);
-    border-radius: 14px;
-    cursor: zoom-in;
-}
-
-.qr-code-caption{
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--cs-plum);
-}
-
-.payment-proof-upload{
-    position: relative;
-}
-
-.payment-proof-preview{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 88px;
-    padding: 14px;
-    background: var(--cs-cream);
-    border: 1.5px dashed #EBBCCB;
-    border-radius: 14px;
-    text-align: center;
-    font-size: 14px;
-    color: var(--cs-muted);
-    overflow: hidden;
-    transition: border-color .15s, background .15s;
-}
-
-.payment-proof-upload:hover .payment-proof-preview{
-    border-color: var(--cs-primary);
-    background: var(--cs-blush);
-}
-
-.payment-proof-preview img{
-    max-width: 100%;
-    max-height: 320px;
     border-radius: 10px;
 }
 
-.payment-proof-placeholder{ display: block; }
+.qr-code-caption { font-size: 14px; font-weight: 800; }
+/* Account Name / Number: tig-isang linya */
+.qr-code-account { display: block; font-size: 11.5px; line-height: 1.35; text-align: center; white-space: nowrap; }
 
-.payment-proof-upload input[type="file"]{
+/* upload ng screenshot - buong box ang clickable (nakapatong ang file input) */
+.payment-proof-upload { position: relative; }
+
+.payment-proof-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 130px;
+    padding: 24px;
+    overflow: hidden;
+    background: #FFEDF2;
+    border: 2px dashed #E5B8C8;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #C2325F;
+    transition: border-color .15s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.payment-proof-upload:hover .payment-proof-preview { border-color: #C2325F; }
+
+.payment-proof-preview img { max-width: 100%; max-height: 240px; border-radius: 10px; }
+
+.payment-proof-placeholder { display: block; }
+.payment-proof-format { font-size: 12px; font-weight: 500; color: #7C6670; }   /* "JPG, PNG, WEBP up to 5MB" */
+
+.payment-proof-upload input[type="file"] {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -283,132 +373,110 @@ button, input, select, textarea{ font: inherit; }
     opacity: 0;
     cursor: pointer;
 }
+/* ====================== END PAYMENT CARD ====================== */
 
-/* ---------- refund method pills ---------- */
 
-.refund-method-options{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 12px;
-}
+/* ==========================================================================
+   [6] REFUND METHOD PILLS  (GCash / BPI / Other)
+   ========================================================================== */
+.refund-method-options { display: flex; gap: 10px; margin-bottom: 10px; }
 
-.refund-method-option{
+.refund-method-option {
     position: relative;
-    display: inline-flex;
+    flex: 1;
+    display: flex;
     align-items: center;
-    padding: 10px 22px;
-    border-radius: 999px;
-    background: var(--cs-blush);
-    color: var(--cs-primary);
+    justify-content: center;
+    padding: 11px;
+    background: #fff;
+    border: 1.5px solid #F3DCE3;
+    border-radius: 12px;
     font-size: 13px;
     font-weight: 700;
+    color: #7C6670;
     cursor: pointer;
-    transition: background .15s, color .15s;
+    transition: background .15s, border-color .15s, color .15s;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-.refund-method-option input{
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
+/* nakatagong radio sa loob ng pill */
+.refund-method-option input { position: absolute; opacity: 0; pointer-events: none; }
 
-.refund-method-option:hover{ background: #FFDCE6; }
+.refund-method-option:hover { background: #FFF5F8; }
+.refund-method-option.selected { background: #FFEDF2; border-color: #C2325F; color: #C2325F; }
+.refund-method-option:focus-within { box-shadow: 0 0 0 3px rgba(194, 50, 95, .2); }
 
-.refund-method-option.selected{
-    background: var(--cs-primary);
-    color: #fff;
-}
+/* "Please specify" - lumalabas lang kapag Other (script) */
+#refundMethodOther { display: block; margin-bottom: 8px; }
+/* ====================== END REFUND METHOD PILLS ====================== */
 
-.refund-method-option:focus-within{
-    box-shadow: 0 0 0 3px rgba(194,50,95,.2);
-}
 
-#refundMethodOther{
-    display: none;
-    width: 100%;
-    margin-bottom: 8px;
-    border: 1px solid var(--cs-line);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 14px;
-    color: var(--cs-plum);
-    outline: none;
-}
-
-#refundMethodOther:focus{
-    border-color: var(--cs-primary);
-    box-shadow: 0 0 0 3px rgba(194,50,95,.12);
-}
-
-/* ---------- terms + buttons ---------- */
-
-.payment-terms-group{
+/* ==========================================================================
+   [7] TERMS + BUTTONS
+   ========================================================================== */
+.payment-terms-group {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin: 4px 0 18px;
+    margin: 16px 0;
 }
 
-.payment-terms-group input[type="checkbox"]{
-    width: 17px;
-    height: 17px;
+.payment-terms-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
     margin-top: 2px;
     flex-shrink: 0;
-    accent-color: var(--cs-primary);
+    accent-color: #C2325F;
     cursor: pointer;
 }
 
-.payment-terms-group label{
-    font-size: 13px;
-    color: var(--cs-plum);
+.payment-terms-group label { font-size: 13px; color: #7C6670; cursor: pointer; }
+
+.payment-terms-group a { font-weight: 700; color: #C2325F; text-decoration: none; }
+.payment-terms-group a:hover { text-decoration: underline; }
+
+/* Back at Submit Payment - magkatabi */
+.payment-actions-row { display: flex; gap: 12px; }
+
+/* Submit Payment */
+.payment-submit-btn {
+    flex: 1;
+    padding: 12px 22px;
+    background: #C2325F;
+    border: 0;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #fff;
     cursor: pointer;
+    transition: background .15s, opacity .15s;
 }
 
-.payment-terms-group a{
-    color: var(--cs-primary);
-    font-weight: 700;
+.payment-submit-btn:hover { background: #A92A52; }
+.payment-submit-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Back - may border para kita (bumabalik sa My Orders) */
+.payment-back-btn {
+    flex: 1;
+    padding: 12px 22px;
+    background: #fff;
+    border: 2px solid #C2325F;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #C2325F;
     text-decoration: none;
 }
 
-.payment-terms-group a:hover{ text-decoration: underline; }
+.payment-back-btn:hover { background: #FFF1F6; }
+/* ====================== END TERMS + BUTTONS ====================== */
 
-.payment-actions-row{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
 
-.payment-submit-btn,
-.payment-cancel-btn{
-    padding: 15px 28px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background .15s, color .15s, opacity .15s;
-}
-
-.payment-submit-btn{
-    background: var(--cs-primary);
-    color: #fff;
-    border: 2px solid var(--cs-primary);
-}
-
-.payment-submit-btn:hover{ background: #A92A52; border-color: #A92A52; }
-.payment-submit-btn:disabled{ opacity: .6; cursor: not-allowed; }
-
-.payment-cancel-btn{
-    background: #fff;
-    color: var(--cs-primary);
-    border: 2px solid var(--cs-primary);
-}
-
-.payment-cancel-btn:hover{ background: var(--cs-blush); }
-
-/* ---------- QR lightbox ---------- */
-
-.qr-lightbox-overlay{
+/* ==========================================================================
+   [8] QR LIGHTBOX  (click ng QR = palakihin)
+   ========================================================================== */
+.qr-lightbox-overlay {
     position: fixed;
     inset: 0;
     z-index: 3000;
@@ -416,22 +484,23 @@ button, input, select, textarea{ font: inherit; }
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: rgba(74,29,59,.6);
+    background: rgba(74, 29, 59, .6);
 }
 
-.qr-lightbox-overlay.show{ display: flex; }
+.qr-lightbox-overlay.show { display: flex; }
 
-.qr-lightbox-box{
+.qr-lightbox-box {
     position: relative;
-    max-width: 420px;
     width: 100%;
+    max-width: 420px;
     padding: 28px 24px 22px;
     background: #fff;
     border-radius: 20px;
     text-align: center;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-.qr-lightbox-box img{
+.qr-lightbox-box img {
     display: block;
     width: 100%;
     max-height: 70vh;
@@ -439,45 +508,73 @@ button, input, select, textarea{ font: inherit; }
     border-radius: 12px;
 }
 
-.qr-lightbox-box p{
-    margin: 12px 0 0;
-    font-weight: 700;
-    color: var(--cs-plum);
-}
+.qr-lightbox-box p { margin: 12px 0 0; font-weight: 700; }
 
-.qr-lightbox-box .qr-lightbox-hint{
-    margin-top: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--cs-muted);
-}
+.qr-lightbox-box .qr-lightbox-hint { margin-top: 4px; font-size: 12px; font-weight: 500; color: #7C6670; }
 
-.qr-lightbox-close{
+.qr-lightbox-frame { position: relative; }
+
+/* close (X): iisang itsura sa buong system - puting bilog, pink na X (dalawang guhit),
+   nasa loob ng larawan sa kanang itaas (kapareho ng Image Submission) */
+.qr-lightbox-close {
     position: absolute;
-    top: 8px;
-    right: 12px;
-    width: 34px;
-    height: 34px;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     border: 0;
     border-radius: 50%;
-    background: var(--cs-blush);
-    color: var(--cs-primary);
-    font-size: 22px;
-    line-height: 1;
+    background: #fff;
+    color: #C2325F;
     cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-/* ---------- responsive ---------- */
-
-@media (max-width: 960px){
-    .ps-layout{ grid-template-columns: minmax(0, 1fr); }
-    .ps-hero{ padding: 32px 14px 28px; }
-    .ps-hero h1{ font-size: 34px; }
+.qr-lightbox-close::before,
+.qr-lightbox-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
 }
 
-@media (max-width: 520px){
-    .ps-page{ padding: 20px 14px 48px; }
-    .ps-card{ padding: 22px 16px 20px; }
-    .qr-code-img{ width: 120px; height: 120px; }
-    .payment-actions-row > button{ flex: 1 1 100%; }
+.qr-lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.qr-lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.qr-lightbox-close:hover { background: #FFF1F6; }
+/* ====================== END QR LIGHTBOX ====================== */
+
+
+/* ==========================================================================
+   [9] RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1100px) {
+    .ps-layout { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media (max-width: 720px) {
+    .ps-hero { min-height: 220px; }
+    .ps-hero::after { top: 12px; right: 4%; font-size: 14px; letter-spacing: 4px; }
+    .ps-hero-inner { padding: 34px 16px 26px; }
+}
+
+@media (max-width: 520px) {
+    .ps-card { padding: 20px 16px; }
+    .payment-option-card { padding: 14px; }
+    .qr-code-row { gap: 10px; }
+    .qr-code-account { white-space: normal; }   /* maliit na phone: pwedeng bumaba para hindi lumampas */
+}
+/* ====================== END RESPONSIVE ====================== */
+
+/* ===== MODAL BUKAS: hindi gumagalaw ang page sa likod ===== */
+body.no-scroll { overflow: hidden; }
+
+/* ===== nakatago (hidden) ===== */
+#paymentProofPreviewImg[hidden],
+.payment-proof-placeholder[hidden],
+#refundMethodOther[hidden] { display: none; }

@@ -1,0 +1,1431 @@
+/* ==========================================================================
+   image-submission.css  -  IMAGE SUBMISSION PAGE (image-submission.php)
+   Iisang malinis na CSS ng page na ito. Walang patong-patong na layer
+   at walang pilitan (override) na rule.
+
+   LAMAN:
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] PAGE LAYOUT                  heading, kaliwa (form) at kanan (Your Order)
+     [2] FORM CARDS                   numbered cards, style / product / size options
+     [3] INPUTS + UPLOAD              fields, notes, reference images
+     [4] CUSTOM BOX                   Funko box, Hirono blind box
+     [5] ADD TO ORDER BUTTONS
+     [6] YOUR ORDER PANEL             cart, quantity, subtotal, total, submit
+     [7] IMAGE MODAL + NOTICE
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html {
+    scroll-behavior:smooth;
+}
+
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
+}
+
+body {
+    color:#75445e;
+    line-height:1.5;
+}
+
+button,
+input,
+select,
+textarea {
+    font:inherit;
+}
+
+button {
+    cursor:pointer;
+}
+
+/* mga heading ng page na ito */
+
+.receipt-header h3,
+.hero h1,
+.summary-total span,
+.summary-total strong {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ==========================================================================
+   [1] PAGE LAYOUT
+   ========================================================================== */
+
+.page {
+    max-width:1240px;
+    margin:0 auto;
+    padding:40px 28px 48px;
+}
+
+.order-form {
+    display:none;
+}
+
+.order-form.show {
+    display:block;
+    animation:fadeUp .35s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity:0; transform:translateY(15px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+
+.order-workspace {
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) 380px;
+    gap:28px;
+    align-items:start;
+}
+
+/* mga card sa kaliwa (walang numbering, hindi step-by-step) */
+
+.order-left {
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    min-width:0;
+}
+
+.summary-column {
+    position:sticky;
+    top:92px;
+    align-self:start;
+    min-width:0;
+}
+
+/* ==========================================================================
+   [1b] FORM CARD   (isang container: Figure Details at Custom Box, walang scroll sa loob)
+   ========================================================================== */
+
+.form-card {
+    scroll-margin-top:100px;
+    border:1px solid #F3DCE3;
+    border-radius:22px;
+    background:#fff;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ==========================================================================
+   [2] FORM CARDS   (numbered: 1 Choose a figure style, 2 Product type, ...)
+   ========================================================================== */
+
+/* Figure Details at Box & Add-ons: nasa loob ng iisang .form-card (ito na ang may border at puti) */
+.details-box {
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    padding:24px;
+}
+
+/* Box & Add-ons: lalabas lang kapag Funko Pop o Hirono (.show).
+   Ang kulay (iba sa Figure Details, para alam na optional) ay nasa custom-box.css (.optional-box-area) */
+.box-addon-box {
+    display:none;
+    margin:0 24px 24px;
+}
+
+/* title ng card */
+
+.details-box > .field-group > label,
+.box-addon-box-heading h3 {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+    color:#4A1D3B;
+    font-size:19px;
+    font-weight:800;
+}
+
+.details-box > .field-group > label .required-star {
+    margin-left:-10px;
+}
+
+/* ---------- Product Type at Size: lumalabas lang kapag kailangan (JS ang may hawak ng .show) ---------- */
+
+#productTypeFieldGroup,
+#sizeFieldGroup {
+    display:none;
+}
+
+#productTypeFieldGroup.show,
+#sizeFieldGroup.show {
+    display:block;
+}
+
+/* ---------- option cards (Figure Style / Product Type) ---------- */
+
+.option-grid {
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:16px;
+}
+
+.product-grid {
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:14px;
+}
+
+.image-option {
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    padding:10px 10px 14px;
+    border:2px solid #F3DCE3;
+    border-radius:18px;
+    background:#fff;
+    color:#4A1D3B;
+    text-align:center;
+    transition:border-color .15s ease, background-color .15s ease, transform .15s ease;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.image-option:hover {
+    border-color:#E9A9C4;
+    transform:translateY(-2px);
+}
+
+.image-option.selected {
+    border-color:#C2325F;
+    background:#FFF1F6;
+    box-shadow:0 0 0 3px rgba(194, 50, 95, .18);
+}
+
+.image-option.disabled {
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+.image-option.disabled:hover {
+    border-color:#F3DCE3;
+    transform:none;
+}
+
+.image-option-image {
+    width:100%;
+    aspect-ratio:1 / 1;
+    border-radius:13px;
+    object-fit:cover;
+    background:#FBE9F1;
+}
+
+.image-option-name {
+    font-size:15px;
+    font-weight:800;
+}
+
+/* check badge: lumalabas lang kapag napili */
+
+/* ---------- size ---------- */
+
+.size-grid {
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.size-option {
+    position:relative;
+    min-width:84px;
+    padding:12px 20px;
+    border:2px solid #F3DCE3;
+    border-radius:14px;
+    background:#fff;
+    color:#4A1D3B;
+    font-size:16px;
+    font-weight:800;
+    transition:border-color .15s ease, background-color .15s ease;
+}
+
+.size-option:hover {
+    border-color:#E9A9C4;
+}
+
+.size-option.selected {
+    border-color:#C2325F;
+    background:#C2325F;
+    color:#fff;
+    box-shadow:0 0 0 3px rgba(194, 50, 95, .18);
+}
+
+.size-option.disabled {
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+.no-size-message {
+    display:none;
+    margin-top:4px;
+    color:#2F8F67;
+    font-size:14px;
+    font-weight:700;
+}
+
+.no-size-message.show {
+    display:block;
+}
+
+/* ==========================================================================
+   [3] INPUTS + UPLOAD
+   ========================================================================== */
+
+.notes-box textarea:focus {
+    outline:none;
+    border-color:#C2325F;
+    box-shadow:0 0 0 3px rgba(194, 50, 95, .12);
+}
+
+.notes-box textarea {
+    width:100%;
+    min-height:110px;
+    padding:14px 16px;
+    border:1px solid #F0CFDD;
+    border-radius:13px;
+    background:#fff;
+    color:#4A1D3B;
+    font-size:16px;
+    resize:vertical;
+}
+
+/* "(Maximum 5 images)" sa tabi ng title */
+
+.upload-limit-inline {
+    margin-left:auto;
+    color:#a5748e;
+    font-size:13px;
+    font-weight:600;
+}
+
+.upload-dropzone {
+    position:relative;
+    padding:18px;
+    border:2px dashed #F2B5CE;
+    border-radius:18px;
+    background:#FFF8FB;
+    cursor:pointer;
+    transition:border-color .15s ease, background-color .15s ease;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone.dragover {
+    border-color:#C2325F;
+    background:#FFF1F6;
+}
+
+.upload-dropzone.disabled {
+    opacity:.65;
+}
+
+.upload-input {
+    position:absolute;
+    width:1px;
+    height:1px;
+    opacity:0;
+    pointer-events:none;
+}
+
+.image-count-badge {
+    position:absolute;
+    top:12px;
+    right:14px;
+    padding:3px 12px;
+    border-radius:999px;
+    background:#fff;
+    color:#C2325F;
+    font-size:12px;
+    font-weight:800;
+}
+
+.image-preview-wrap {
+    position:relative;
+    min-height:120px;
+    margin-top:18px;
+}
+
+/* "Drag and drop" text: nasa gitna, itinatago ng JS kapag may image na */
+
+.upload-subtitle {
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#8a6479;
+    font-size:15px;
+    font-weight:700;
+    text-align:center;
+}
+
+.image-preview-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(96px, 1fr));
+    gap:12px;
+}
+
+.uploaded-image-card {
+    position:relative;
+    aspect-ratio:1 / 1;
+    border:2px solid #fff;
+    border-radius:13px;
+    overflow:hidden;
+    background:#fdf3f8;
+    box-shadow:0 2px 8px rgba(74, 29, 59, .15);
+    cursor:zoom-in;
+}
+
+.uploaded-image-card img {
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.image-number {
+    position:absolute;
+    left:6px;
+    bottom:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:rgba(74, 29, 59, .75);
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+}
+
+/* ===== X buttons (delete ng image + close ng malaking image) =====
+   ang X ay dalawang guhit (::before / ::after) na nasa eksaktong gitna ng bilog,
+   kaya hindi na nakadepende sa font kung naka-center */
+.image-delete {
+    position:absolute;
+    top:6px;
+    right:6px;
+    z-index:2;
+    width:28px;
+    height:28px;
+    padding:0;
+    border:2px solid #fff;
+    border-radius:50%;
+    background:#D92D20;
+    box-shadow:0 2px 6px rgba(74, 29, 59, .3);
+    color:#fff;
+    cursor:pointer;
+}
+
+.image-delete:hover {
+    background:#B42318;
+}
+
+.image-delete::before,
+.image-delete::after,
+.modal-close::before,
+.modal-close::after {
+    content:"";
+    position:absolute;
+    top:50%;
+    left:50%;
+    border-radius:2px;
+    background:currentColor;
+}
+
+.image-delete::before,
+.modal-close::before {
+    transform:translate(-50%, -50%) rotate(45deg);
+}
+
+.image-delete::after,
+.modal-close::after {
+    transform:translate(-50%, -50%) rotate(-45deg);
+}
+
+.image-delete::before,
+.image-delete::after {
+    width:12px;
+    height:2px;
+}
+
+/* ==========================================================================
+   [4] CUSTOM BOX   (lalabas lang kapag Funko Pop o Hirono ang style)
+   ========================================================================== */
+
+.box-addon-box.show {
+    display:block;
+}
+
+.style-addon-section {
+    display:none;
+}
+
+.style-addon-section.show {
+    display:block;
+}
+
+/* ---------- Hirono optional extras ---------- */
+
+.blind-set-contents {
+    display:none;
+    margin-top:16px;
+}
+
+.blind-set-contents.show {
+    display:block;
+}
+
+/* ---------- box details (name, number, color, letter...) ---------- */
+
+.box-detail-fields {
+    display:none;
+}
+
+.box-detail-fields.show {
+    display:grid;
+}
+
+/* ==========================================================================
+   [5] ADD TO ORDER BUTTONS
+   ========================================================================== */
+
+/* ==========================================================================
+   [6] YOUR ORDER PANEL   (kanan)
+   ========================================================================== */
+
+/* taas (Your Order, Order Type, Ship Out Date) at baba (Estimated total, Back / Done) ay nakatigil;
+   ang Figure Order lang ang nag-i-scroll (kasya sa taas ng screen) */
+.receipt {
+    display:flex;
+    flex-direction:column;
+    max-height:calc(100vh - 112px);
+    border:1px solid #F3DCE3;
+    border-radius:22px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.receipt-header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 22px;
+    border-bottom:1px solid #F3DCE3;
+    background:#fff;
+}
+
+.receipt-header h3 {
+    color:#4A1D3B;
+    font-size:25px;
+    font-weight:700;
+}
+
+.receipt-body {
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    padding:18px 20px 20px;
+}
+
+/* ---------- Order Type + Ship Out Date (walang guhit, isang linya bawat isa) ---------- */
+
+.order-info-list {
+    margin-bottom:16px;
+}
+
+.order-info-item {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:6px 2px;
+}
+
+.order-info-label {
+    color:#8a6479;
+    font-size:13px;
+    font-weight:700;
+}
+
+.order-info-value {
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    color:#4A1D3B;
+    font-size:15px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.order-info-sub {
+    color:#8a6479;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* ---------- Figure Order: isang container bawat figure, pababa ang scroll ---------- */
+
+/* "Figure Order" + "1 of 2"; kapag may scroll na, may shadow pababa (kagaya ng Dress Up) */
+.figure-order-head {
+    position:relative;
+    z-index:1;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin:0 -20px;
+    padding:0 20px 10px;
+    background:#fff;
+}
+
+.figure-order-title {
+    color:#4A1D3B;
+    font-size:15px;
+    font-weight:800;
+}
+
+.figure-order-count {
+    padding:3px 12px;
+    border-radius:999px;
+    background:#FDE3EE;
+    color:#C2325F;
+    font-size:12px;
+    font-weight:800;
+}
+
+.receipt.can-scroll .figure-order-head {
+    box-shadow:0 10px 16px -12px rgba(74, 29, 59, .35);
+}
+
+/* manipis at maayos na scroll bar */
+.figure-order-list {
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    overflow-y:auto;
+    padding:10px 6px 10px 2px;
+    scrollbar-width:thin;
+    scrollbar-color:#E7B9C6 transparent;
+}
+
+.figure-order-list::-webkit-scrollbar {
+    width:6px;
+}
+
+.figure-order-list::-webkit-scrollbar-thumb {
+    border-radius:999px;
+    background:#E7B9C6;
+}
+
+.figure-order-item {
+    flex:none;
+    padding:12px;
+    border:1px solid #F3DCE3;
+    border-radius:16px;
+    background:#FFF9FB;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ang figure na ginagawa / ine-edit ngayon */
+.figure-order-item.is-current {
+    border-color:#C2325F;
+}
+
+.cart-card {
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:4px 10px;
+}
+
+/* "Figure 1" - palatandaan kung aling figure ang container */
+.figure-order-number {
+    flex:1 0 100%;
+    color:#C2325F;
+    font-size:15px;
+    font-weight:800;
+}
+
+.cart-card-rows {
+    order:3;
+    flex:1 0 100%;
+    margin:6px 0;
+}
+
+.cart-qty {
+    order:1;
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.cart-qty-btn {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    padding:0;
+    border:1px solid #F0CFDD;
+    border-radius:50%;
+    background:#fff;
+    color:#C2325F;
+    font-size:16px;
+    font-weight:800;
+}
+
+.cart-qty-btn:hover {
+    background:#FFF1F6;
+}
+
+.cart-qty-btn:disabled,
+.cart-item-edit:disabled,
+.cart-item-remove:disabled {
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+.cart-qty-value {
+    min-width:30px;
+    color:#4A1D3B;
+    font-size:15px;
+    font-weight:800;
+    text-align:center;
+}
+
+/* Subtotal ng figure (presyo + rush fee) x qty */
+.cart-card-price {
+    order:4;
+    flex:1 0 100%;
+    display:flex;
+    justify-content:space-between;
+    padding-top:6px;
+    border-top:1px dashed #F0CFDD;
+    color:#4A1D3B;
+    font-size:14px;
+    font-weight:800;
+}
+
+.cart-item-actions {
+    order:2;
+    display:flex;
+    gap:6px;
+}
+
+/* Edit = puti na may border, Remove = pula (iisang kulay ng customer buttons) */
+.cart-item-edit,
+.cart-item-remove {
+    min-height:30px;
+    padding:3px 12px;
+    border:2px solid #C2325F;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.cart-item-edit { background:#fff; color:#C2325F; }
+.cart-item-edit:hover { background:#FFF1F6; }
+
+.cart-item-remove { background:#C2325F; color:#fff; }
+.cart-item-remove:hover { border-color:#A62A50; background:#A62A50; }
+
+.add-figure-button {
+    padding:7px 14px;
+    border: 2px solid #C2325F;
+    border-radius:999px;
+    background:#fff;
+    color:#C2325F;
+    font-size:13px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.add-figure-button:hover {
+    background:#FFF1F6;
+}
+
+.add-figure-button.is-disabled {
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+/* ---------- rows sa loob ng card ng figure: Label | Value | Price ---------- */
+
+.figure-summary-item {
+    display:grid;
+    grid-template-columns:88px minmax(0, 1fr) auto;
+    align-items:baseline;
+    gap:8px;
+    padding:3px 0;
+    font-size:12.5px;
+}
+
+.figure-summary-label {
+    color:#a5748e;
+    font-size:11.5px;
+}
+
+.figure-summary-name {
+    color:#4A1D3B;
+    font-weight:700;
+}
+
+.figure-summary-price {
+    color:#4A1D3B;
+    font-weight:700;
+    text-align:right;
+}
+
+/* ---------- estimated total ---------- */
+
+.summary-total {
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:10px;
+}
+
+.receipt .summary-total {
+    position:relative;
+    margin:0 -20px;
+    padding:12px 20px 0;
+    background:#fff;
+}
+
+.receipt.can-scroll .summary-total {
+    box-shadow:0 -10px 16px -12px rgba(74, 29, 59, .35);
+}
+
+.summary-total span {
+    color:#4A1D3B;
+    font-size:19px;
+    font-weight:700;
+}
+
+.summary-total strong {
+    color:#C2325F;
+    font-size:30px;
+    font-weight:700;
+}
+
+.estimate-note {
+    margin-top:10px;
+    padding:12px 14px;
+    border:1px solid #F2E2A0;
+    border-radius:13px;
+    background:#FFF8DC;
+    color:#6b5300;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.submit-button {
+    width:100%;
+    padding: 12px 22px;
+    border:0;
+    border-radius: 999px;
+    background:#C2325F;
+    color:#fff;
+    font-size: 14.5px;
+    font-weight:800;
+}
+
+.submit-button:hover {
+    background:#a62a50;
+}
+
+/* ---------- Final Summary (lalabas kapag pinindot ang Done) ---------- */
+
+.final-summary {
+    display:none;
+    max-width:980px;
+    margin:0 auto;
+}
+
+.form-shell.show-summary .final-summary {
+    display:block;
+}
+
+.form-shell.show-summary .order-workspace {
+    display:none;
+}
+
+/* hero sa taas (kapareho ng Commission page) - lalabas lang kapag Order Summary */
+
+.hero {
+    display:none;
+    position:relative;
+    min-height:250px;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    text-align:center;
+    background:linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom:3px solid #ead9f0;
+}
+
+.hero.show {
+    display:flex;
+}
+
+.hero:after {
+    content:"\2726   \2606   \2727   \2661   \2726";
+    position:absolute;
+    top:25px;
+    right:7%;
+    font-size:19px;
+    letter-spacing:7px;
+    white-space:nowrap;
+    color:#e8bd4d;
+    pointer-events:none;
+}
+
+.hero-content {
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    padding:30px 20px;
+}
+
+.hero-small {
+    display:block;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#a04a78;
+}
+
+.hero h1 {
+    margin-top:8px;
+    font-size:clamp(34px, 5vw, 55px);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:-.5px;
+    color:#86365f;
+}
+
+.hero p {
+    max-width:720px;
+    margin:15px auto 0;
+    font-size:15px;
+    line-height:1.6;
+    color:#8a5870;
+}
+
+.final-card {
+    padding:32px;
+    border:1px solid #F3DCE3;
+    border-radius:28px;
+    background:#fff;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* Order Type at Ship Out Date: listahan (label sa kaliwa, sagot sa kanan), walang container */
+.final-info {
+    display:grid;
+    margin-bottom:16px;
+    border-bottom:1px solid #F3DCE3;
+}
+
+.final-info-box {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:8px 0;
+}
+
+.final-list {
+    display:grid;
+    gap:18px;
+}
+
+/* isang figure: Figure N + Edit / Remove, Figure Details, Box & Add-ons, presyo sa baba */
+.final-row {
+    display:grid;
+    gap:14px;
+    padding:20px;
+    border:1px solid #F3DCE3;
+    border-radius:18px;
+    background:#FFF5F8;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.final-row-top {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+/* "Figure 1", "Figure 2" - malaki, para alam kung aling figure ang container */
+.final-figure-number {
+    color:#C2325F;
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size:26px;
+    font-weight:700;
+    line-height:1.1;
+}
+
+.final-row-actions {
+    display:flex;
+    gap:8px;
+}
+
+/* walang container sa loob: Figure Details sa kaliwa, Box & Add-ons sa kanan (may guhit sa pagitan) */
+.final-cols {
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:24px;
+}
+
+.final-cols.is-single {
+    grid-template-columns:minmax(0, 1fr);
+}
+
+.final-col {
+    min-width:0;
+}
+
+.final-col-box {
+    padding-left:24px;
+    border-left:1px solid #F3DCE3;
+}
+
+.final-col-title {
+    margin-bottom:6px;
+    color:#C2325F;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+/* presyo ng figure: nasa pinakababa ng container */
+.final-prices {
+    display:grid;
+    gap:6px;
+    padding:4px 4px 0;
+}
+
+.final-price-line {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    color:#8a6479;
+    font-size:14px;
+    font-weight:700;
+}
+
+.final-price-line span:last-child {
+    color:#4A1D3B;
+}
+
+.final-subtotal {
+    padding-top:8px;
+    border-top:1px dashed #F0CFDD;
+    color:#4A1D3B;
+    font-size:16px;
+    font-weight:800;
+}
+
+/* Estimated total: maliit na space sa taas at baba */
+.final-totals {
+    margin-top:12px;
+    padding:0 4px;
+}
+
+.final-totals .summary-total {
+    margin-top:0;
+}
+
+/* isang linya: Label | Laman | Presyo */
+.final-detail-item {
+    display:grid;
+    grid-template-columns:130px minmax(0, 1fr) auto;
+    align-items:center;
+    gap:12px;
+    padding:8px 0;
+    border-bottom:1px solid #F7E6EC;
+    font-size:14px;
+}
+
+.final-detail-item:last-child {
+    border-bottom:0;
+}
+
+/* Notes / Letter: buong lapad ang laman sa ilalim ng label */
+.final-detail-stack .final-detail-value {
+    grid-column:1 / -1;
+}
+
+.final-detail-label {
+    color:#8a6479;
+    font-weight:700;
+}
+
+.final-detail-value {
+    color:#4A1D3B;
+    font-weight:700;
+    white-space:pre-wrap;
+    overflow-wrap:anywhere;
+}
+
+.final-detail-price {
+    color:#4A1D3B;
+    font-weight:800;
+    text-align:right;
+}
+
+.final-thumbs {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.final-photo {
+    width:64px;
+    height:64px;
+    cursor:zoom-in;
+    border-radius:10px;
+    background:#FFF1F6;
+    object-fit:cover;
+}
+
+.final-actions {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:14px;
+}
+
+/* Order Summary: hindi mahahabang button - sakto ang lapad, nasa kanan */
+.final-card .final-actions {
+    display:flex;
+    justify-content:flex-end;
+}
+
+.final-card .final-actions button {
+    width:auto;
+    min-width:180px;
+}
+
+.final-back-button {
+    padding: 12px 22px;
+    border: 2px solid #C2325F;
+    border-radius: 999px;
+    background:#fff;
+    color:#C2325F;
+    font-size: 14.5px;
+    font-weight:800;
+}
+
+.final-back-button:hover {
+    background:#FFF1F6;
+}
+
+/* ==========================================================================
+   [7] IMAGE MODAL + NOTICE
+   ========================================================================== */
+
+.image-modal {
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    background:rgba(66, 39, 56, .78);
+    backdrop-filter:blur(5px);
+}
+
+.image-modal.show {
+    display:flex;
+    animation:modalFade .2s ease;
+}
+
+@keyframes modalFade {
+    from { opacity:0; }
+    to   { opacity:1; }
+}
+
+.modal-content {
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:min(850px, 95vw);
+    max-height:90vh;
+}
+
+/* larawan + close button: ang close ay nasa loob ng larawan, kanang itaas */
+.modal-frame {
+    position:relative;
+    display:flex;
+    max-width:100%;
+}
+
+.modal-frame img {
+    display:block;
+    max-width:100%;
+    max-height:80vh;
+    border-radius:16px;
+    object-fit:contain;
+}
+
+.modal-label {
+    margin-top:12px;
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+}
+
+.modal-close {
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:2;
+    width:40px;
+    height:40px;
+    padding:0;
+    border:0;
+    border-radius:50%;
+    background:#fff;
+    color:#C2325F;
+    cursor:pointer;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.modal-close::before,
+.modal-close::after {
+    width:16px;
+    height:2.5px;
+}
+
+.modal-close:hover {
+    background:#FFF1F6;
+}
+
+/* ---------- notice (showNotice sa image-submission.js) ---------- */
+
+.notice-container {
+    position:fixed;
+    top:84px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:10050;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    width:max-content;
+    max-width:calc(100% - 32px);
+    pointer-events:none;
+}
+
+.notice-toast {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 20px;
+    border:1px solid #f3dde5;
+    border-left:4px solid #B83227;
+    border-radius:14px;
+    background:#fff;
+    box-shadow:0 3px 6px rgba(0, 0, 0, 0.18);
+    opacity:0;
+    transform:translateY(-8px);
+    transition:opacity .2s ease, transform .2s ease;
+    pointer-events:auto;
+}
+
+.notice-toast.notice-show {
+    opacity:1;
+    transform:translateY(0);
+}
+
+.notice-toast.notice-hide {
+    opacity:0;
+    transform:translateY(-6px);
+}
+
+.notice-toast.notice-success {
+    border-left-color:#2F8F67;
+}
+
+.notice-toast.notice-info {
+    border-left-color:#C2325F;
+}
+
+.notice-icon {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#B83227;
+    color:#fff;
+    font-size:13px;
+    font-weight:800;
+}
+
+.notice-success .notice-icon {
+    background:#2F8F67;
+}
+
+.notice-info .notice-icon {
+    background:#C2325F;
+}
+
+.notice-message {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    color:#4A1D3B;
+    font-size:14.5px;
+    font-weight:700;
+    line-height:1.45;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width:1000px) {
+
+    .order-workspace {
+        grid-template-columns:minmax(0, 1fr);
+    }
+
+    .summary-column {
+        position:static;
+    }
+
+    .receipt {
+        max-height:none;
+    }
+
+    .figure-order-list {
+        max-height:60vh;
+    }
+
+}
+
+@media (max-width:640px) {
+
+    .page {
+        padding:28px 16px 48px;
+    }
+
+    .option-grid,
+    .product-grid {
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+
+    .details-box {
+        padding:16px;
+    }
+
+    .box-addon-box {
+        margin:0 16px 16px;
+    }
+
+    .final-card {
+        padding:18px;
+    }
+
+    .final-row {
+        padding:14px;
+    }
+
+    .final-figure-number {
+        font-size:22px;
+    }
+
+    .final-detail-item {
+        grid-template-columns:110px minmax(0, 1fr) auto;
+    }
+
+    .final-cols {
+        grid-template-columns:minmax(0, 1fr);
+    }
+
+    .final-col-box {
+        padding:16px 0 0;
+        border-left:0;
+        border-top:1px solid #F3DCE3;
+    }
+
+    .final-card .final-actions button {
+        flex:1;
+        min-width:0;
+    }
+
+    .hero {
+        min-height:220px;
+    }
+
+    .hero:after {
+        top:12px;
+        right:4%;
+        font-size:14px;
+        letter-spacing:4px;
+    }
+
+    .hero-content {
+        padding:34px 16px 26px;
+    }
+
+}
+
+/* ===== MODAL BUKAS: hindi gumagalaw ang page sa likod ===== */
+body.no-scroll { overflow: hidden; }
+
+/* ===== nakatago (hidden) - product grid ng ibang style, size na hindi available, drag text ===== */
+.product-style-group[hidden],
+.size-option[hidden],
+.upload-subtitle[hidden] { display: none; }
+
+/* ----- field na kulang (pag pinindot ang Done / Add Figure) ----- */
+
+.field-missing {
+    border-radius: 16px;
+    background: #fde0e8;
+    box-shadow: 0 0 0 8px #fde0e8;
+    outline: 3px solid #c2325f;
+    outline-offset: 8px;
+    animation: missingPulse 1s ease 3;
+}
+
+@keyframes missingPulse {
+    0%, 100% { outline-color: #c2325f; background-color: #fde0e8; box-shadow: 0 0 0 8px #fde0e8; }
+    50% { outline-color: #f3b5c8; background-color: #fff1f5; box-shadow: 0 0 0 8px #fff1f5; }
+}

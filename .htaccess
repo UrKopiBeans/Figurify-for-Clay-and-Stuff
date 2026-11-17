@@ -31,7 +31,7 @@ Options -Indexes
 #    b) Larawan lang ang laman ng uploads - bawal patakbuhin ang
 #       kahit anong script dito.
 # ---------------------------------------------------------------------
-<If "%{REQUEST_URI} =~ m#/uploads[^/]*/(?!orders/)#i">
+<If "%{REQUEST_URI} =~ m#/uploads[^/]*/(?!orders/|avatars/[^/]+\.(?:jpe?g|png|gif|webp)$)#i">
     Require all denied
 </If>
 

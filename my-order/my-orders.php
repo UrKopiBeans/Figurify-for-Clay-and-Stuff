@@ -1,127 +1,40 @@
 <?php
+/* ==========================================================================
+   MY ORDERS PAGE   (my-order/my-orders.php)
+   Style: my-order/my-orders.css      Script: nasa dulo ng file na ito ([5] SCRIPT)
+   Mga action (POST) ng page: confirm_order.php, respond_progress.php,
+   order_received.php, submit_payment.php (sa payment-shipping.php).
+   Auto-refresh: check_order_updates.php
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+   LAMAN (taas pababa):
+     [1] SETUP       helpers, session, database
+     [2] FUNCTIONS   label / presyo / cancel form helpers
+     [3] DATA        orders, reviews, progress updates, figures, workflow state
+     [4] HTML        navbar, page hero, order list, order details, lightbox, footer
+     [5] SCRIPT      search/filter, piliin ang order/figure, progress response,
+                     lightbox, auto-open, linis ng URL, auto-refresh
+   ========================================================================== */
+
+
+/* ==========================================================================
+   [1] SETUP
+   ========================================================================== */
+require_once __DIR__ . "/../helpers/security_helper.php";
 require_once __DIR__ . "/../helpers/dressup_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-require_once __DIR__ . "/../helpers/expire_helper.php";
-require_once __DIR__ . "/../helpers/order_status_helper.php";
-require_once __DIR__ . "/../helpers/review_helper.php";
-require_once __DIR__ . "/../helpers/order_workflow.php";
-require_once __DIR__ . "/../helpers/proof_helper.php";
+require_once __DIR__ . "/../helpers/expiration_helper.php";
+require_once __DIR__ . "/../helpers/order_helper.php";
+require_once __DIR__ . "/../helpers/booking_helper.php";
+require_once __DIR__ . "/../helpers/content_helper.php";
+/* ====================== END SETUP ====================== */
 
 
-/* statusLabel and figurify_status_class are in order_status_helper.php,
-   shared across Owner/Staff Dashboard, Calendar, and this page */
-
-
-/* Friendly text para sa order method: "reference" = Image Submission, "create_style" = Dress Up */
-
-function orderMethodLabel($method)
-{
-    $labels = [
-        "reference"    => "Image Submission",
-        "create_style" => "Dress Up",
-    ];
-
-    return $labels[$method] ?? "Image Submission";
-}
-
-
-/* friendly text for the Hirono box design */
-
-function hironoBoxDesignLabel($design)
-{
-    $labels = [
-        "checkered"   => "Checkered",
-        "hirono_peek" => "Hirono Peek",
-    ];
-
-    return $labels[$design] ?? $design;
-}
-
-
-/* price helper: presyo sa "Product Type" row kung walang size, sa "Size" row kung may size
-   (kapareho ng Commission form's Order Summary) */
-
-function figureHasSize($fig)
-{
-    return !empty($fig["size_label"]);
-}
-
-
-/* Hirono base blind box price (walang extras) - box_addon_price ay kabuuan na
-   ng box + extras, kaya ibawas ang extras total */
-
-function hironoBaseBoxPrice($fig)
-{
-    return (float) $fig["box_addon_price"] - (float) $fig["hirono_blind_items_total"];
-}
-
-
-/* reference images - parehong larawan gaya ng Commission form, para magkatugma */
-
-function figureStyleImage($style)
-{
-    $map = [
-        "Chibi"     => "figures/chibi/chibi-style.jpg",
-        "Funko Pop" => "figures/funko-pop/funko-pop-style.jpg",
-        "Hirono"    => "figures/hirono/hirono-style.jpg",
-    ];
-
-    return $map[$style] ?? null;
-}
-
-function productTypeImage($style, $product)
-{
-    $map = [
-        "Chibi" => [
-            "Full Body Standee"  => "figures/chibi/chibi-full-body-standee.jpg",
-            "Full Body Keychain" => "figures/chibi/chibi-full-body-keychain.jpg",
-            "Half Body Keychain" => "figures/chibi/chibi-half-body-keychain.jpg",
-            "Head Only Keychain" => "figures/chibi/chibi-head-only-keychain.jpg",
-        ],
-        "Funko Pop" => [
-            "Full Body Standee"  => "figures/funko-pop/funko-pop-full-body-standee.jpg",
-            "Full Body Keychain" => "figures/funko-pop/funko-pop-full-body-keychain.jpg",
-            "Half Body Keychain" => "figures/funko-pop/funko-pop-half-body-keychain.jpg",
-            "Head Only Keychain" => "figures/funko-pop/funko-pop-head-only-keychain.jpg",
-        ],
-        "Hirono" => [
-            "Full Body Standee"  => "figures/hirono/hirono-full-body-standee.jpg",
-            "Full Body Keychain" => "figures/hirono/hirono-full-body-keychain.jpg",
-            "Half Body Keychain" => "figures/hirono/hirono-half-body-keychain.jpg",
-            "Head Only Keychain" => "figures/hirono/hirono-head-only-keychain.jpg",
-        ],
-    ];
-
-    return $map[$style][$product] ?? null;
-}
-
-function hironoBlindTypeImage($blindType)
-{
-    return ($blindType === "set") ? "boxes/blind-box-set.jpg" : "figures/hirono/hirono-style.jpg";
-}
-
-function hironoBoxDesignImage($design)
-{
-    $map = [
-        "checkered"   => "boxes/hirono-box-checkered.jpg",
-        "hirono_peek" => "boxes/hirono-box-peek.jpg",
-    ];
-
-    return $map[$design] ?? null;
-}
-
-
-/* image for each Hirono blind box optional extra - parehong placeholder image gaya ng Commission form */
-
-function hironoBlindItemImage($itemKey)
-{
-    return "figures/hirono/hirono-style.jpg";
-}
-
+/* ==========================================================================
+   [2] FUNCTIONS
+   (statusLabel / figurify_status_class ay nasa helpers/order_helper.php)
+   ========================================================================== */
 
 /* ───── helpers para sa bagong My Orders design (prefix na mo_) ───── */
 
@@ -139,56 +52,32 @@ function mo_order_type_label($type)
 }
 
 
-/* kulay ng status pill (galing sa design system) */
+/* kulay ng status pill - PAREHO sa staff at owner pages (dilaw, berde, asul, pula, pink, lila, kahel) */
 
 function mo_tone_class($statusKey)
 {
     $map = [
-        "pending"              => "warn",
-        "needs_correction"     => "danger",
-        "quoted"               => "warn",
-        "awaiting_payment"     => "warn",
-        "to_verify"            => "info",
-        "for_approval"         => "info",
-        "processing"           => "ok",
-        "awaiting_balance"     => "danger",
-        "to_verify_balance"    => "info",
-        "for_balance_approval" => "info",
-        "to_ship"              => "info",
-        "shipped"              => "info",
-        "completed"            => "ok",
-        "cancelled"            => "danger",
-        "for_refund"           => "warn",
-        "refunded"             => "danger",
-        "revision"             => "warn",
+        "pending"              => "yellow",
+        "needs_correction"     => "orange",
+        "quoted"               => "green",
+        "awaiting_payment"     => "yellow",
+        "to_verify"            => "green",
+        "for_approval"         => "green",
+        "processing"           => "pink",
+        "awaiting_balance"     => "yellow",
+        "to_verify_balance"    => "green",
+        "for_balance_approval" => "green",
+        "to_ship"              => "blue",
+        "address_returned"     => "orange",
+        "shipped"              => "blue",
+        "completed"            => "green",
+        "cancelled"            => "red",
+        "for_refund"           => "red",
+        "refunded"             => "purple",
+        "revision"             => "yellow",
     ];
 
-    return "tone-" . ($map[$statusKey] ?? "warn");
-}
-
-
-/* maliit na larawan sa order list: unang reference image, kung wala
-   ay ang larawan ng figure style */
-
-function mo_order_thumb(array $order, string $siteBase): string
-{
-    foreach (($order["figures"] ?? []) as $thumbFig) {
-        if (!empty($thumbFig["images"][0])) {
-            return $siteBase . $thumbFig["images"][0];
-        }
-    }
-
-    $firstFig = $order["figures"][0] ?? null;
-
-    if ($firstFig) {
-        $styleImg = figureStyleImage($firstFig["figure_style"] ?? "");
-
-        if ($styleImg) {
-            return $siteBase . "Image/" . $styleImg;
-        }
-    }
-
-    return "";
+    return "tone-" . ($map[$statusKey] ?? "yellow");
 }
 
 
@@ -205,12 +94,35 @@ function mo_cancel_form(int $orderId, string $label = "Cancel"): void
     >
         <input type="hidden" name="order_id" value="<?php echo (int) $orderId; ?>">
         <input type="hidden" name="action" value="cancel">
-        <button type="submit" class="mo-btn mo-btn-soft"><?php echo mo_e($label); ?></button>
+        <button type="submit" class="mo-btn mo-btn-secondary"><?php echo mo_e($label); ?></button>
     </form>
     <?php
 }
 
 
+/* Mensahe / dahilan na may sariling container, para alam kung kanino galing
+   (hal. "Message from Clay and Stuff"). $fromCustomer = true -> sinulat ng customer mismo. */
+
+function mo_message_box(string $from, string $text, bool $fromCustomer = false): void
+{
+    if (trim($text) === "") {
+        return;
+    }
+    ?>
+    <div class="mo-msg-box<?php echo $fromCustomer ? " is-customer" : ""; ?>">
+        <span class="mo-msg-from"><?php echo mo_e($from); ?></span>
+        <p><?php echo nl2br(mo_e($text)); ?></p>
+    </div>
+    <?php
+}
+
+
+/* ====================== END FUNCTIONS ====================== */
+
+
+/* ==========================================================================
+   [3] DATA
+   ========================================================================== */
 
 /* site base path - computed base sa project folder location, hindi umaasa sa bilang ng "../" */
 
@@ -237,7 +149,6 @@ $user_id = $_SESSION["user_id"];
 figurify_expire_old_quotes($conn);
 
 /* shipped nang 7 araw pero hindi pinindot ang "Order Received" -> complete */
-require_once __DIR__ . "/../helpers/order_complete_helper.php";
 figurify_autocomplete_shipped_orders($conn);
 
 
@@ -254,10 +165,10 @@ $justSubmitted  = isset($_GET["submitted"]) && $_GET["submitted"] === "1";
 $stmt = false;
 try {
     $stmt = $conn->prepare(
-        "SELECT order_id, order_type, order_method, booking_date, rush_fee,
+        "SELECT order_id, order_type, order_method, ship_out_date, rush_fee,
                 subtotal, total_amount, status, created_at,
                 quote_expires_at, review_token,
-                shipping_name, shipping_address, shipping_contact, courier,
+                shipping_name, shipping_address, pin_address, shipping_contact, courier,
                 payment_reference, payment_proof, paid_at,
                 refund_account_name, refund_account_number, refund_method,
                 balance_to_pay,
@@ -273,7 +184,7 @@ try {
 
 if ($stmt === false) {
     $stmt = $conn->prepare(
-        "SELECT order_id, order_type, order_method, booking_date, rush_fee,
+        "SELECT order_id, order_type, order_method, ship_out_date, rush_fee,
                 subtotal, total_amount, status, created_at,
                 quote_expires_at, review_token,
                 shipping_name, shipping_address, shipping_contact, courier,
@@ -375,7 +286,7 @@ foreach ($orders as &$order) {
 
     $fstmt = $conn->prepare(
         "SELECT figure_id, figure_style, product_type, size_label,
-                figure_name, notes, product_price, name_fee, figure_total,
+                figure_name, notes, product_price, name_fee, figure_total, quantity,
                 box_addon_type, box_addon_price,
                 funko_box_type, funko_box_name, funko_box_number, funko_box_color,
                 hirono_blind_type, hirono_box_design, hirono_box_color, hirono_letter,
@@ -492,7 +403,7 @@ foreach ($orders as &$order) {
         && $order["latest_progress_update"]["customer_response"] === "revision"
         && !in_array(
             figurify_status_key($order["status"]),
-            ["to_ship", "shipped", "completed", "cancelled"],
+            ["to_ship", "address_returned", "shipped", "completed", "cancelled"],
             true
         )
     );
@@ -502,7 +413,7 @@ foreach ($orders as &$order) {
 unset($order);
 
 
-/* WORKFLOW STATE (iisang source of truth - helpers/order_workflow.php):
+/* WORKFLOW STATE (iisang source of truth - helpers/order_helper.php):
    canonical state + customer-facing label, revision usage (0/1 o 1/1),
    kasaysayan, at ang huling dahilan kapag ibinalik/na-reject. */
 
@@ -512,7 +423,7 @@ $revisionCounts = [];
 
 $revStmt = $conn->prepare(
     "SELECT order_id, revision_count, tracking_number, shipping_fee, shipped_at,
-            balance_payment_reference, balance_paid_at
+            balance_payment_reference, balance_paid_at, payment_option
      FROM orders WHERE user_id = ?"
 );
 $revStmt->bind_param("i", $user_id);
@@ -540,16 +451,18 @@ foreach ($orders as &$order) {
     }
     $order["extra"]          = $orderExtras[$oid] ?? [];
     // Slot hold: puno na ba ang petsa ng Quoted order? (kinukuha dito habang bukas pa ang database)
+    $order["problem"]   = ($order["status"] ?? "") === "shipped" ? figurify_delivery_problem($conn, (int) $order["order_id"]) : null;
     $order["slot_open"] = true;
     $order["slot_alts"] = [];
-    if (in_array(($order["status"] ?? ""), ["pending", "needs_correction", "quoted", "awaiting_payment", "to_verify", "for_approval"], true) && !empty($order["booking_date"])) {
-        $slotDate = date("Y-m-d", strtotime((string) $order["booking_date"]));
+    if (in_array(($order["status"] ?? ""), ["pending", "needs_correction", "quoted", "awaiting_payment", "to_verify", "for_approval"], true) && !empty($order["ship_out_date"])) {
+        $slotDate = date("Y-m-d", strtotime((string) $order["ship_out_date"]));
         /* capacity lang (puno na ba?) - hindi ang lead-time rule */
         $order["slot_open"] = figurify_date_has_capacity($conn, (string) $order["order_type"], $slotDate)["ok"];
         if (!$order["slot_open"]) {
-            $order["slot_alts"] = figurify_next_available_dates($conn, (string) $order["order_type"], 8);
+            $order["slot_alts"] = figurify_next_available_dates($conn, (string) $order["order_type"], 150);
         }
     }
+    $order["payment_option"] = $order["extra"]["payment_option"] ?? "half";
     $order["downpayment"]    = figurify_wf_downpayment_amount($order);
     $order["balance_due"]    = figurify_wf_balance_amount($order);
     $order["history"]        = figurify_wf_history($conn, $oid);
@@ -581,7 +494,7 @@ foreach ($orders as $filterOrder) {
 
     if ($filterOrder["has_revision"]) {
         $filterKey   = "revision";
-        $filterLabel = "For Revision";
+        $filterLabel = "Revision Requested";
     } else {
         $filterKey   = figurify_status_key($filterOrder["status"]);
         $filterLabel = $filterOrder["cust_label"];
@@ -613,56 +526,44 @@ if ($paymentNotice === "payment_unavailable" && isset($_GET["order_id"])) {
 }
 
 $conn->close();
+/* ====================== END DATA ====================== */
 
+
+/* ==========================================================================
+   [4] HTML
+   ========================================================================== */
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Orders | Clay and Stuff</title>
     <link rel="icon" type="image/png" href="../Image/brand/logo.png">
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>My Orders — Clay and Stuff</title>
-
-
-<?php /* bagong stylesheet (design system). Hindi na nilo-load dito ang lumang
-         my-orders.css at receipt-panels.css; ang payment-shipping.php ay
-         gumagamit pa ng my-orders.css kaya hindi ito binago. */ ?>
-<link rel="stylesheet" href="my-orders-v2.css?v=2">
-
-<style>
-/* [MY ORDER] Figure information: presyo walang border at bg, same sa owner/staff */
-body .orders-page .mo-row .mo-chip:not(.is-free) {
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: none !important;
-    padding: 0 !important;
-    color: var(--p-plum, #4A1D3B) !important;
-    font-size: 14px !important;
-    font-weight: 800 !important;
-    margin-left: auto !important;
-}
-</style>
+    <?php include __DIR__ . "/../Shared/popup-and-security.php"; ?>
+    <link rel="stylesheet" href="my-orders.css">
 </head>
+
 <body>
 
-<?php include "../Shared/navbar.php"; ?>
+<!-- ====================== NAVBAR (Shared/navbar.php) ====================== -->
+<?php include __DIR__ . "/../Shared/navbar.php"; ?>
+<!-- ====================== END NAVBAR ====================== -->
 
-<?php
-require_once __DIR__ . "/../helpers/rush_split_helper.php";
-require_once __DIR__ . "/../helpers/payment_view_helper.php";
-?>
 
+<!-- ====================== PAGE HERO (css: my-orders.css [2]) ====================== -->
 <header class="mo-hero">
     <div class="mo-wrap">
         <span class="mo-eyebrow">TRACK YOUR COMMISSIONS</span>
         <h1>My Orders, All in One Place</h1>
-        <p>Here's a list of every figure you've commissioned with us.</p>
+        <p>See and track all your orders here.</p>
     </div>
 </header>
+<!-- ====================== END PAGE HERO ====================== -->
 
+
+<!-- ====================== MY ORDERS (css: my-orders.css [3]-[17]) ====================== -->
 <main class="orders-page mo-wrap">
 
     <?php
@@ -672,7 +573,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
     if ($justCancelled) {
         $orderPopup = [
             "type"    => "error",
-            "message" => (isset($_GET["order_id"]) ? "Order " . (int) $_GET["order_id"] . " has been cancelled." : "The order has been cancelled.")
+            "message" => (isset($_GET["order_id"]) ? "Order #" . (int) $_GET["order_id"] . " has been cancelled." : "The order has been cancelled.")
         ];
     } elseif ($justSubmitted) {
         $orderPopup = [
@@ -682,14 +583,14 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
     } elseif ($paymentNotice === "payment_unavailable" && $paymentNoticeOrder && figurify_status_key($paymentNoticeOrder["status"]) === "cancelled") {
         $orderPopup = [
             "type"    => "error",
-            "message" => "Order " . (int) $paymentNoticeOrder["order_id"] . " was cancelled and can't be paid."
+            "message" => "Order #" . (int) $paymentNoticeOrder["order_id"] . " was cancelled and can't be paid."
         ];
     } elseif ($paymentNotice === "payment_unavailable") {
         $orderPopup = [
             "type"    => "info",
             "message" => $paymentNoticeOrder
-                ? "Order " . (int) $paymentNoticeOrder["order_id"] . " can no longer be paid — its status is now \"" . statusLabel($paymentNoticeOrder["status"]) . "\"."
-                : "That order can no longer be paid — its status has already changed."
+                ? "Order #" . (int) $paymentNoticeOrder["order_id"] . " can no longer be paid. Its status is now \"" . statusLabel($paymentNoticeOrder["status"]) . "\"."
+                : "That order can no longer be paid. Its status has already changed."
         ];
     } elseif ($paymentNotice === "order_not_found") {
         $orderPopup = [
@@ -698,7 +599,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
         ];
     }
 
-    /* shared pop up (Shared/all-in-one.php) - kapareho ng sa Image Submission */
+    /* shared pop up (Shared/popup-and-security.php) - kapareho ng sa Image Submission */
     if ($orderPopup) {
         echo figurify_toast_now($orderPopup["message"], $orderPopup["type"]);
     }
@@ -710,149 +611,119 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
         <!-- EMPTY STATE -->
         <div class="no-orders">
             <p>You don't have any orders yet.</p>
-            <a href="../Commission/commission.php">Start a Commission →</a>
+            <a href="../Commission/commission.php">Start a Commission</a>
         </div>
 
     <?php else: ?>
 
-        <div class="orders-layout">
+        <!-- filter (iisang dropdown: All + lahat ng status) + search -->
 
-        <!-- left: order list -->
+        <div class="orders-toolbar">
 
-        <div class="orders-list-col">
-
-            <div class="orders-list-shell">
-
-                <div class="orders-toolbar">
-
-                    <div class="orders-filter-dropdown" id="myOrdersFilterDropdown">
-
-                        <button
-                            type="button"
-                            class="orders-filter-trigger"
-                            onclick="myOrdersToggleFilter()"
-                        >
-                            <span id="myOrdersFilterLabel">All</span>
-                            <svg class="orders-filter-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                        </button>
-
-                        <div class="orders-filter-menu">
-
-                            <a
-                                href="javascript:void(0)"
-                                class="orders-filter-option active"
-                                onclick="myOrdersSetFilter(this, 'all', 'All')"
-                            >
-                                All
-                            </a>
-
-                            <?php foreach ($myOrdersFilterOptions as $filterKey => $filterLabel): ?>
-                                <a
-                                    href="javascript:void(0)"
-                                    class="orders-filter-option"
-                                    onclick="myOrdersSetFilter(this, '<?php echo mo_e($filterKey); ?>', '<?php echo mo_e($filterLabel); ?>')"
-                                >
-                                    <?php echo mo_e($filterLabel); ?>
-                                </a>
-                            <?php endforeach; ?>
-
-                        </div>
-
-                    </div>
-
-                    <div class="orders-search-wrap">
-                        <input
-                            type="text"
-                            id="myOrdersSearch"
-                            class="orders-search-input"
-                            placeholder="Search order / status / figure..."
-                            oninput="myOrdersApplyFilters()"
-                            autocomplete="off"
-                        >
-                    </div>
-
-                </div>
-
-                <div class="orders-list-scroll" id="myOrdersScroll">
-
-                <?php
-                /* "Order 1", "Order 2"... - pinakamatanda = Order 1 (newest first ang $orders) */
-                $moSeqMap  = [];
-                $moSeqTotal = count($orders);
-                foreach (array_values($orders) as $moSeqIdx => $moSeqOrder) {
-                    $moSeqMap[(int) $moSeqOrder["order_id"]] = $moSeqTotal - $moSeqIdx;
-                }
-                ?>
-
-                <?php foreach ($orders as $listOrder): ?>
-
-                    <?php
-                    $listSeq = $moSeqMap[(int) $listOrder["order_id"]] ?? (int) $listOrder["order_id"];
-                    $orderSearchBits = [
-                        "order " . $listSeq,
-                        "order " . $listOrder["order_id"],
-                        mo_order_type_label($listOrder["order_type"] ?? ""),
-                        (string) $listOrder["order_id"],
-                        $listOrder["cust_label"],
-                        orderMethodLabel($listOrder["order_method"]),
-                        date("F j, Y", strtotime($listOrder["created_at"])),
-                    ];
-
-                    foreach ($listOrder["figures"] as $searchFig) {
-                        $orderSearchBits[] = $searchFig["figure_style"] ?? "";
-                        $orderSearchBits[] = $searchFig["product_type"] ?? "";
-                    }
-
-                    $orderSearchData = strtolower(implode(" ", array_filter($orderSearchBits)));
-
-                    $listStatusKey = $listOrder["has_revision"] ? "revision" : figurify_status_key($listOrder["status"]);
-                    
-                    ?>
-
-                    <button
-                        type="button"
-                        class="order-list-item"
-                        data-order-target="order-panel-<?php echo (int) $listOrder["order_id"]; ?>"
-                        data-order-id="<?php echo (int) $listOrder["order_id"]; ?>"
-                        data-order-status="<?php
-                            echo htmlspecialchars(
-                                $listOrder["status"]
-                                . "::u" . (int) ($listOrder["latest_progress_update"]["update_id"] ?? 0)
-                                . "::" . (string) ($listOrder["latest_progress_update"]["customer_response"] ?? "")
-                            );
-                        ?>"
-                        data-search="<?php echo mo_e($orderSearchData); ?>"
-                        data-status="<?php echo mo_e($listStatusKey); ?>"
-                        onclick="selectOrder(this)"
-                    >
-
-                        <span class="mo-list-main">
-                            <span class="order-list-id">Order <?php echo (int) $listSeq; ?></span>
-                            <span class="order-list-date">Ordered on <?php echo mo_e(date("M j, Y", strtotime($listOrder["created_at"]))); ?></span>
-                            <?php if (!empty($listOrder["booking_date"])): ?>
-                                <span class="order-list-date">Booking date: <?php echo mo_e(date("M j, Y", strtotime($listOrder["booking_date"]))); ?></span>
-                            <?php endif; ?>
-                            <span class="order-list-date"><?php echo mo_e(mo_order_type_label($listOrder["order_type"] ?? "")); ?> · <?php echo mo_e(orderMethodLabel($listOrder["order_method"])); ?></span>
-                        </span>
-
-                        <span class="mo-pill order-list-badge <?php echo mo_tone_class($listStatusKey); ?>"><?php echo mo_e($listOrder["cust_label"]); ?></span>
-
-                    </button>
-
+            <select class="orders-filter-select" id="myOrdersFilter" aria-label="Filter orders" onchange="myOrdersSetFilter(this.value)">
+                <option value="all">All</option>
+                <?php foreach ($myOrdersFilterOptions as $filterKey => $filterLabel): ?>
+                    <option value="<?php echo mo_e($filterKey); ?>"><?php echo mo_e($filterLabel); ?></option>
                 <?php endforeach; ?>
+            </select>
 
-                <div class="orders-search-empty" id="myOrdersSearchEmpty" style="display:none;">
-                    No orders match your search.
-                </div>
-
-                </div>
-
+            <div class="orders-search-wrap">
+                <input
+                    type="text"
+                    id="myOrdersSearch"
+                    class="orders-search-input"
+                    placeholder="Search order / status / figure..."
+                    oninput="myOrdersApplyFilters()"
+                    autocomplete="off"
+                >
             </div>
 
         </div>
 
 
-        <!-- right: order details -->
+        <!-- ===== ORDERS LAYOUT: kaliwa = listahan ng order (scroll kapag lampas 5), kanan = details ===== -->
+        <div class="orders-layout">
+
+        <!-- order cards (kaliwa) -->
+
+        <div class="orders-list-scroll" id="myOrdersScroll">
+
+            <?php
+            /* "Order 1", "Order 2"... - pinakamatanda = Order 1 (newest first ang $orders) */
+            $moSeqMap  = [];
+            $moSeqTotal = count($orders);
+            foreach (array_values($orders) as $moSeqIdx => $moSeqOrder) {
+                $moSeqMap[(int) $moSeqOrder["order_id"]] = $moSeqTotal - $moSeqIdx;
+            }
+            ?>
+
+            <?php foreach ($orders as $listOrder): ?>
+
+                <?php
+                $listSeq = $moSeqMap[(int) $listOrder["order_id"]] ?? (int) $listOrder["order_id"];
+                $orderSearchBits = [
+                    "order " . $listSeq,
+                    "order #" . $listSeq,
+                    "order " . $listOrder["order_id"],
+                    mo_order_type_label($listOrder["order_type"] ?? ""),
+                    (string) $listOrder["order_id"],
+                    $listOrder["cust_label"],
+                    orderMethodLabel($listOrder["order_method"]),
+                    date("F j, Y", strtotime($listOrder["created_at"])),
+                ];
+
+                foreach ($listOrder["figures"] as $searchFig) {
+                    $orderSearchBits[] = $searchFig["figure_style"] ?? "";
+                    $orderSearchBits[] = $searchFig["product_type"] ?? "";
+                }
+
+                $orderSearchData = strtolower(implode(" ", array_filter($orderSearchBits)));
+
+                $listStatusKey = $listOrder["has_revision"] ? "revision" : figurify_status_key($listOrder["status"]);
+
+                ?>
+
+                <button
+                    type="button"
+                    class="order-list-item"
+                    data-order-target="order-panel-<?php echo (int) $listOrder["order_id"]; ?>"
+                    data-order-id="<?php echo (int) $listOrder["order_id"]; ?>"
+                    data-order-status="<?php
+                        echo htmlspecialchars(
+                            $listOrder["status"]
+                            . "::u" . (int) ($listOrder["latest_progress_update"]["update_id"] ?? 0)
+                            . "::" . (string) ($listOrder["latest_progress_update"]["customer_response"] ?? "")
+                        );
+                    ?>"
+                    data-search="<?php echo mo_e($orderSearchData); ?>"
+                    data-status="<?php echo mo_e($listStatusKey); ?>"
+                    onclick="selectOrder(this)"
+                >
+
+                    <span class="mo-list-main">
+                        <span class="mo-list-top">
+                            <span class="order-list-id">Order #<?php echo (int) $listSeq; ?></span>
+                            <span class="mo-pill order-list-badge <?php echo mo_tone_class($listStatusKey); ?>"><?php echo mo_e($listOrder["cust_label"]); ?></span>
+                        </span>
+                        <span class="order-list-date">Ordered on <?php echo mo_e(date("M j, Y", strtotime($listOrder["created_at"]))); ?></span>
+                        <?php if (!empty($listOrder["ship_out_date"])): ?>
+                            <span class="order-list-date">Ship out date: <?php echo mo_e(date("M j, Y", strtotime($listOrder["ship_out_date"]))); ?></span>
+                        <?php endif; ?>
+                        <span class="order-list-date"><?php echo mo_e(mo_order_type_label($listOrder["order_type"] ?? "")); ?> · <?php echo mo_e(orderMethodLabel($listOrder["order_method"])); ?></span>
+                    </span>
+
+                </button>
+
+            <?php endforeach; ?>
+
+            <div class="orders-search-empty" id="myOrdersSearchEmpty" hidden>
+                No orders match your search.
+            </div>
+
+        </div>
+
+
+        <!-- order details (kanan) -->
 
         <div class="orders-detail-col">
 
@@ -881,7 +752,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                     "PAYMENT_SUBMITTED" => 1, "PAYMENT_DETAILS_VERIFIED" => 1,
                     "PROCESSING" => 3, "REVISION_REQUESTED" => 3, "REVISION_IN_PROGRESS" => 3,
                     "PROGRESS_SUBMITTED" => 4, "CUSTOMER_APPROVED" => 4,
-                    "AWAITING_BALANCE" => 4, "BALANCE_SUBMITTED" => 4, "READY_TO_SHIP" => 4,
+                    "AWAITING_BALANCE" => 4, "BALANCE_SUBMITTED" => 4, "READY_TO_SHIP" => 4, "ADDRESS_RETURNED" => 4,
                     "SHIPPED" => 5, "COMPLETED" => 5,
                 ];
                 $trackerStopped = in_array($wf, ["CANCELLED", "REFUND_REQUIRED", "REFUNDED"], true)
@@ -889,55 +760,59 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                 $trackerReached = $trackerReachedMap[$wf] ?? 0;
                 ?>
 
+                <div class="mo-main">
+
+                <!-- order head + tracker + state + progress update = isang card -->
                 <section class="mo-card" aria-label="Order progress">
 
-                    <h2 class="mo-card-title">Order Progress</h2>
+                    <!-- "Order #3" sa kaliwa, "Order Progress" sa dulo ng kanan (iisang linya) -->
+                    <div class="mo-order-head">
+                        <h2 class="mo-card-title">Order #<?php echo (int) ($moSeqMap[$oid] ?? $oid); ?></h2>
+                        <div class="mo-sub">Order Progress</div>
+                    </div>
 
                     <ol class="mo-tracker<?php echo $trackerStopped ? " is-stopped" : ""; ?>">
                         <?php foreach ($trackerSteps as $tIndex => $tLabel): ?>
                             <?php
+                            /* done = tapos na, current = kasalukuyan; kapag Shipped/Completed na, lahat done */
                             $tClass = "";
                             if (!$trackerStopped) {
-                                if ($tIndex <= $trackerReached) { $tClass = "done"; }
-                                if ($tIndex === $trackerReached) { $tClass .= " current"; }
+                                if ($tIndex < $trackerReached || $trackerReached === 5) { $tClass = "done"; }
+                                elseif ($tIndex === $trackerReached) { $tClass = "current"; }
                                 if ($tIndex === 0 && $wf === "STAFF_CORRECTION_REQUIRED") {
                                     $tLabel = "Needs correction";
-                                    $tClass = "attention current";
+                                    $tClass = "attention";
                                 }
                             }
                             ?>
                             <li class="mo-step <?php echo $tClass; ?>">
-                                <span class="mo-dot"><svg class="mo-dot-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 7.5"/></svg></span>
+                                <span class="mo-dot"><svg class="mo-dot-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 7.5"/></svg><span class="mo-dot-num"><?php echo $tIndex + 1; ?></span></span>
                                 <span class="mo-step-label"><?php echo mo_e($tLabel); ?></span>
                             </li>
                         <?php endforeach; ?>
                     </ol>
 
-                </section>
-
 
                 <?php
-                /* ───── 2. PROGRESS UPDATE (galing sa staff) ───── */
-                if (!empty($order["latest_progress_update"])):
+                /* ───── 2. PROGRESS UPDATE (galing sa staff) - nakatago na kapag naipadala / tapos na ang order ───── */
+                if (!empty($order["latest_progress_update"]) && !in_array($statusKey, ["shipped", "completed"], true)):
 
                     $ppu          = $order["latest_progress_update"];
                     $ppuIsPending = ($ppu["customer_response"] === "pending") && empty($ppu["is_final"]);
 
+                    /* malinaw na salita kung nasaan na ang progress photo / revision */
                     if (!empty($ppu["is_final"])) {
-                        $ppuPill = ["Your figure is done!", "tone-ok"];
+                        $ppuPill = ["Your figure is done!", "tone-green"];
                     } elseif ($ppu["customer_response"] === "pending") {
-                        $ppuPill = ["Update from staff", "tone-warn"];
+                        $ppuPill = ["New progress photo", "tone-yellow"];
                     } elseif ($ppu["customer_response"] === "approved") {
-                        $ppuPill = ["Progress approved", "tone-ok"];
+                        $ppuPill = ["You approved this photo", "tone-green"];
                     } elseif ($ppu["customer_response"] === "revision") {
-                        $ppuPill = ["For revision", "tone-warn"];
+                        $ppuPill = ["Revision requested", "tone-yellow"];
                     } elseif ($ppu["customer_response"] === "in_progress") {
-                        $ppuPill = [
-                            in_array($order["status"], ["to_ship", "shipped", "completed"], true) ? "Revision accepted" : "Revising",
-                            "tone-info",
-                        ];
+                        $ppuPill = ["Revision accepted", "tone-blue"];
                     } else {
-                        $ppuPill = ["Revision not possible", "tone-danger"];
+                        $ppuPill = ["Revision declined", "tone-red"];
                     }
 
                     /* ONE-TIME REVISION: nakatago ang button kapag nagamit na -
@@ -945,9 +820,9 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                     $canRequestRevision = ((int) $order["revision_count"] < FIGURIFY_WF_MAX_REVISIONS);
                 ?>
 
-                <section class="mo-card" id="progress-update-<?php echo $oid; ?>">
-
-                    <h2 class="mo-card-title">Progress update</h2>
+                <!-- walang container: may guhit sa ilalim ng tracker, at may kulay na background para alam na update ito.
+                     kaliwa = malaking larawan (kasing-taas ng laman sa kanan), kanan = title + status, paalala, mensahe, buttons -->
+                <section class="mo-progress-card" id="progress-update-<?php echo $oid; ?>">
 
                     <div class="mo-progress">
 
@@ -960,11 +835,11 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                         <div class="mo-progress-body">
 
-                            <span class="mo-pill <?php echo $ppuPill[1]; ?>"><?php echo mo_e($ppuPill[0]); ?></span>
-
-                            <?php if (!empty($ppu["staff_message"])): ?>
-                                <p class="mo-progress-msg"><?php echo nl2br(mo_e($ppu["staff_message"])); ?></p>
-                            <?php endif; ?>
+                            <!-- "Progress update" sa kaliwa, status (hal. "New progress photo") sa kanan -->
+                            <div class="mo-progress-head">
+                                <h3 class="mo-progress-title">Progress update</h3>
+                                <span class="mo-pill <?php echo $ppuPill[1]; ?>"><?php echo mo_e($ppuPill[0]); ?></span>
+                            </div>
 
                             <?php if ($ppuIsPending): ?>
 
@@ -974,6 +849,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                     : "";
                                 ?>
 
+                                <!-- paalala: nasa taas ng mensahe -->
                                 <p class="mo-progress-note">
                                     <?php if ($canRequestRevision): ?>
                                         Happy with it? Tap <strong>It's Good</strong>, or request a change.
@@ -982,6 +858,12 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                         You've used your revision. This update will be approved automatically<?php echo $ppuDeadline !== "" ? " on <strong>" . mo_e($ppuDeadline) . "</strong>" : ""; ?>.
                                     <?php endif; ?>
                                 </p>
+
+                            <?php endif; ?>
+
+                            <?php mo_message_box("Message from Clay and Stuff", (string) ($ppu["staff_message"] ?? "")); ?>
+
+                            <?php if ($ppuIsPending): ?>
 
                                 <form
                                     method="POST"
@@ -1002,7 +884,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                     </div>
 
                                     <?php if ($canRequestRevision): ?>
-                                    <div class="progress-update-revision-box" id="progressRevisionBox-<?php echo $oid; ?>">
+                                    <div class="progress-update-revision-box" id="progressRevisionBox-<?php echo $oid; ?>" hidden>
 
                                         <label for="progressRevisionNote-<?php echo $oid; ?>">What would you like changed?</label>
 
@@ -1013,9 +895,9 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                             placeholder="Tell us what to revise..."
                                         ></textarea>
 
-                                        <div class="mo-actions" style="margin-top:2px;">
+                                        <div class="mo-actions">
                                             <button type="button" class="mo-btn mo-btn-primary" onclick="submitProgressResponse(<?php echo $oid; ?>, 'revision')">Send</button>
-                                            <button type="button" class="mo-btn mo-btn-soft" onclick="hideProgressRevisionBox(<?php echo $oid; ?>)">Cancel</button>
+                                            <button type="button" class="mo-btn mo-btn-secondary" onclick="hideProgressRevisionBox(<?php echo $oid; ?>)">Cancel</button>
                                         </div>
 
                                     </div>
@@ -1029,23 +911,19 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                             <?php elseif ($ppu["customer_response"] === "revision" || $ppu["customer_response"] === "in_progress"): ?>
 
-                                <?php if (!empty($ppu["revision_note"])): ?>
-                                    <p class="mo-progress-revnote"><strong>Your revision request:</strong> <?php echo nl2br(mo_e($ppu["revision_note"])); ?></p>
-                                <?php endif; ?>
+                                <?php mo_message_box("Your revision request", (string) ($ppu["revision_note"] ?? ""), true); ?>
+
+                                <p class="mo-progress-status<?php echo $ppu["customer_response"] === "in_progress" ? " is-approved" : ""; ?>">
+                                    <?php echo $ppu["customer_response"] === "in_progress"
+                                        ? "Your revision was accepted. We're now working on the changes and will send a new photo."
+                                        : "Your revision request was sent. Please wait for the staff to accept it."; ?>
+                                </p>
 
                             <?php elseif ($ppu["customer_response"] === "declined"): ?>
 
-                                <?php if (!empty($ppu["revision_note"])): ?>
-                                    <p class="mo-progress-revnote"><strong>Your revision request:</strong> <?php echo nl2br(mo_e($ppu["revision_note"])); ?></p>
-                                <?php endif; ?>
+                                <?php mo_message_box("Your revision request", (string) ($ppu["revision_note"] ?? ""), true); ?>
 
-                                <p class="mo-progress-status is-declined">
-                                    <?php
-                                    echo !empty($ppu["staff_reply"])
-                                        ? nl2br(mo_e($ppu["staff_reply"]))
-                                        : "Sorry, we can't make this revision.";
-                                    ?>
-                                </p>
+                                <?php mo_message_box("Reply from Clay and Stuff", !empty($ppu["staff_reply"]) ? (string) $ppu["staff_reply"] : "Sorry, we can't make this revision."); ?>
 
                             <?php endif; ?>
 
@@ -1063,29 +941,34 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                 /* 3a. Puno na ang petsa (hindi pa naaaprubahan ng owner) -> pumili ng ibang petsa
                        (same order, walang bagong bayad) o mag-cancel kung hindi na tutuloy. */
-                $quotedDateStr  = !empty($order["booking_date"]) ? date("Y-m-d", strtotime((string) $order["booking_date"])) : "";
+                $quotedDateStr  = !empty($order["ship_out_date"]) ? date("Y-m-d", strtotime((string) $order["ship_out_date"])) : "";
                 $quotedDateOpen = !empty($order["slot_open"]);
                 $quotedAltDates = $order["slot_alts"] ?? [];
                 $dateFullPaid   = in_array($wf, ["PAYMENT_SUBMITTED", "PAYMENT_DETAILS_VERIFIED"], true);
                 ?>
 
                 <?php if (!$quotedDateOpen && $quotedDateStr !== ""): ?>
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-warn">Date is full</span>
+                    <section class="mo-state">
+                        <span class="mo-pill tone-yellow">Date is full</span>
                         <p class="mo-state-text">
-                            The date you picked (<?php echo mo_e(date("M j, Y", strtotime($quotedDateStr))); ?>) is now full. Please choose a new date<?php echo $dateFullPaid ? " — you don't need to pay again." : ", or cancel the order if you no longer want to continue."; ?>
+                            The date you picked (<?php echo mo_e(date("M j, Y", strtotime($quotedDateStr))); ?>) is now full. Please choose a new date<?php echo $dateFullPaid ? ". You don't need to pay again." : ", or cancel the order if you no longer want to continue."; ?>
                         </p>
 
                         <?php if (!empty($quotedAltDates)): ?>
-                            <form method="POST" action="confirm_order.php" class="mo-date-form">
+                            <!-- Calendar: ang may kulay lang na petsa ang pwedeng piliin -->
+                            <form method="POST" action="confirm_order.php" class="mo-date-form" data-dates="<?php echo mo_e(implode(",", $quotedAltDates)); ?>">
                                 <input type="hidden" name="order_id" value="<?php echo $oid; ?>">
                                 <input type="hidden" name="action" value="change_date">
-                                <select name="new_date" required>
-                                    <option value="" disabled selected>Pick new date</option>
-                                    <?php foreach ($quotedAltDates as $altDate): ?>
-                                        <option value="<?php echo mo_e($altDate); ?>"><?php echo mo_e(date("M j, Y", strtotime($altDate))); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <input type="hidden" name="new_date" value="" required>
+                                <div class="mo-cal">
+                                    <div class="mo-cal-head">
+                                        <button type="button" class="mo-cal-nav" data-dir="-1" aria-label="Previous month">&lsaquo;</button>
+                                        <strong class="mo-cal-title"></strong>
+                                        <button type="button" class="mo-cal-nav" data-dir="1" aria-label="Next month">&rsaquo;</button>
+                                    </div>
+                                    <div class="mo-cal-grid"></div>
+                                    <p class="mo-cal-picked">Pick a highlighted date.</p>
+                                </div>
                                 <button type="submit" class="mo-btn mo-btn-primary">Use this date</button>
                             </form>
                         <?php else: ?>
@@ -1093,7 +976,12 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                         <?php endif; ?>
 
                         <?php if ($dateFullPaid): ?>
-                            <p class="mo-state-sub">Don't want to continue? Please contact us so we can cancel your order and process your refund.</p>
+                            <form method="POST" action="confirm_order.php" class="mo-date-cancel">
+                                <input type="hidden" name="order_id" value="<?php echo $oid; ?>">
+                                <input type="hidden" name="action" value="cancel_full_date">
+                                <p class="mo-state-sub">Don't want to change the date? You can cancel and the owner will handle your refund.</p>
+                                <button type="submit" class="mo-btn">Cancel &amp; request refund</button>
+                            </form>
                         <?php endif; ?>
                     </section>
                 <?php endif; ?>
@@ -1109,15 +997,14 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                     <?php if ($statusKey === "refunded"): ?>
 
-                        <section class="mo-card mo-state">
-                            <span class="mo-pill tone-danger">Refunded</span>
+                        <section class="mo-state">
                             <p class="mo-state-text">
                                 Your refund has been sent.
-                                <?php if ($refundReasonText !== ""): ?>Reason: <?php echo mo_e($refundReasonText); ?>.<?php endif; ?>
                                 Amount ₱<?php echo number_format((float) ($order["refund_amount"] ?? 0), 2); ?>
                                 <?php if (!empty($order["refund_reference"])): ?> · Ref <?php echo mo_e($order["refund_reference"]); ?><?php endif; ?>
                                 <?php if (!empty($order["refunded_at"])): ?> · <?php echo mo_e(date("M j", strtotime($order["refunded_at"]))); ?><?php endif; ?>
                             </p>
+                            <?php mo_message_box("Refund reason", $refundReasonText); ?>
                             <?php if (!empty($order["refund_proof"])): ?>
                                 <?php $refundProofUrl = figurify_proof_url($order["refund_proof"]); ?>
                                 <a
@@ -1133,41 +1020,36 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                     <?php else: ?>
 
-                        <section class="mo-card mo-state">
-                            <span class="mo-pill tone-warn">For refund</span>
+                        <section class="mo-state">
                             <p class="mo-state-text">
-                                The owner is reviewing your payment. Your refund will be sent to the refund account below within 7–14 business days.
-                                <?php if ($refundReasonText !== ""): ?>Reason: <?php echo mo_e($refundReasonText); ?>.<?php endif; ?>
+                                We are processing your refund. It will be sent to the account below within 7 to 14 business days.
                             </p>
+                            <?php mo_message_box("Refund reason", $refundReasonText); ?>
                         </section>
 
                     <?php endif; ?>
 
                 <?php elseif ($wf === "CANCELLED" || $statusKey === "cancelled"): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-danger">Cancelled</span>
+                    <section class="mo-state">
                         <p class="mo-state-text">
                             This order was cancelled.
-                            <?php if (!empty($order["decline_reason"])): ?>Reason: <?php echo mo_e($order["decline_reason"]); ?>.<?php endif; ?>
                         </p>
+                        <?php mo_message_box("Reason from Clay and Stuff", (string) ($order["decline_reason"] ?? "")); ?>
                     </section>
 
                 <?php elseif ($wf === "PENDING_STAFF_VERIFICATION"): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-info">Order being reviewed</span>
+                    <section class="mo-state">
                         <p class="mo-state-text">We're checking your order. Your quotation will be sent soon.</p>
                         <div class="mo-actions"><?php mo_cancel_form($oid, "Cancel Order"); ?></div>
                     </section>
 
                 <?php elseif ($wf === "STAFF_CORRECTION_REQUIRED"): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-danger">Correction required</span>
-                        <p class="mo-state-text">
-                            <?php echo nl2br(mo_e((string) ($order["correction_reason"] ?? "Our staff needs you to review your order details."))); ?>
-                        </p>
+                    <section class="mo-state">
+                        <p class="mo-state-text">Please check and fix your order details, then send it again.</p>
+                        <?php mo_message_box("Message from Clay and Stuff", (string) ($order["correction_reason"] ?? "Our staff needs you to review your order details.")); ?>
                         <div class="mo-actions">
                             <a href="correct-order.php?order_id=<?php echo $oid; ?>" class="mo-btn mo-btn-primary">Fix My Order</a>
                             <?php mo_cancel_form($oid, "Cancel"); ?>
@@ -1176,13 +1058,12 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                 <?php elseif ($statusKey === "quoted"): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-warn">Quotation ready</span>
+                    <section class="mo-state">
                         <p class="mo-state-text">
                             <?php if (!empty($order["quote_expires_at"])): ?>
-                                Please respond by <strong><?php echo mo_e(date("M j, Y — g:i A", strtotime($order["quote_expires_at"]))); ?></strong>, or this order will be cancelled automatically.
+                                Please respond by <strong><?php echo mo_e(date("M j, Y, g:i A", strtotime($order["quote_expires_at"]))); ?></strong>, or this order will be cancelled automatically.
                             <?php else: ?>
-                                Your quotation is ready. Continue to confirm your order, or cancel it.
+                                Your quotation is ready. Proceed to payment to confirm your order, or cancel it.
                             <?php endif; ?>
                         </p>
                         <div class="mo-actions">
@@ -1190,7 +1071,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                 <form method="POST" action="confirm_order.php" class="mo-inline-form">
                                     <input type="hidden" name="order_id" value="<?php echo $oid; ?>">
                                     <input type="hidden" name="action" value="continue">
-                                    <button type="submit" class="mo-btn mo-btn-primary">Continue Order</button>
+                                    <button type="submit" class="mo-btn mo-btn-primary">Proceed to Payment</button>
                                 </form>
                             <?php endif; ?>
                             <?php mo_cancel_form($oid, "Cancel"); ?>
@@ -1204,19 +1085,18 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                     $rejAction = (string) ($order["rejection_action"] ?? "");
                     ?>
 
-                    <section class="mo-card mo-state">
+                    <section class="mo-state">
                         <?php if ($rejReason !== ""): ?>
-                            <span class="mo-pill tone-danger"><?php echo $rejAction === "decline_payment_details" ? "Payment details declined" : "Payment proof declined"; ?></span>
+                            <span class="mo-pill tone-yellow"><?php echo $rejAction === "decline_payment_details" ? "Payment details declined" : "Payment proof declined"; ?></span>
                             <p class="mo-state-text">
-                                Reason: <?php echo mo_e($rejReason); ?>.
                                 <?php echo $rejAction === "decline_payment_details" ? "Please submit your details again." : "Please submit a new proof."; ?>
                             </p>
+                            <?php mo_message_box("Reason from Clay and Stuff", $rejReason); ?>
                             <div class="mo-actions">
                                 <a href="payment-shipping.php?order_id=<?php echo $oid; ?>" class="mo-btn mo-btn-primary">Resubmit payment</a>
                                 <?php mo_cancel_form($oid, "Cancel"); ?>
                             </div>
                         <?php else: ?>
-                            <span class="mo-pill tone-warn">Ready for payment</span>
                             <p class="mo-state-text">Send your down payment so we can start on your figure.</p>
                             <div class="mo-actions">
                                 <a href="payment-shipping.php?order_id=<?php echo $oid; ?>" class="mo-btn mo-btn-primary">Proceed to Payment</a>
@@ -1228,12 +1108,11 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                 <?php elseif (in_array($wf, ["PAYMENT_SUBMITTED", "PAYMENT_DETAILS_VERIFIED"], true)): ?>
 
                     <!-- OWNER lang ang nagve-verify ng bayad -->
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-info"><?php echo $wf === "PAYMENT_DETAILS_VERIFIED" ? "Waiting for approval" : "Checking your payment"; ?></span>
+                    <section class="mo-state">
                         <p class="mo-state-text">
                             <?php echo $wf === "PAYMENT_DETAILS_VERIFIED"
-                                ? "Payment checked — we'll start on your figure once it's approved."
-                                : "Payment sent — we'll let you know once it's approved."; ?>
+                                ? "Payment checked. We'll start on your figure once it's approved."
+                                : "Payment sent. We'll let you know once it's approved."; ?>
                         </p>
                     </section>
 
@@ -1241,11 +1120,12 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                     <?php $balRej = trim((string) ($order["rejection_reason"] ?? "")); ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-danger">Pay your balance</span>
-                        <p class="mo-state-text">Your figure is done! Pay the remaining balance so we can ship it.</p>
+                    <section class="mo-state">
+                        <p class="mo-state-text">Your figure is approved! You can pay the remaining balance now.</p>
+                        <p class="mo-state-sub"><strong>Note:</strong> We will keep working on your order, but we can only ship it after your balance is paid.</p>
                         <?php if ($balRej !== ""): ?>
-                            <p class="mo-state-sub">The owner couldn't verify your last balance payment: <strong><?php echo mo_e($balRej); ?></strong>. Please upload a new proof.</p>
+                            <p class="mo-state-sub">The owner couldn't verify your last balance payment. Please upload a new proof.</p>
+                            <?php mo_message_box("Reason from Clay and Stuff", $balRej); ?>
                         <?php endif; ?>
                         <div class="mo-actions">
                             <a href="pay-balance.php?order_id=<?php echo $oid; ?>" class="mo-btn mo-btn-primary">Pay Balance</a>
@@ -1255,47 +1135,82 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                 <?php elseif ($wf === "BALANCE_SUBMITTED"): ?>
 
                     <!-- diretso sa owner ang balance payment, walang staff-verification step -->
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-info">Waiting for approval</span>
-                        <p class="mo-state-text">Balance sent — we'll ship your order once it's approved.</p>
+                    <section class="mo-state">
+                        <p class="mo-state-text">Balance sent. We'll ship your order once it's approved.</p>
                     </section>
 
                 <?php elseif (in_array($wf, ["PROCESSING", "REVISION_IN_PROGRESS", "REVISION_REQUESTED"], true) && empty($order["latest_progress_update"])): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-ok">We're making your figure</span>
-                        <p class="mo-state-text">We'll send you a progress photo soon.</p>
+                    <section class="mo-state mo-state-making">
+                        <span class="mo-state-icon">🎨</span>
+                        <div>
+                            <p class="mo-state-title">We're making your figure</p>
+                            <p class="mo-state-text">We'll send you a progress photo soon.</p>
+                        </div>
                     </section>
 
                 <?php elseif ($wf === "READY_TO_SHIP"): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-info">Ready to ship</span>
+                    <section class="mo-state">
                         <p class="mo-state-text">
                             It will be sent via <?php echo mo_e(strtoupper((string) ($order["courier"] ?? ""))); ?>
                             to <?php echo mo_e((string) ($order["shipping_address"] ?? "")); ?>.
                         </p>
                     </section>
 
+                <?php elseif ($wf === "ADDRESS_RETURNED"): ?>
+
+                    <!-- Ibinalik ng staff: hindi mahanap ng courier ang address -> ayusin dito, babalik sa Ready to Ship -->
+                    <section class="mo-state">
+                        <span class="mo-pill tone-orange">Fix shipping details</span>
+                        <p class="mo-state-text">We couldn't ship your order using these shipping details. Please update them so we can ship it.</p>
+                        <?php mo_message_box("Reason from Clay and Stuff", (string) (figurify_wf_latest_reason($conn, $oid, "ADDRESS_RETURNED") ?? "")); ?>
+
+                        <form method="POST" action="confirm_order.php" class="mo-address-form">
+                            <input type="hidden" name="order_id" value="<?php echo $oid; ?>">
+                            <input type="hidden" name="action" value="update_address">
+
+                            <label>Full Name
+                                <input type="text" name="shipping_name" maxlength="150" value="<?php echo mo_e((string) ($order["shipping_name"] ?? "")); ?>" required>
+                            </label>
+                            <label>Full Address
+                                <input type="text" name="shipping_address" maxlength="255" placeholder="House No. / Street / Brgy, City / Province" value="<?php echo mo_e((string) ($order["shipping_address"] ?? "")); ?>" required>
+                            </label>
+                            <label>Pin Address / Google Maps Link (Optional)
+                                <input type="text" name="pin_address" maxlength="255" value="<?php echo mo_e((string) ($order["pin_address"] ?? "")); ?>">
+                            </label>
+                            <label>Contact Number
+                                <input type="text" name="shipping_contact" inputmode="numeric" pattern="[0-9]{11}" maxlength="11" placeholder="e.g. 09171234567" value="<?php echo mo_e((string) ($order["shipping_contact"] ?? "")); ?>" data-digits-only required>
+                            </label>
+                            <label>Courier
+                                <select name="courier" required>
+                                    <option value="lbc"<?php echo ($order["courier"] ?? "") === "lbc" ? " selected" : ""; ?>>LBC</option>
+                                    <option value="lalamove"<?php echo ($order["courier"] ?? "") === "lalamove" ? " selected" : ""; ?>>Lalamove</option>
+                                </select>
+                            </label>
+
+                            <div class="mo-actions">
+                                <button type="submit" class="mo-btn mo-btn-primary">Update Shipping Details</button>
+                            </div>
+                        </form>
+                    </section>
+
                 <?php elseif ($wf === "SHIPPED"): ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-info">Shipped</span>
-                        <p class="mo-state-text">
-                            <?php echo mo_e(strtoupper((string) ($order["courier"] ?? "—"))); ?>
-                            · Tracking <?php echo mo_e((string) ($extra["tracking_number"] ?? "—")); ?>
-                        </p>
+                    <section class="mo-state">
+                        <p class="mo-state-text">Your order is on the way.</p>
 
-                        <?php if ((isset($extra["shipping_fee"]) && $extra["shipping_fee"] !== null) || !empty($extra["shipped_at"])): ?>
-                            <div class="mo-state-meta">
-                                <?php if (isset($extra["shipping_fee"]) && $extra["shipping_fee"] !== null): ?>
-                                    <div><span>Shipping Fee</span><span>₱<?php echo number_format((float) $extra["shipping_fee"], 2); ?></span></div>
-                                <?php endif; ?>
-                                <?php if (!empty($extra["shipped_at"])): ?>
-                                    <div><span>Shipped On</span><span><?php echo mo_e(date("M j, Y", strtotime($extra["shipped_at"]))); ?></span></div>
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
+                        <!-- Courier / Tracking Number / Shipping Fee / Shipped On: pare-parehong row, pantay ang value -->
+                        <div class="mo-state-meta">
+                            <div><span>Courier</span><span><?php echo mo_e(strtoupper((string) ($order["courier"] ?? "N/A"))); ?></span></div>
+                            <div><span>Tracking Number</span><span><?php echo mo_e((string) ($extra["tracking_number"] ?? "N/A")); ?></span></div>
+                            <?php if (isset($extra["shipping_fee"]) && $extra["shipping_fee"] !== null): ?>
+                                <div><span>Shipping Fee</span><span>₱<?php echo number_format((float) $extra["shipping_fee"], 2); ?></span></div>
+                            <?php endif; ?>
+                            <?php if (!empty($extra["shipped_at"])): ?>
+                                <div><span>Shipped On</span><span><?php echo mo_e(date("M j, Y", strtotime($extra["shipped_at"]))); ?></span></div>
+                            <?php endif; ?>
+                        </div>
 
                         <?php figurify_render_shipping_receipt($oid, "customer"); ?>
 
@@ -1306,6 +1221,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                             <?php if ($autoReceive !== ""): ?>
                                 <p class="mo-state-sub">If you don't tap it, we'll mark it as received on <?php echo mo_e($autoReceive); ?>.</p>
                             <?php endif; ?>
+                            <!-- Order Received at Report: magkatabi -->
                             <div class="mo-actions">
                                 <form
                                     method="POST"
@@ -1316,8 +1232,40 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                     <input type="hidden" name="order_id" value="<?php echo $oid; ?>">
                                     <button type="submit" class="mo-btn mo-btn-primary">Order Received</button>
                                 </form>
+                                <?php if (empty($order["problem"])): ?>
+                                    <button type="button" class="mo-btn mo-btn-secondary" onclick="moToggleReport(<?php echo $oid; ?>, true)">Report</button>
+                                <?php endif; ?>
                             </div>
                         </div>
+
+                        <?php /* May problema sa dumating (hal. sira)? Note + proof -> makikita ng staff/owner sa Shipments */ ?>
+                        <?php if (!empty($order["problem"])): ?>
+                            <?php echo figurify_delivery_problem_html($order["problem"], "Your delivery problem report"); ?>
+                            <p class="mo-state-sub">The owner is checking your report. We will contact you about your refund.</p>
+                        <?php else: ?>
+                            <!-- REPORT POPUP: lalabas pag-click ng Report (note + photo, Cancel / Send Report) -->
+                            <div class="mo-report-modal" id="moReportModal-<?php echo $oid; ?>" data-order="<?php echo $oid; ?>" onclick="if (event.target === this) moToggleReport(<?php echo $oid; ?>, false)" hidden>
+                                <form method="POST" action="order_received.php" enctype="multipart/form-data" class="mo-report-form" id="moReportForm-<?php echo $oid; ?>">
+                                    <button type="button" class="mo-report-close" aria-label="Close" onclick="moToggleReport(<?php echo $oid; ?>, false)"></button>
+                                    <h3 class="mo-report-title">Report a problem</h3>
+                                    <input type="hidden" name="order_id" value="<?php echo $oid; ?>">
+                                    <input type="hidden" name="problem" value="1">
+                                    <label class="mo-report-label" for="moReportNote-<?php echo $oid; ?>">What is wrong with your order?</label>
+                                    <textarea name="problem_note" id="moReportNote-<?php echo $oid; ?>" rows="3" maxlength="500" placeholder="e.g. The figure arrived damaged" required></textarea>
+                                    <span class="mo-report-label">Photo of the problem</span>
+                                    <!-- kapareho ng upload box ng Payment page: buong box ang clickable, nasa loob ang larawan -->
+                                    <div class="mo-upload">
+                                        <span class="mo-upload-text">Click to upload a photo<small>JPG, PNG, WEBP up to 5MB</small></span>
+                                        <img alt="Selected photo" hidden>
+                                        <input type="file" name="problem_proof" accept="image/jpeg,image/png,image/webp" required onchange="moPreviewUpload(this)">
+                                    </div>
+                                    <div class="mo-actions">
+                                        <button type="button" class="mo-btn mo-btn-secondary" onclick="moToggleReport(<?php echo $oid; ?>, false)">Cancel</button>
+                                        <button type="submit" class="mo-btn mo-btn-primary">Send Report</button>
+                                    </div>
+                                </form>
+                            </div>
+                        <?php endif; ?>
                     </section>
 
                 <?php elseif ($statusKey === "completed"): ?>
@@ -1327,8 +1275,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                     $reviewToken = $order["review_token"] ?? "";
                     ?>
 
-                    <section class="mo-card mo-state">
-                        <span class="mo-pill tone-ok">Completed</span>
+                    <section class="mo-state">
 
                         <?php if ($orderReview): ?>
                             <p class="mo-state-text">
@@ -1352,23 +1299,11 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                 <?php endif; ?>
 
+                </section>
+                <!-- /.status card -->
+
 
                 <!-- ───── 5. FIGURES IN THIS ORDER ───── -->
-
-                <?php
-                /* Image Submission: Figures card katabi ang Custom Box card (kung meron),
-                   o ang Order Summary (kung walang custom box). Dress Up: dating layout. */
-                $moPair    = !$isDressUpOrder;
-                $moBoxHtml = [];
-                $moHasBox  = [];
-                foreach (array_values($order["figures"]) as $moBi => $moBf) {
-                    $moHasBox[$moBi] = in_array((string) ($moBf["box_addon_type"] ?? ""), ["funko_box", "hirono_blind_box"], true);
-                }
-                $moFirstHasBox = !empty($moHasBox[0]);
-                ob_start(); /* buong Figures + Summary region, pagsasamahin sa dulo */
-                ?>
-
-                <?php if ($moPair): ?><div class="mo-pair" data-has-box="<?php echo $moFirstHasBox ? "1" : "0"; ?>"><?php endif; ?>
 
                 <section class="mo-card mo-figures-card">
 
@@ -1410,115 +1345,114 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                 id="figure-panel-<?php echo $oid; ?>-<?php echo $index; ?>"
                             >
 
-                                <div class="viewer-grid<?php echo $isDressUpFig ? " dressup-grid" : ""; ?>">
+                                <!-- figure information (buong lapad): Figure Style hanggang Rush Fee -->
 
-                                    <!-- figure information -->
+                                <div class="mo-sub">Figure <?php echo $index + 1; ?> Information</div>
 
-                                    <div class="viewer-column">
+                                <dl class="mo-rows">
 
-                                        <div class="mo-sub">Figure <?php echo $index + 1; ?> Information</div>
-
-                                        <dl class="mo-rows mo-rows-split">
-
-                                            <div class="mo-row">
-                                                <dt class="mo-k">Figure Style</dt>
-                                                <dd class="mo-v"><span class="mo-val-text"><?php echo mo_e($fig["figure_style"]); ?></span></dd>
-                                            </div>
-
-                                            <div class="mo-row">
-                                                <dt class="mo-k">Product Type</dt>
-                                                <dd class="mo-v">
-                                                    <span class="mo-val-text"><?php echo mo_e($fig["product_type"]); ?></span>
-                                                    <?php if (!$hasSize): ?><span class="mo-chip">₱<?php echo number_format((float) $fig["product_price"], 2); ?></span><?php endif; ?>
-                                                </dd>
-                                            </div>
-
-                                            <div class="mo-row">
-                                                <dt class="mo-k">Size</dt>
-                                                <dd class="mo-v">
-                                                    <span class="mo-val-text"><?php echo $hasSize ? mo_e($fig["size_label"]) : "No size required"; ?></span>
-                                                    <?php if ($hasSize): ?><span class="mo-chip">₱<?php echo number_format((float) $fig["product_price"], 2); ?></span><?php endif; ?>
-                                                </dd>
-                                            </div>
-
-                                            <?php if (!$isDressUpFig): /* walang Figure Name sa Dress Up */ ?>
-                                                <div class="mo-row">
-                                                    <dt class="mo-k">Figure Name</dt>
-                                                    <dd class="mo-v">
-                                                        <span class="mo-val-text"><?php echo mo_e(figurify_figure_name_display($fig)); ?></span>
-                                                        <?php if ((float) $fig["name_fee"] > 0): ?>
-                                                            <span class="mo-chip">₱<?php echo number_format((float) $fig["name_fee"], 2); ?></span>
-                                                        <?php endif; ?>
-                                                    </dd>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <?php if ($figRush > 0): ?>
-                                                <div class="mo-row">
-                                                    <dt class="mo-k">Rush Fee</dt>
-                                                    <dd class="mo-v"><span class="mo-val-text"></span><span class="mo-chip">₱<?php echo number_format($figRush, 2); ?></span></dd>
-                                                </div>
-                                            <?php endif; ?>
-
-                                        </dl>
-
-                                        <?php if ($isDressUpFig): ?>
-
-                                            <?php figurify_render_dressup_design($fig, "customer"); ?>
-
-                                        <?php else: ?>
-
-                                            <!-- uploaded reference photos -->
-
-                                            <?php $imgCount = count($fig["images"]); ?>
-
-                                            <div class="mo-gallery-label">Reference Images <span>(<?php echo $imgCount; ?>)</span></div>
-
-                                            <?php if ($imgCount > 0): ?>
-
-                                                <div class="gallery-row">
-                                                    <?php foreach ($fig["images"] as $imgIndex => $imgPath): ?>
-                                                        <img
-                                                            src="<?php echo mo_e($siteBase . $imgPath); ?>"
-                                                            alt="<?php echo mo_e($fig["figure_name"]); ?> — photo <?php echo $imgIndex + 1; ?>"
-                                                            class="gallery-thumb"
-                                                            onclick="openImageLightbox('<?php echo mo_e($siteBase . $imgPath); ?>', '<?php echo mo_e($fig["figure_name"]); ?>')"
-                                                        >
-                                                    <?php endforeach; ?>
-                                                </div>
-
-                                            <?php else: ?>
-
-                                                <div class="no-image">No Image</div>
-
-                                            <?php endif; ?>
-
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($fig["notes"])): ?>
-                                            <div class="notes-box">
-                                                <strong>Customer Notes</strong>
-                                                <p><?php echo nl2br(mo_e($fig["notes"])); ?></p>
-                                            </div>
-                                        <?php endif; ?>
-
+                                    <div class="mo-row">
+                                        <dt class="mo-k">Figure Style</dt>
+                                        <dd class="mo-v"><span class="mo-val-text"><?php echo mo_e($fig["figure_style"]); ?></span></dd>
                                     </div>
-                                    <!-- /.viewer-column (figure information) -->
 
+                                    <div class="mo-row">
+                                        <dt class="mo-k">Product Type</dt>
+                                        <dd class="mo-v"><?php echo mo_e($fig["product_type"]); ?></dd>
+                                        <dd class="mo-p"><?php if (!$hasSize): ?>₱<?php echo number_format((float) $fig["product_price"], 2); ?><?php endif; ?></dd>
+                                    </div>
 
-                                    <!-- custom box -->
+                                    <div class="mo-row">
+                                        <dt class="mo-k">Size</dt>
+                                        <dd class="mo-v"><?php echo $hasSize ? mo_e(preg_replace('/^([0-9.]+)\s*(?:"|in|inch|inches)?$/', '$1 inches', trim((string) $fig["size_label"]))) : "No size required"; ?></dd>
+                                        <dd class="mo-p"><?php if ($hasSize): ?>₱<?php echo number_format((float) $fig["product_price"], 2); ?><?php endif; ?></dd>
+                                    </div>
 
-                                    <?php if ($moPair) { ob_start(); } ?>
-                                    <div class="viewer-column">
+                                    <?php if (!$isDressUpFig): /* walang Figure Name sa Dress Up */ ?>
+                                        <div class="mo-row">
+                                            <dt class="mo-k">Figure Name</dt>
+                                            <dd class="mo-v"><?php echo mo_e(figurify_figure_name_display($fig)); ?></dd>
+                                            <dd class="mo-p"><?php if ((float) $fig["name_fee"] > 0): ?>₱<?php echo number_format((float) $fig["name_fee"], 2); ?><?php endif; ?></dd>
+                                        </div>
+                                    <?php endif; ?>
 
-                                        <div class="mo-sub">Custom Box</div>
+                                    <div class="mo-row">
+                                        <dt class="mo-k">Quantity</dt>
+                                        <dd class="mo-v"><?php echo figurify_figure_quantity($fig); ?></dd>
+                                    </div>
+
+                                    <?php if ($figRush > 0): ?>
+                                        <div class="mo-row">
+                                            <dt class="mo-k">Rush Fee</dt>
+                                            <dd class="mo-v">Rush Order</dd>
+                                            <dd class="mo-p">₱<?php echo number_format($figRush, 2); ?></dd>
+                                        </div>
+                                    <?php endif; ?>
+
+                                </dl>
+
+                                <?php if ($isDressUpFig): ?>
+
+                                    <!-- DRESS UP DESIGN: isang container - kaliwa ang napili (larawan | pangalan | kulay | presyo),
+                                         kanan ang 3D figure (kasing-taas ng listahan) -->
+                                    <div class="mo-dressup-box">
+                                        <div class="mo-dressup-list">
+                                            <?php figurify_render_dressup_design($fig, "customer"); ?>
+                                        </div>
+                                        <div class="mo-dressup-view">
+                                            <?php figurify_render_dressup_viewer($fig); ?>
+                                        </div>
+                                    </div>
+
+                                <?php else: ?>
+
+                                    <!-- uploaded reference photos -->
+
+                                    <?php $imgCount = count($fig["images"]); ?>
+
+                                    <div class="mo-gallery-label">Reference Images <span>(<?php echo $imgCount; ?>)</span></div>
+
+                                    <?php if ($imgCount > 0): ?>
+
+                                        <div class="gallery-row">
+                                            <?php foreach ($fig["images"] as $imgIndex => $imgPath): ?>
+                                                <img
+                                                    src="<?php echo mo_e($siteBase . $imgPath); ?>"
+                                                    alt="<?php echo mo_e($fig["figure_name"]); ?> photo <?php echo $imgIndex + 1; ?>"
+                                                    class="gallery-thumb"
+                                                    onclick="openImageLightbox('<?php echo mo_e($siteBase . $imgPath); ?>', '<?php echo mo_e($fig["figure_name"]); ?>')"
+                                                >
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                    <?php else: ?>
+
+                                        <div class="no-image">No Image</div>
+
+                                    <?php endif; ?>
+
+                                <?php endif; ?>
+
+                                <?php if (!empty($fig["notes"])): ?>
+                                    <div class="notes-box">
+                                        <strong>Your Notes</strong>
+                                        <p><?php echo nl2br(mo_e($fig["notes"])); ?></p>
+                                    </div>
+                                <?php endif; ?>
+
+                                    <!-- Box & Add-ons: nasa baba, sariling container, lalabas lang kapag may box na inorder -->
+                                    <?php if (in_array($fig["box_addon_type"], ["funko_box", "hirono_blind_box"], true)): ?>
+                                    <div class="box-addons-section">
+
+                                        <div class="mo-sub">Box &amp; Add-ons</div>
 
                                         <?php if ($fig["box_addon_type"] === "funko_box"): ?>
 
-                                            <dl class="mo-rows mo-rows-split">
+                                            <dl class="mo-rows">
                                                 <div class="mo-row">
                                                     <dt class="mo-k">Box Type</dt>
-                                                    <dd class="mo-v"><?php echo $fig["funko_box_type"] === "solo" ? "Solo Box" : "Couple Box"; ?> · ₱<?php echo number_format((float) $fig["box_addon_price"], 2); ?></dd>
+                                                    <dd class="mo-v"><?php echo $fig["funko_box_type"] === "solo" ? "Solo Box" : "Couple Box"; ?></dd>
+                                                    <dd class="mo-p">₱<?php echo number_format((float) $fig["box_addon_price"], 2); ?></dd>
                                                 </div>
                                             </dl>
 
@@ -1530,11 +1464,12 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                                         <?php elseif ($fig["box_addon_type"] === "hirono_blind_box"): ?>
 
-                                            <dl class="mo-rows mo-rows-split">
+                                            <dl class="mo-rows">
 
                                                 <div class="mo-row">
                                                     <dt class="mo-k">Box Type</dt>
-                                                    <dd class="mo-v"><?php echo $fig["hirono_blind_type"] === "regular" ? "Regular Blind Box" : "Blind Box Set"; ?> · ₱<?php echo number_format(hironoBaseBoxPrice($fig), 2); ?></dd>
+                                                    <dd class="mo-v"><?php echo $fig["hirono_blind_type"] === "regular" ? "Regular Blind Box" : "Blind Box Set"; ?></dd>
+                                                    <dd class="mo-p">₱<?php echo number_format(hironoBaseBoxPrice($fig), 2); ?></dd>
                                                 </div>
 
                                                 <?php if (!empty($fig["hirono_box_design"])): ?>
@@ -1547,7 +1482,8 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                                 <?php foreach ($fig["blind_items_list"] as $extraItem): ?>
                                                     <div class="mo-row">
                                                         <dt class="mo-k">Optional Extra</dt>
-                                                        <dd class="mo-v"><?php echo mo_e($extraItem["label"]); ?> · ₱<?php echo number_format((float) $extraItem["price"], 2); ?></dd>
+                                                        <dd class="mo-v"><?php echo mo_e($extraItem["label"]); ?></dd>
+                                                        <dd class="mo-p">₱<?php echo number_format((float) $extraItem["price"], 2); ?></dd>
                                                     </div>
                                                 <?php endforeach; ?>
 
@@ -1563,12 +1499,10 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                                             </div>
 
                                             <?php if (!empty($fig["hirono_letter"])): ?>
-                                                <dl class="mo-rows mo-rows-split">
-                                                    <div class="mo-row">
-                                                        <dt class="mo-k">Letter</dt>
-                                                        <dd class="mo-v"><?php echo nl2br(mo_e($fig["hirono_letter"])); ?></dd>
-                                                    </div>
-                                                </dl>
+                                                <div class="notes-box">
+                                                    <strong>Letter</strong>
+                                                    <p><?php echo nl2br(mo_e($fig["hirono_letter"])); ?></p>
+                                                </div>
                                             <?php endif; ?>
 
                                             <?php if (!empty($fig["box_images"])): ?>
@@ -1588,26 +1522,11 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                                             <?php endif; ?>
 
-                                        <?php else: ?>
-
-                                            <p class="mo-muted">No custom box added to this figure.</p>
-
                                         <?php endif; ?>
 
                                     </div>
-                                    <!-- /.viewer-column (custom box) -->
-                                    <?php if ($moPair) { $moBoxHtml[$index] = ob_get_clean(); } ?>
-
-
-                                    <?php if ($isDressUpFig): ?>
-                                        <!-- DRESS UP: 3D figure, katabi ng Figure Information -->
-                                        <div class="viewer-column dressup-3d-column">
-                                            <?php figurify_render_dressup_viewer($fig); ?>
-                                        </div>
+                                    <!-- /.box-addons-section -->
                                     <?php endif; ?>
-
-                                </div>
-                                <!-- /.viewer-grid -->
 
                             </div>
                             <!-- /.order-figure -->
@@ -1619,29 +1538,15 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                 </section>
 
-                <?php if ($moPair): ?>
-                    <div class="mo-pair-side">
-                        <?php foreach ($moBoxHtml as $moBoxIdx => $moBoxMarkup): ?>
-                            <?php if (!empty($moHasBox[$moBoxIdx])): ?>
-                                <section class="mo-card mo-box-card<?php echo ($moBoxIdx === 0) ? " is-on" : ""; ?>" data-box-for="<?php echo $oid; ?>-<?php echo (int) $moBoxIdx; ?>">
-                                    <?php echo $moBoxMarkup; ?>
-                                </section>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                        <div class="mo-summary-slot mo-summary-side<?php echo $moFirstHasBox ? "" : " is-on"; ?>">
-                            <!--MO_SUMMARY-->
-                        </div>
-                    </div>
-                </div><!-- /.mo-pair -->
-                <div class="mo-summary-slot mo-summary-below<?php echo $moFirstHasBox ? " is-on" : ""; ?>" data-pair-summary="<?php echo $oid; ?>">
-                    <!--MO_SUMMARY-->
                 </div>
-                <?php endif; ?>
+                <!-- /.mo-main -->
 
 
-                <!-- ───── 6. ORDER SUMMARY ───── -->
+                <div class="mo-side">
 
-                <?php ob_start(); ?>
+
+                <!-- ───── 7. ORDER SUMMARY (kanan, taas) ───── -->
+
                 <section class="mo-card">
 
                     <h2 class="mo-card-title">Order Summary</h2>
@@ -1649,48 +1554,27 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                     <div class="mo-sum">
 
                         <?php
-                        /* Down Payment / Remaining Balance */
-                        $splitShown = $isDressUpOrder
-                            || !in_array($wf, ["PENDING_STAFF_VERIFICATION", "STAFF_CORRECTION_REQUIRED"], true);
-
-                        if ($splitShown && $wf !== "CANCELLED"):
-
-                            /* PAID lang kapag na-approve na ng owner (walang "checking") */
-                            $dpPaid = !empty($order["paid_at"]) && !in_array($wf, ["AWAITING_PAYMENT", "QUOTATION_SENT", "PENDING_STAFF_VERIFICATION", "STAFF_CORRECTION_REQUIRED", "PAYMENT_SUBMITTED", "PAYMENT_DETAILS_VERIFIED", "CANCELLED"], true);
-                            $balPaid = !empty($extra["balance_paid_at"]) && $wf !== "BALANCE_SUBMITTED" && $wf !== "AWAITING_BALANCE";
-                        ?>
-                            <div class="mo-split">
-                                <div class="mo-sum-line">
-                                    <span>Down Payment (50%)<?php if ($dpPaid): ?><em class="pay-tag is-paid">paid</em><?php endif; ?></span>
-                                    <span>₱<?php echo number_format((float) $order["downpayment"], 2); ?></span>
-                                </div>
-                                <div class="mo-sum-line">
-                                    <span>Remaining Balance<?php if ($balPaid): ?><em class="pay-tag is-paid">paid</em><?php endif; ?></span>
-                                    <span>₱<?php echo number_format((float) $order["balance_due"], 2); ?></span>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php
-                        /* Bawat figure - "Figure N" row, at ang rush fee niya sa ilalim */
+                        /* Bawat figure: "Figure N" + ano ito, tapos Price, Quantity, Rush Fee, Subtotal
+                           (pareho sa Image Submission at Dress Up) */
                         foreach (array_values($order["figures"]) as $bIndex => $bFig):
 
-                            /* wala pang quotation -> estimate (figure_total) muna */
-                            $bFigPrice = ($bFig["quoted_price"] !== null)
-                                ? (float) $bFig["quoted_price"]
-                                : (float) ($bFig["figure_total"] ?? 0);
+                            /* presyo ng isang piraso (estimate muna kung wala pang quotation) */
+                            $bFigUnit = figurify_figure_unit_price($bFig);
+                            $bFigQty  = figurify_figure_quantity($bFig);
+                            $bFigRush = (float) ($rushSplit["per"][$bIndex] ?? 0);
                         ?>
-                            <div class="mo-sum-line">
-                                <span>Figure <?php echo $bIndex + 1; ?></span>
-                                <span>₱<?php echo number_format($bFigPrice, 2); ?></span>
-                            </div>
-
-                            <?php if (($rushSplit["per"][$bIndex] ?? 0) > 0): ?>
-                                <div class="mo-sum-line is-sub">
-                                    <span>Rush Fee</span>
-                                    <span>₱<?php echo number_format((float) $rushSplit["per"][$bIndex], 2); ?></span>
+                            <div class="mo-sum-fig">
+                                <div class="mo-sum-fig-head">
+                                    <span>Figure <?php echo $bIndex + 1; ?></span>
+                                    <small><?php echo mo_e($bFig["figure_style"] . " · " . $bFig["product_type"]); ?></small>
                                 </div>
-                            <?php endif; ?>
+                                <div class="mo-sum-line"><span>Price</span><span>₱<?php echo number_format($bFigUnit, 2); ?></span></div>
+                                <div class="mo-sum-line"><span>Quantity</span><span><?php echo $bFigQty; ?></span></div>
+                                <?php if ($bFigRush > 0): ?>
+                                    <div class="mo-sum-line"><span>Rush Fee</span><span>₱<?php echo number_format($bFigRush, 2); ?></span></div>
+                                <?php endif; ?>
+                                <div class="mo-sum-line mo-sum-sub"><span>Subtotal</span><span>₱<?php echo number_format($bFigUnit * $bFigQty + $bFigRush, 2); ?></span></div>
+                            </div>
 
                         <?php endforeach; ?>
 
@@ -1711,20 +1595,38 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
                             <span>₱<?php echo number_format((float) $order["total_amount"], 2); ?></span>
                         </div>
 
+                        <?php
+                        /* Down Payment / Remaining Balance (Full Payment: isang linya lang, walang balance) */
+                        $splitShown = $isDressUpOrder
+                            || !in_array($wf, ["PENDING_STAFF_VERIFICATION", "STAFF_CORRECTION_REQUIRED"], true);
+
+                        if ($splitShown && $wf !== "CANCELLED"):
+
+                            /* PAID lang kapag na-approve na ng owner (walang "checking") */
+                            $dpPaid = !empty($order["paid_at"]) && !in_array($wf, ["AWAITING_PAYMENT", "QUOTATION_SENT", "PENDING_STAFF_VERIFICATION", "STAFF_CORRECTION_REQUIRED", "PAYMENT_SUBMITTED", "PAYMENT_DETAILS_VERIFIED", "CANCELLED"], true);
+                            $balPaid = !empty($extra["balance_paid_at"]) && $wf !== "BALANCE_SUBMITTED" && $wf !== "AWAITING_BALANCE";
+                        ?>
+                            <div class="mo-split">
+                                <div class="mo-sum-line<?php echo $dpPaid ? " is-paid" : ""; ?>">
+                                    <span><?php echo e(figurify_wf_downpayment_label($order)); ?><?php if ($dpPaid): ?><em class="pay-tag is-paid">paid</em><?php endif; ?></span>
+                                    <span>₱<?php echo number_format((float) $order["downpayment"], 2); ?></span>
+                                </div>
+                                <?php if (!figurify_wf_is_full_payment($order)): ?>
+                                    <div class="mo-sum-line">
+                                        <span>Remaining Balance<?php if ($balPaid): ?><em class="pay-tag is-paid">paid</em><?php endif; ?></span>
+                                        <span>₱<?php echo number_format((float) $order["balance_due"], 2); ?></span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
                     </div>
 
                 </section>
-                <?php
-                $moSummaryHtml = ob_get_clean();   /* Order Summary card */
-                $moRegionHtml  = ob_get_clean();   /* Figures (+ Custom Box) region */
-                echo $moPair
-                    ? str_replace("<!--MO_SUMMARY-->", $moSummaryHtml, $moRegionHtml)
-                    : $moRegionHtml . $moSummaryHtml;
-                ?>
 
 
                 <?php
-                /* ───── 7. PAYMENT & SHIPPING DETAILS ───── */
+                /* ───── 8. PAYMENT & SHIPPING DETAILS ───── */
                 $hasPaymentInfo = !empty($order["payment_reference"])
                     || !empty($order["payment_proof"])
                     || !empty($order["paid_at"])
@@ -1743,13 +1645,11 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                     <section class="mo-card">
 
-                        <h2 class="mo-card-title">Payment &amp; Shipping Details</h2>
+                        <h2 class="mo-card-title">Payment &amp; Shipping Information</h2>
 
                         <?php if ($hasPaymentInfo): ?>
 
                             <div class="mo-pay-block">
-
-                                <div class="mo-sub">Payment &amp; Shipping Information</div>
 
                                 <dl class="mo-rows">
 
@@ -1810,6 +1710,10 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
                 <?php endif; ?>
 
+
+                </div>
+                <!-- /.mo-side -->
+
             </div>
             <!-- /.order-detail-panel -->
 
@@ -1819,7 +1723,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
         <!-- /.orders-detail-col -->
 
         </div>
-        <!-- /.orders-layout -->
+        <!-- ===== END ORDERS LAYOUT ===== -->
 
     <?php endif; ?>
 
@@ -1827,7 +1731,10 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
 
 
 
-<!-- image lightbox, click photo to enlarge -->
+<!-- ====================== END MY ORDERS ====================== -->
+
+
+<!-- ====================== IMAGE LIGHTBOX (css: my-orders.css [16] | js: [5e]) ====================== -->
 
 <div
     class="image-lightbox"
@@ -1842,9 +1749,7 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
             class="image-lightbox-close"
             onclick="closeImageLightbox()"
             aria-label="Close"
-        >
-            ✕
-        </button>
+        ></button>
 
         <img
             id="lightboxImage"
@@ -1860,11 +1765,20 @@ require_once __DIR__ . "/../helpers/payment_view_helper.php";
     </div>
 
 </div>
+<!-- ====================== END IMAGE LIGHTBOX ====================== -->
 
 
+<!-- ====================== FOOTER (Shared/footer.php) ====================== -->
+<?php include __DIR__ . "/../Shared/footer.php"; ?>
+<!-- ====================== END FOOTER ====================== -->
+
+
+<!-- ====================== [5] SCRIPT ====================== -->
 <script>
 
-/* client-side search + status filter lang, walang extra request sa server */
+/* ==========================================================================
+   [5a] SEARCH + STATUS FILTER  (client-side lang, walang extra request sa server)
+   ========================================================================== */
 
 var myOrdersStatusFilter = "all";
 
@@ -1882,7 +1796,7 @@ function myOrdersApplyFilters() {
         var matchesStatus = (myOrdersStatusFilter === "all") || (item.dataset.status === myOrdersStatusFilter);
         var matches = matchesSearch && matchesStatus;
 
-        item.style.display = matches ? "" : "none";
+        item.hidden = !matches;
 
         if (matches) {
             visibleCount++;
@@ -1893,73 +1807,31 @@ function myOrdersApplyFilters() {
     var emptyMessage = document.getElementById("myOrdersSearchEmpty");
 
     if (emptyMessage) {
-        emptyMessage.style.display = (visibleCount === 0 && items.length > 0) ? "" : "none";
+        emptyMessage.hidden = !(visibleCount === 0 && items.length > 0);
     }
+
+    /* nagbago ang bilang ng kita -> ayusin ulit ang taas ng listahan */
+    myOrdersFitListHeight();
 
 }
 
 
-/* status filter dropdown - bukas/sara, isa lang bukas sa isang pagkakataon */
+/* status pills - isa lang ang active; saka i-apply ang filter + search */
 
-function myOrdersToggleFilter() {
-
-    var dropdown = document.getElementById("myOrdersFilterDropdown");
-
-    if (!dropdown) {
-        return;
-    }
-
-    var isOpen = dropdown.classList.contains("open");
-
-    dropdown.classList.toggle("open", !isOpen);
-
-}
-
-function myOrdersSetFilter(el, value, label) {
+function myOrdersSetFilter(value) {
 
     myOrdersStatusFilter = value;
-
-    var labelEl = document.getElementById("myOrdersFilterLabel");
-    if (labelEl) {
-        labelEl.textContent = label;
-    }
-
-    document.querySelectorAll("#myOrdersFilterDropdown .orders-filter-option").forEach(function (opt) {
-        opt.classList.toggle("active", opt === el);
-    });
-
-    var dropdown = document.getElementById("myOrdersFilterDropdown");
-    if (dropdown) {
-        dropdown.classList.remove("open");
-    }
 
     myOrdersApplyFilters();
 
 }
 
-document.addEventListener("click", function (event) {
-
-    var dropdown = document.getElementById("myOrdersFilterDropdown");
-
-    if (dropdown && dropdown.classList.contains("open") && !dropdown.contains(event.target)) {
-        dropdown.classList.remove("open");
-    }
-
-});
-
-document.addEventListener("keydown", function (event) {
-
-    if (event.key === "Escape") {
-        var dropdown = document.getElementById("myOrdersFilterDropdown");
-        if (dropdown) {
-            dropdown.classList.remove("open");
-        }
-    }
-
-});
+/* ====================== END SEARCH + STATUS FILTER ====================== */
 
 
-/* switch which order's details show on the right */
+/* ==========================================================================
+   [5b] PILIIN ANG ORDER  (lalabas ang details nito sa kanan)
+   ========================================================================== */
 
 function selectOrder(button, noScroll) {
 
@@ -1986,7 +1858,7 @@ function selectOrder(button, noScroll) {
         /* sa desktop, mag-scroll lang kung nakalampas na ang taas ng panel;
            sa mobile (stacked na ang layout) laging bumaba sa details */
         var panelTop = target.getBoundingClientRect().top;
-        var isStacked = window.innerWidth <= 1000;
+        var isStacked = window.innerWidth <= 1100;
 
         if (!noScroll && (isStacked || panelTop < 0)) {
 
@@ -2001,8 +1873,41 @@ function selectOrder(button, noScroll) {
 
 }
 
+/* ===== taas ng listahan sa kaliwa: eksaktong 5 order ang kita, scroll kapag lampas ===== */
+function myOrdersFitListHeight() {
 
-/* progress update response - approve or request revision, per order_id */
+    var list = document.getElementById("myOrdersScroll");
+
+    if (!list) {
+        return;
+    }
+
+    var items = Array.prototype.filter.call(list.querySelectorAll(".order-list-item"), function (item) {
+        return !item.hidden;
+    });
+
+    /* naka-stack na (phone/tablet) o 5 pababa lang ang order: walang limit */
+    if (window.innerWidth <= 1100 || items.length <= 5) {
+        list.style.maxHeight = "";
+        return;
+    }
+
+    var style  = window.getComputedStyle(list);
+    var top    = items[0].offsetTop;
+    var bottom = items[4].offsetTop + items[4].offsetHeight;
+
+    list.style.maxHeight = (bottom - top + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)) + "px";
+}
+
+window.addEventListener("load", myOrdersFitListHeight);
+window.addEventListener("resize", myOrdersFitListHeight);
+
+/* ====================== END PILIIN ANG ORDER ====================== */
+
+
+/* ==========================================================================
+   [5c] PROGRESS UPDATE RESPONSE  (approve o request revision, kada order_id)
+   ========================================================================== */
 
 function showProgressRevisionBox(orderId) {
 
@@ -2010,11 +1915,11 @@ function showProgressRevisionBox(orderId) {
     var revisionBox = document.getElementById("progressRevisionBox-" + orderId);
 
     if (buttonsRow) {
-        buttonsRow.style.display = "none";
+        buttonsRow.hidden = true;
     }
 
     if (revisionBox) {
-        revisionBox.style.display = "flex";
+        revisionBox.hidden = false;
     }
 
 }
@@ -2026,7 +1931,7 @@ function hideProgressRevisionBox(orderId) {
     var noteField = document.getElementById("progressRevisionNote-" + orderId);
 
     if (revisionBox) {
-        revisionBox.style.display = "none";
+        revisionBox.hidden = true;
     }
 
     if (noteField) {
@@ -2034,7 +1939,7 @@ function hideProgressRevisionBox(orderId) {
     }
 
     if (buttonsRow) {
-        buttonsRow.style.display = "";
+        buttonsRow.hidden = false;
     }
 
 }
@@ -2066,10 +1971,70 @@ function submitProgressResponse(orderId, response) {
 
 }
 
+/* ====================== END PROGRESS UPDATE RESPONSE ====================== */
 
 
+/* ==========================================================================
+   [5c] CALENDAR NG BAGONG PETSA  (kapag puno na ang napiling ship out date)
+   ========================================================================== */
 
-/* switch which figure's details show (kapag 2+ figures), isa lang sa isang time */
+document.querySelectorAll(".mo-date-form[data-dates]").forEach(function (form) {
+
+    var dates   = form.dataset.dates.split(",");
+    var cur     = new Date(dates[0] + "T00:00:00");   /* unang bukas na petsa */
+    var grid    = form.querySelector(".mo-cal-grid");
+    var title   = form.querySelector(".mo-cal-title");
+    var picked  = form.querySelector(".mo-cal-picked");
+    var field   = form.querySelector("input[name=new_date]");
+    var months  = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+    function draw() {
+
+        var y = cur.getFullYear(), m = cur.getMonth();
+        var html = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(function (d) { return "<span class='mo-cal-dow'>" + d + "</span>"; }).join("");
+
+        for (var i = 0; i < new Date(y, m, 1).getDay(); i++) { html += "<span></span>"; }
+
+        for (var d = 1; d <= new Date(y, m + 1, 0).getDate(); d++) {
+            var key  = y + "-" + pad(m + 1) + "-" + pad(d);
+            var open = dates.indexOf(key) !== -1;
+            html += open
+                ? "<button type='button' class='mo-cal-day is-open" + (field.value === key ? " is-picked" : "") + "' data-date='" + key + "'>" + d + "</button>"
+                : "<span class='mo-cal-day'>" + d + "</span>";
+        }
+
+        title.textContent = months[m] + " " + y;
+        grid.innerHTML = html;
+    }
+
+    form.querySelectorAll(".mo-cal-nav").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            cur.setMonth(cur.getMonth() + parseInt(btn.dataset.dir, 10), 1);
+            draw();
+        });
+    });
+
+    grid.addEventListener("click", function (e) {
+        var day = e.target.closest(".mo-cal-day.is-open");
+        if (!day) { return; }
+        field.value = day.dataset.date;
+        picked.textContent = "Selected: " + months[parseInt(day.dataset.date.substr(5, 2), 10) - 1] + " " + parseInt(day.dataset.date.substr(8, 2), 10) + ", " + day.dataset.date.substr(0, 4);
+        draw();
+    });
+
+    form.addEventListener("submit", function (e) {
+        if (!field.value) { e.preventDefault(); picked.textContent = "Please pick a highlighted date first."; }
+    });
+
+    draw();
+});
+
+
+/* ==========================================================================
+   [5d] PILIIN ANG FIGURE  (kapag 2+ figures, isa lang ang nakikita)
+   ========================================================================== */
 
 function selectFigure(button) {
 
@@ -2105,55 +2070,45 @@ function selectFigure(button) {
         target.classList.add("active");
     }
 
-    moSyncPair(button);
-
 }
 
 
-/* Image Submission: kapag nagpalit ng figure tab, ipakita ang Custom Box ng figure na iyon
-   katabi ng Figures card; kung wala siyang box, Order Summary ang katabi. */
+/* ====================== END PILIIN ANG FIGURE ====================== */
 
-function moSyncPair(button) {
 
-    var pair = button.closest(".mo-pair");
+/* ==========================================================================
+   [5d2] REPORT A PROBLEM  (Report button -> popup na may note + photo, Cancel / Send Report)
+   ========================================================================== */
 
-    if (!pair) {
-        return;
+function moToggleReport(orderId, show) {
+    var form = document.getElementById("moReportForm-" + orderId);
+    document.getElementById("moReportModal-" + orderId).hidden = !show;
+    document.body.classList.toggle("no-scroll", show);
+    if (!show) {
+        form.reset();
+        moPreviewUpload(form.querySelector('input[type="file"]'));
     }
-
-    var panelId = button.dataset.figureTarget || "";   /* figure-panel-{oid}-{idx} */
-    var match = panelId.match(/^figure-panel-(\d+)-(\d+)$/);
-
-    if (!match) {
-        return;
-    }
-
-    var boxKey = match[1] + "-" + match[2];
-    var hasBox = false;
-
-    pair.querySelectorAll(".mo-box-card").forEach(function (card) {
-        var on = card.getAttribute("data-box-for") === boxKey;
-        card.classList.toggle("is-on", on);
-        if (on) {
-            hasBox = true;
-        }
-    });
-
-    var sideSummary = pair.querySelector(".mo-summary-side");
-    var belowSummary = pair.parentNode.querySelector('.mo-summary-below[data-pair-summary="' + match[1] + '"]');
-
-    if (sideSummary) {
-        sideSummary.classList.toggle("is-on", !hasBox);
-    }
-
-    if (belowSummary) {
-        belowSummary.classList.toggle("is-on", hasBox);
-    }
-
 }
 
+/* larawan na pinili = makikita sa loob ng upload box */
+function moPreviewUpload(input) {
+    var box  = input.closest(".mo-upload");
+    var img  = box.querySelector("img");
+    var text = box.querySelector(".mo-upload-text");
+    var file = input.files && input.files[0];
 
-/* click a figure photo to enlarge it */
+    if (img.src) { URL.revokeObjectURL(img.src); }
+    img.hidden  = !file;
+    text.hidden = !!file;
+    img.src     = file ? URL.createObjectURL(file) : "";
+}
+
+/* ====================== END REPORT A PROBLEM ====================== */
+
+
+/* ==========================================================================
+   [5e] IMAGE LIGHTBOX  (click ng larawan = palakihin)
+   ========================================================================== */
 
 function openImageLightbox(src, label) {
 
@@ -2173,7 +2128,7 @@ function openImageLightbox(src, label) {
 
     lightbox.classList.add("show");
 
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("no-scroll");
 
 }
 
@@ -2193,19 +2148,28 @@ function closeImageLightbox(event) {
 
     lightbox.classList.remove("show");
 
-    document.body.style.overflow = "";
+    document.body.classList.remove("no-scroll");
 
 }
 
 
+/* Escape = isara ang lightbox at ang Report popup */
 document.addEventListener("keydown", function (event) {
 
     if (event.key === "Escape") {
         closeImageLightbox();
+        document.querySelectorAll(".mo-report-modal:not([hidden])").forEach(function (modal) {
+            moToggleReport(modal.dataset.order, false);
+        });
     }
 
 });
+/* ====================== END IMAGE LIGHTBOX ====================== */
 
+
+/* ==========================================================================
+   [5f] AUTO-OPEN NG ORDER
+   ========================================================================== */
 
 /* Auto-open a specific order (galing sa Notifications page) - ?order_id=12 auto-opens
    at scrolls dito, imbes na maghanap sa listahan. */
@@ -2241,10 +2205,12 @@ document.addEventListener("keydown", function (event) {
 
 })();
 
-</script>
+/* ====================== END AUTO-OPEN NG ORDER ====================== */
 
 
-<script>
+/* ==========================================================================
+   [5g] LINIS NG URL
+   ========================================================================== */
 
 /* remove ?submitted=1 / ?cancelled=1 from URL after showing the banner once,
    para di na ulit lumabas pag nag-reload */
@@ -2277,6 +2243,12 @@ document.addEventListener("keydown", function (event) {
 
 })();
 
+/* ====================== END LINIS NG URL ====================== */
+
+
+/* ==========================================================================
+   [5h] AUTO-REFRESH  (check_order_updates.php)
+   ========================================================================== */
 
 /* poll check_order_updates.php every few seconds, auto-reload kapag may nabagong status */
 
@@ -2299,7 +2271,9 @@ document.addEventListener("keydown", function (event) {
         var active = document.activeElement;
         var tag = active && active.tagName ? active.tagName.toLowerCase() : "";
 
-        return (tag === "textarea" || tag === "input" || tag === "select");
+        /* bukas ang Report form = may sinusulat pa ang customer */
+        return (tag === "textarea" || tag === "input" || tag === "select")
+            || !!document.querySelector(".mo-report-modal:not([hidden])");
     }
 
     function checkForUpdates() {
@@ -2387,11 +2361,10 @@ document.addEventListener("keydown", function (event) {
     setInterval(checkForUpdates, POLL_INTERVAL_MS);
 
 })();
-
+/* ====================== END AUTO-REFRESH ====================== */
 </script>
-
-
-<?php include "../Shared/footer.php"; ?>
+<!-- ====================== END SCRIPT ====================== -->
 
 </body>
 </html>
+<!-- ====================== END HTML ====================== -->

@@ -1,119 +1,153 @@
-// Collection page — filter pills, search, sort
-(function () {
+/* ==========================================================================
+   COLLECTION PAGE - JS   (Collection/collection.js)
+   Markup: Collection/collection.php      Style: Collection/collection.css
+   Walang CSS dito - "hidden" at class lang ang pinapalitan.
 
-  const cards = document.querySelectorAll('.card');
-  const blocks = document.querySelectorAll('.collection-block');
-  const searchInput = document.getElementById('searchInput');
-  const emptyState = document.getElementById('emptyState');
+   LAMAN (taas pababa):
+     [1] ELEMENTS          mga element na ginagamit
+     [2] SORT              ayos ng card (random / size / price)
+     [3] FILTER + SEARCH   itago ang card na hindi tugma
+     [4] CLICK AT TYPE     pills, search box, sort dropdown
+   ========================================================================== */
 
-  // category pills
-  const pills = document.querySelectorAll('#tagFilters .pill');
 
-  // sort dropdown
-  const sortDropdown = document.getElementById('sortDropdown');
-  const sortButton = document.getElementById('sortButton');
-  const sortLabel = document.getElementById('sortLabel');
-  const sortMenuButtons = document.querySelectorAll('#sortMenu button');
+/* ==========================================================================
+   [1] ELEMENTS
+   ========================================================================== */
+const cards       = document.querySelectorAll(".card");
+const blocks      = document.querySelectorAll(".collection-block");
+const pills       = document.querySelectorAll("#tagFilters .pill");
+const searchInput = document.getElementById("searchInput");
+const emptyState  = document.getElementById("emptyState");
 
-  let activeFilter = 'all';
-  let activeSort = 'random';
+const sortDropdown    = document.getElementById("sortDropdown");
+const sortButton      = document.getElementById("sortButton");
+const sortLabel       = document.getElementById("sortLabel");
+const sortMenuButtons = document.querySelectorAll("#sortMenu button");
 
-  // open / close ng sort dropdown
-  if (sortButton && sortDropdown) {
-    sortButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      sortDropdown.classList.toggle('open');
+// kasalukuyang napiling filter at sort
+let activeFilter = "all";
+let activeSort   = "random";
+/* ====================== END ELEMENTS ====================== */
+
+
+/* ==========================================================================
+   [2] SORT
+   ========================================================================== */
+
+// kunin ang unang numero sa text ng element, hal. "3.5 in" -> 3.5, "₱1,500" -> 1500
+function getNumber(card, selector) {
+    const element = card.querySelector(selector);
+    const match   = element ? element.textContent.replace(/,/g, "").match(/[\d.]+/) : null;
+    return match ? parseFloat(match[0]) : 0;
+}
+
+// paghambingin ang 2 card ayon sa napiling sort
+function compareCards(a, b) {
+    if (activeSort === "size-asc")   return getNumber(a, ".meta-chip") - getNumber(b, ".meta-chip");
+    if (activeSort === "size-desc")  return getNumber(b, ".meta-chip") - getNumber(a, ".meta-chip");
+    if (activeSort === "price-asc")  return getNumber(a, ".price") - getNumber(b, ".price");
+    if (activeSort === "price-desc") return getNumber(b, ".price") - getNumber(a, ".price");
+
+    return Math.random() - 0.5;   // "random"
+}
+
+// ayusin ang mga card sa loob ng collection
+function applySort() {
+    blocks.forEach(function (block) {
+        const grid = block.querySelector(".card-grid");
+        const cardsInBlock = Array.from(grid.querySelectorAll(".card"));
+
+        cardsInBlock.sort(compareCards);
+
+        // ibalik sa grid ayon sa bagong ayos
+        cardsInBlock.forEach(function (card) {
+            grid.appendChild(card);
+        });
+    });
+}
+/* ====================== END SORT ====================== */
+
+
+/* ==========================================================================
+   [3] FILTER + SEARCH
+   ========================================================================== */
+
+// ipakita lang ang card na tugma sa filter AT sa search
+function applyFilters() {
+    const searchText = searchInput.value.trim().toLowerCase();
+
+    cards.forEach(function (card) {
+        // tag ng card galing sa data-filter (hal. "normal chibi bestseller")
+        const tags = card.dataset.filter.split(" ");
+
+        const matchesFilter = activeFilter === "all" || tags.includes(activeFilter);
+        const matchesSearch = card.textContent.toLowerCase().includes(searchText);
+
+        card.hidden = !(matchesFilter && matchesSearch);
     });
 
-    document.addEventListener('click', (e) => {
-      if (!sortDropdown.contains(e.target)) {
-        sortDropdown.classList.remove('open');
-      }
-    });
-  }
-
-  // size is always the last meta-chip, e.g. "3.5 in" -> 3.5
-  function getCardSize(card) {
-    const chip = card.querySelector('.meta-chip');
-    if (!chip) return 0;
-    const match = chip.textContent.match(/([\d.]+)/);
-    return match ? parseFloat(match[1]) : 0;
-  }
-
-  // "₱1,500" -> 1500
-  function getCardPrice(card) {
-    const priceEl = card.querySelector('.price');
-    if (!priceEl) return 0;
-    const match = priceEl.textContent.match(/([\d,]+)/);
-    return match ? parseFloat(match[1].replace(/,/g, '')) : 0;
-  }
-
-  // sort the cards inside each collection block
-  function applySort() {
-    blocks.forEach(block => {
-      const grid = block.querySelector('.card-grid');
-      const cardsInBlock = [...grid.querySelectorAll('.card')];
-
-      cardsInBlock.sort((a, b) => {
-        switch (activeSort) {
-          case 'size-asc':   return getCardSize(a) - getCardSize(b);
-          case 'size-desc':  return getCardSize(b) - getCardSize(a);
-          case 'price-asc':  return getCardPrice(a) - getCardPrice(b);
-          case 'price-desc': return getCardPrice(b) - getCardPrice(a);
-          default:           return Math.random() - 0.5;
-        }
-      });
-
-      cardsInBlock.forEach(card => grid.appendChild(card));
-    });
-  }
-
-  function applyFilters() {
-    const term = searchInput.value.trim().toLowerCase();
-    let anyVisible = false;
-
-    cards.forEach(card => {
-      const tags = (card.dataset.filter || '').split(' ');
-      const matchesFilter = activeFilter === 'all' || tags.includes(activeFilter);
-
-      // search sa pangalan, category at size ng card
-      const text = card.textContent.toLowerCase();
-      const matchesSearch = text.includes(term);
-
-      const visible = matchesFilter && matchesSearch;
-      card.style.display = visible ? '' : 'none';
-      if (visible) anyVisible = true;
+    // itago ang buong section kapag wala nang nakikitang card sa loob
+    blocks.forEach(function (block) {
+        block.hidden = !block.querySelector(".card:not([hidden])");
     });
 
-    blocks.forEach(block => {
-      const hasVisible = [...block.querySelectorAll('.card')]
-        .some(c => c.style.display !== 'none');
-      block.style.display = hasVisible ? '' : 'none';
+    // "No figures match..." lalabas lang kapag wala talagang nakikitang card
+    const anyVisible = document.querySelector(".card:not([hidden])") !== null;
+    emptyState.hidden = anyVisible;
+}
+/* ====================== END FILTER + SEARCH ====================== */
+
+
+/* ==========================================================================
+   [4] CLICK AT TYPE
+   ========================================================================== */
+
+// pill (All, Best Sellers, Chibi ...)
+pills.forEach(function (pill) {
+    pill.addEventListener("click", function () {
+        pills.forEach(function (other) {
+            other.classList.remove("active");
+        });
+        pill.classList.add("active");
+
+        activeFilter = pill.dataset.filter;
+        applyFilters();
     });
+});
 
-    if (emptyState) emptyState.hidden = anyVisible;
-  }
+// search box
+searchInput.addEventListener("input", applyFilters);
 
-  pills.forEach(pill => pill.addEventListener('click', () => {
-    pills.forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    activeFilter = pill.dataset.filter;
-    applyFilters();
-  }));
+// buksan / isara ang sort dropdown
+sortButton.addEventListener("click", function (event) {
+    event.stopPropagation();
+    sortDropdown.classList.toggle("open");
+});
 
-  sortMenuButtons.forEach(btn => btn.addEventListener('click', () => {
-    sortMenuButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    activeSort = btn.dataset.sort;
-    if (sortLabel) sortLabel.textContent = btn.textContent.trim();
-    sortDropdown.classList.remove('open');
-    applySort();
-    applyFilters();
-  }));
+// isara ang dropdown kapag cinlick ang ibang parte ng page
+document.addEventListener("click", function (event) {
+    if (!sortDropdown.contains(event.target)) {
+        sortDropdown.classList.remove("open");
+    }
+});
 
-  searchInput.addEventListener('input', applyFilters);
+// pinili sa sort dropdown
+sortMenuButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        sortMenuButtons.forEach(function (other) {
+            other.classList.remove("active");
+        });
+        button.classList.add("active");
 
-  // unang load: random order, gaya ng dati
-  applySort();
+        activeSort = button.dataset.sort;
+        sortLabel.textContent = button.textContent.trim();
+        sortDropdown.classList.remove("open");
 
-})();
+        applySort();
+    });
+});
+
+// pagbukas ng page: random ang ayos ng mga card
+applySort();
+/* ====================== END CLICK AT TYPE ====================== */

@@ -11,19 +11,27 @@ const loader = new GLTFLoader();
 
 const SKIP_FRAGMENTS = ["design", "logo", "print"];
 
+// pangalan ng GLB na ginagamit sa ilang bahagi (hal. pag-load ng Chibi Girl Keychain)
+const FUNKO_GIRL_GLB = /Funko[ _]pop-girl\.glb$|funko girl\.glb$/i;
+const CHIBI_GIRL_KEYCHAIN_GLB = /chibi(?:%20| |_)girl(?:%20| |_)keychain\.glb$/i;
+
 
 function isPlaceholderPath(path) {
     return !path || String(path).startsWith("placeholder:");
 }
 
 
-// kapareho ng dress-up.js: ang lumang "funko girl.glb" ay ituturo sa bagong "Funko pop-girl.glb"
-
-// GLB folders: bawat figure / product type / gender may sariling folder sa
-// dressup-assets/GLB_files/ (hal. "Hirono Standee Boy/"). Ang mga lumang path
-// (naka-save sa lumang orders/drafts, walang folder o "Chibi Boy/") ay kusang
-// itinuturo sa bagong folder. Kapag hindi pa nailipat ang file, sinusubukan
-// din ang lumang lugar para walang masira habang naglilipat.
+/* =====================================================
+   GLB PATHS - lugar ng 3D files (dressup-assets/GLB_files/)
+     Funko Pop Standee Boy / Funko Pop Standee Girl
+     Hirono Standee Boy / Hirono Standee Girl   (kasama na ang keychain na figure)
+     Chibi Standee Boy / Chibi Standee Girl     (kasama na ang keychain na figure)
+     Hirono Head Keychain                       (mga sombrero)
+   Sa loob ng bawat figure: Hairstyle / Tops / Bottoms / Shoes
+   Ang lumang path (naka-save sa lumang order o draft) ay itinuturo sa bagong lugar.
+   Pareho nito: dress-up.js, Shared/dressup-viewer.js, helpers/dressup_helper.php
+   ===================================================== */
+// lumang file na walang folder -> folder niya (para sa lumang order lang)
 const GLB_FOLDER_BY_FILE = {
     "Funko pop-default.glb": "Funko Pop Standee Boy",
     "funko boy.glb": "Funko Pop Standee Boy",
@@ -81,79 +89,98 @@ const GLB_FOLDER_BY_FILE = {
     "Chibi Girl Pants2.glb": "Chibi Standee Girl",
     "Chibi Girl Keychain.glb": "Chibi Keychain Girl"
 };
-// lumang pangalan ng folder -> bagong pangalan
+// lumang folder -> bagong folder (pinagsama ang keychain sa standee)
 const GLB_FOLDER_ALIASES = {
     "Chibi Boy/": "Chibi Standee Boy/",
+    "Chibi Keychain Boy/": "Chibi Standee Boy/",
+    "Chibi Keychain Girl/": "Chibi Standee Girl/",
+    "Hirono Keychain Boy/": "Hirono Standee Boy/",
+    "Hirono Keychain Girl/": "Hirono Standee Girl/",
     "Funko Pop Boy/": "Funko Pop Standee Boy/",
     "Funko Pop Girl/": "Funko Pop Standee Girl/"
 };
 
-function relocateGlbPath(path) {
-    const value = String(path || "");
+// lumang pangalan ng subfolder -> bago
+const GLB_SUBFOLDER_NAMES = { hair: "Hairstyle", top: "Tops", tops: "Tops", topss: "Tops", bottom: "Bottoms", pants: "Bottoms", shoes: "Shoes" };
+
+// file na inilipat sa subfolder o pinalitan ng pangalan
+const GLB_MOVED_FILES = {
+    "Funko Pop Standee Girl/Funko pop-girl.glb": "Funko Pop Standee Girl/funko girl.glb",
+    "Funko Pop Standee Girl/Funko_pop-girl.glb": "Funko Pop Standee Girl/funko girl.glb",
+    "Funko Pop Standee Girl/Funko GirlHair01.glb": "Funko Pop Standee Girl/Hairstyle/Funko GirlHair01.glb",
+    "Funko Pop Standee Girl/Funko GirlHair02.glb": "Funko Pop Standee Girl/Hairstyle/Funko GirlHair02.glb",
+    "Funko Pop Standee Girl/Funko GirlHair03.glb": "Funko Pop Standee Girl/Hairstyle/Funko GirlHair03.glb",
+    "Funko Pop Standee Girl/Funko Girl T-Shirt.glb": "Funko Pop Standee Girl/Tops/Funko Girl T-Shirt.glb",
+    "Funko Pop Standee Girl/Funko Girl T-Shirt1.glb": "Funko Pop Standee Girl/Tops/Funko Girl T-Shirt1.glb",
+    "Funko Pop Standee Girl/Funko Girl T-Shirt2.glb": "Funko Pop Standee Girl/Tops/Funko Girl T-Shirt2.glb",
+    "Funko Pop Standee Girl/Funko Girl Bottom.glb": "Funko Pop Standee Girl/Bottoms/Funko Girl Bottom.glb",
+    "Funko Pop Standee Girl/Funko Girl Bottom1.glb": "Funko Pop Standee Girl/Bottoms/Funko Girl Bottom1.glb",
+    "Hirono Standee Boy/Hirono default.glb": "Hirono Standee Boy/Hirono Standee-boy.glb",
+    "Hirono Standee Boy/Hirono Hair01.glb": "Hirono Standee Boy/Hairstyle/Hirono Hair01.glb",
+    "Hirono Standee Boy/Hirono Coat.glb": "Hirono Standee Boy/Tops/Hirono Coat.glb",
+    "Hirono Standee Boy/Hirono Jersey.glb": "Hirono Standee Boy/Tops/Hirono Jersey.glb",
+    "Hirono Standee Boy/Hirono Polo.glb": "Hirono Standee Boy/Tops/Hirono Polo.glb",
+    "Hirono Standee Boy/Hirono Polo1.glb": "Hirono Standee Boy/Tops/Hirono Polo1.glb",
+    "Hirono Standee Boy/Hirono Pants.glb": "Hirono Standee Boy/Bottoms/Hirono Pants.glb",
+    "Hirono Standee Boy/Hirono Pants1.glb": "Hirono Standee Boy/Bottoms/Hirono Pants1.glb",
+    "Hirono Standee Boy/Hirono Shoes.glb": "Hirono Standee Boy/Shoes/Hirono Shoes.glb",
+    "Hirono Standee Girl/Girl Keychain.glb": "Hirono Standee Girl/Hirono Girl Keychain.glb",
+    "Hirono Standee Girl/Hirono Girl Hair.glb": "Hirono Standee Girl/Hairstyle/Hirono Girl Hair.glb",
+    "Hirono Standee Girl/Hirono Girl Hair1.glb": "Hirono Standee Girl/Hairstyle/Hirono Girl Hair1.glb",
+    "Hirono Standee Girl/Hirono Girl Hair2.glb": "Hirono Standee Girl/Hairstyle/Hirono Girl Hair2.glb",
+    "Hirono Standee Girl/Hirono Girl Hair3.glb": "Hirono Standee Girl/Hairstyle/Hirono Girl Hair3.glb",
+    "Hirono Standee Girl/Hirono Girl Coat.glb": "Hirono Standee Girl/Tops/Hirono Girl Coat.glb",
+    "Hirono Standee Girl/Hirono Girl Dress.glb": "Hirono Standee Girl/Tops/Hirono Girl Dress.glb",
+    "Hirono Standee Girl/Hirono Girl Pants.glb": "Hirono Standee Girl/Bottoms/Hirono Girl Pants.glb",
+    "Hirono Standee Girl/Hirono Girl Shoes.glb": "Hirono Standee Girl/Shoes/Hirono Girl Shoes.glb",
+    "Chibi Standee Girl/chibi_girl.glb": "Chibi Standee Girl/chibi girl.glb"
+};
+
+// lumang path -> tamang path ngayon
+function glbPath(path) {
+    const value = String(path || "")
+        .replace(/(chibi(?:%20| )keychain)-(?:light|dark)\.glb$/i, "$1.glb")
+        .replace(/girl-keychain-(?:light|dark)\.glb$/i, "Chibi Girl Keychain.glb");
     const marker = "GLB_files/";
     const at = value.indexOf(marker);
     if (at === -1) {
         return value;
     }
     const head = value.slice(0, at + marker.length);
-    const rest = value.slice(at + marker.length);
+    let rest = value.slice(at + marker.length);
+    try {
+        rest = decodeURIComponent(rest);
+    } catch (error) {
+        // iwan kung hindi ma-decode
+    }
+
+    // 1) lumang file na walang folder
+    if (rest.indexOf("/") === -1 && GLB_FOLDER_BY_FILE[rest]) {
+        rest = GLB_FOLDER_BY_FILE[rest] + "/" + rest;
+    }
+    // 2) lumang folder
     for (const oldFolder in GLB_FOLDER_ALIASES) {
         if (rest.startsWith(oldFolder)) {
-            return head + GLB_FOLDER_ALIASES[oldFolder] + rest.slice(oldFolder.length);
+            rest = GLB_FOLDER_ALIASES[oldFolder] + rest.slice(oldFolder.length);
+            break;
         }
     }
-    if (rest.indexOf("/") === -1) {
-        const folder = GLB_FOLDER_BY_FILE[decodeURIComponent(rest)];
-        if (folder) {
-            return head + folder + "/" + rest;
-        }
+    // 3) lumang subfolder (hair -> Hairstyle ...)
+    const parts = rest.split("/");
+    const subfolder = parts.length === 3 ? GLB_SUBFOLDER_NAMES[parts[1].toLowerCase()] : "";
+    if (subfolder) {
+        parts[1] = subfolder;
+        rest = parts.join("/");
     }
-    return value;
+    // 4) file na inilipat / pinalitan ng pangalan
+    return head + (GLB_MOVED_FILES[rest] || rest);
 }
-
-// mga lumang lugar ng file (bago/habang inililipat) - fallback lang kapag
-// wala pa ang file sa bagong folder: walang folder, o lumang pangalan ng folder
-function legacyGlbPaths(path) {
-    const value = String(path || "");
-    const marker = "GLB_files/";
-    const at = value.indexOf(marker);
-    if (at === -1) {
-        return [];
-    }
-    const head = value.slice(0, at + marker.length);
-    const rest = value.slice(at + marker.length);
-    const slash = rest.indexOf("/");
-    if (slash === -1) {
-        return [];
-    }
-    const folder = rest.slice(0, slash + 1);
-    const fileName = rest.slice(slash + 1);
-    const candidates = [head + fileName];
-    for (const oldFolder in GLB_FOLDER_ALIASES) {
-        if (GLB_FOLDER_ALIASES[oldFolder] === folder) {
-            candidates.push(head + oldFolder + fileName);
-        }
-    }
-    return candidates;
-}
-
-function resolveModelUrl(url) {
-    return relocateGlbPath(String(url || "").replace(/funko(%20| )girl\.glb$/i, "Funko$1pop-girl.glb"));
-}
+/* ===== END GLB PATHS ===== */
 
 function loadScene(url) {
-    url = resolveModelUrl(url);
+    url = glbPath(url);
     return new Promise((resolve, reject) => {
-        // subukan muna ang bagong folder, tapos ang mga lumang lugar
-        const candidates = [url].concat(legacyGlbPaths(url));
-        const tryLoad = index => loader.load(candidates[index], gltf => resolve(gltf.scene), undefined, error => {
-            if (index + 1 < candidates.length) {
-                tryLoad(index + 1);
-                return;
-            }
-            reject(error);
-        });
-        tryLoad(0);
+        loader.load(url, gltf => resolve(gltf.scene), undefined, reject);
     });
 }
 
@@ -289,6 +316,33 @@ function applyColorToModel(model, color, clearTextures, skipFragments) {
 }
 
 
+// balat na may skin mask sa texture: balat lang ang kinukulayan, hindi ang mata (kapareho ng dress-up.js)
+function tintSkinMask(material, color) {
+    if (!(material.userData.skinTint && material.userData.skinTint.value && material.userData.skinTint.value.isColor)) {
+        material.userData.skinTint = { value: new THREE.Color(1, 1, 1) };
+        material.onBeforeCompile = shader => {
+            shader.uniforms.skinTint = material.userData.skinTint;
+            shader.fragmentShader = "uniform vec3 skinTint;\n" + shader.fragmentShader.replace(
+                "#include <map_fragment>",
+                "#include <map_fragment>\n" +
+                    "float skinMask = 1.0 - step(0.75, diffuseColor.a);\n" +
+                    "diffuseColor.rgb *= mix(vec3(1.0), skinTint, skinMask);\n" +
+                    "diffuseColor.a = 1.0;"
+            );
+        };
+        material.customProgramCacheKey = () => "skin-mask";
+        material.needsUpdate = true;
+    }
+    material.userData.skinTint.value.set(color || "#ffffff");
+}
+
+// kulay ng balat - pareho sa lahat ng figure (kapareho ng SKIN_TONES sa dress-up.js)
+const SKIN_TONES = { light: "#FFE1CA", dark: "#D19477" };
+
+function skinToneColor(name, fallback) {
+    return SKIN_TONES[String(name || "").toLowerCase()] || fallback || "";
+}
+
 // kapareho ng applySkinColor sa dress-up.js: hindi kinukulayan ang stand, at sa
 // Hirono / Funko ay may mga parte (sapatos, sando, shorts, medyas) na hindi kasama
 function applySkinTint(model, color, category) {
@@ -303,18 +357,23 @@ function applySkinTint(model, color, category) {
         ? [...standNode, "shoes", "foot", "sando"]
         : category === "funko"
             ? [...standNode, "sando", "shorts", "socks"]
-            : standNode;
+            : category === "chibiwhite" || category === "chibi"
+                ? [...standNode, "sando", "shorts", "shoes", "eye", "hair", "keychain", "ring"]
+                : standNode;
 
     const target = new THREE.Color(color);
 
     model.traverse(node => {
         const nodeName = String(node.name || "").toLowerCase();
 
-        if (skipNode.some(fragment => nodeName.includes(fragment))) {
+        const isFigure = nodeName.includes("figure");
+        if (!isFigure && (skipNode.some(fragment => nodeName.includes(fragment)) || /key|ring/.test(nodeName))) {
             return;
         }
 
-        if (node.isMesh) {
+        if (node.isMesh && !Array.isArray(node.material) && node.material.userData.skinMask) {
+            tintSkinMask(node.material, color);
+        } else if (node.isMesh) {
             recolorMesh(node, target, false, skipMaterial);
         }
     });
@@ -452,11 +511,17 @@ class DressUpViewer {
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.08;
         this.controls.enablePan = false;
-        this.controls.minDistance = 1.5;
-        this.controls.maxDistance = 12;
+        // walang zoom (kapareho ng Dress Up) - laging sakto ang buong figure
+        this.controls.enableZoom = false;
         // left/right lang ang ikot, hindi makikita ang ilalim/ibabaw
         this.controls.minPolarAngle = Math.PI / 2;
         this.controls.maxPolarAngle = Math.PI / 2;
+        // vertical swipe = scroll ng page; horizontal lang ang ikot
+        // OrbitControls naglalagay ng inline "touch-action: none" - tanggalin; nasa CSS na ng .dressup-3d-stage canvas
+        // (binabasa muna ang style para tuluyang mabura, hindi bumalik bilang walang lamang style attribute)
+        if (this.renderer.domElement.getAttribute("style") !== null) {
+            this.renderer.domElement.removeAttribute("style");
+        }
 
         this.scene.add(new THREE.AmbientLight(0xffffff, 1.6));
 
@@ -565,29 +630,26 @@ class DressUpViewer {
         try {
             let body = null;
 
-            // Chibi Girl and the Chibi Boy standee use separate Dark body GLBs.
+            // Chibi Girl (standee at keychain): puti ang katawan, tint ang skin (kapareho ng dress-up.js)
             let modelPath = design.model;
-            let bodyVariant = false;
-            const girlPattern = /(chibi girl|girl-keychain|chibi keychain)-(light|dark)\.glb$/i;
+            let girlVariant = false;
+            const girlPattern = /(chibi girl)-(light|dark)\.glb$/i;
             if (girlPattern.test(modelPath)) {
                 const tone = /dark/i.test(String(design.skinName || "")) ? "dark" : "light";
                 modelPath = modelPath.replace(girlPattern, (all, base) => base + "-" + tone + ".glb");
-                bodyVariant = true;
-            } else if (/Chibi Standee Boy\/Chibi Boy\.glb$/i.test(String(modelPath || "")) && /dark/i.test(String(design.skinName || ""))) {
-                modelPath = modelPath.replace(/Chibi Boy\.glb$/i, "Chibi Boy-Dark.glb");
-                bodyVariant = true;
+                girlVariant = true;
             }
 
             try {
                 body = await loadScene(this.url(modelPath));
             } catch (error) {
-                if (!/Funko pop-girl\.glb$|funko girl\.glb$/i.test(design.model)) {
+                if (!FUNKO_GIRL_GLB.test(design.model)) {
                     throw error;
                 }
             }
 
             // kapareho ng dress-up.js: kung walang laman ang Funko Girl GLB, gamitin ang default
-            if ((!body || !hasMeshes(body)) && /Funko pop-girl\.glb$|funko girl\.glb$/i.test(design.model)) {
+            if ((!body || !hasMeshes(body)) && FUNKO_GIRL_GLB.test(design.model)) {
                 if (body) disposeObject(body);
                 body = await loadScene(this.url("dressup-assets/GLB_files/Funko Pop Standee Boy/funko boy.glb"));
             }
@@ -601,14 +663,34 @@ class DressUpViewer {
 
             const category = String(design.category || "").toLowerCase();
 
-            if (bodyVariant) {
-                // Variant GLBs already contain their intended skin materials.
-            } else if (design.skin && (category === "hirono" || category === "chibi") && /^light$/i.test(String(design.skinName || ""))) {
-                // Light = original na materials ng GLB, walang tint (kapareho ng dress-up.js)
-            } else if (design.skin) {
-                applySkinTint(body, design.skin, category);
-            } else if (/Funko pop-girl\.glb$|funko girl\.glb$/i.test(design.model)) {
-                applyColorToModel(body, "#F2CCB7", false, []);
+            // Balat: PUTI ang lahat ng figure (pareho ng Funko Pop Boy). Light / Dark = parehong kulay sa lahat
+            // (kapareho ng dress-up.js). Chibi Girl na lumang Light/Dark GLB: walang tint.
+            if (design.skin && !girlVariant) {
+                applySkinTint(body, skinToneColor(design.skinName, design.skin), category);
+            }
+
+            // Chibi Girl keychain: itago ang baked na sapatos / sando / shorts kapag may ibang napili
+            if (CHIBI_GIRL_KEYCHAIN_GLB.test(String(design.model || ""))) {
+                const hasPart = folder => (design.parts || []).some(part =>
+                    new RegExp("/" + folder + "/", "i").test(glbPath(part.model)) && !isPlaceholderPath(part.model));
+
+                const hideShoes = hasPart("Shoes");
+                const hideSando = hasPart("Tops");
+                const hideShorts = hasPart("Bottoms");
+
+                body.traverse(node => {
+                    const nodeName = String(node.name || "").toLowerCase();
+
+                    if (nodeName === "shoes" && hideShoes) {
+                        node.visible = false;
+                    }
+                    else if (nodeName.includes("sando") && hideSando) {
+                        node.visible = false;
+                    }
+                    else if (nodeName.includes("shorts") && hideShorts) {
+                        node.visible = false;
+                    }
+                });
             }
 
             this.scene.add(body);
@@ -662,13 +744,15 @@ class DressUpViewer {
         }
     }
 
+    /* ANO ITO: sakto ang buong figure sa 3D box (kapareho ng Dress Up):
+       katawan lang ang basehan, may espasyo sa itaas para sa buhok at sa ibaba para sa 360 control.
+       Keychain = mas malayo para kita ang singsing hanggang paa. */
     frame() {
         if (!this.objects.length || !this.camera) {
             return;
         }
 
-        const box = new THREE.Box3();
-        this.objects.forEach(object3D => box.expandByObject(object3D));
+        const box = new THREE.Box3().setFromObject(this.objects[0]);
 
         if (box.isEmpty()) {
             return;
@@ -676,10 +760,15 @@ class DressUpViewer {
 
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
-        const maxSize = Math.max(size.x, size.y, size.z);
-        const distance = maxSize / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)));
+        const isKeychain = /keychain/i.test(String((this.design || {}).model || ""));
+        const headroom = size.y * 0.2;
+        // makitid na box (portrait): ang lapad ang basehan para hindi maputol sa gilid
+        const focusSize = Math.max(size.y + headroom, size.x / Math.min(1, this.camera.aspect), size.z) * 0.95;
+        const scale = isKeychain ? 1.5 : 1.35;
+        const distance = (focusSize / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)))) * scale;
 
-        this.camera.position.set(center.x, center.y, center.z + distance * 1.35);
+        center.y += headroom / 2 - focusSize * scale * (isKeychain ? 0.11 : 0.07);
+        this.camera.position.set(center.x, center.y, center.z + distance);
         this.camera.lookAt(center);
         this.controls.target.copy(center);
         this.controls.update();
@@ -700,6 +789,7 @@ class DressUpViewer {
         this.renderer.setSize(width, height, false);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
+        this.frame(); // bagong laki ng box = i-sakto ulit ang figure
     }
 
     stop() {
@@ -741,6 +831,28 @@ class DressUpViewer {
         this.controls = null;
 
         this.setStatus("Loading 3D figure…", false);
+    }
+
+    // larawan ng figure sa iba't ibang anggulo (degrees mula sa harap) - para sa PDF ng Order Summary
+    snapshot(angles) {
+        const target = this.controls.target.clone();
+        const offset = this.camera.position.clone().sub(target);
+
+        const urls = angles.map(degrees => {
+            const rotated = offset.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), THREE.MathUtils.degToRad(degrees));
+
+            this.camera.position.copy(target).add(rotated);
+            this.camera.lookAt(target);
+            this.renderer.render(this.scene, this.camera);
+
+            // kailangang sabay sa render, kung hindi ay blangko ang makukuha
+            return this.canvas.toDataURL("image/png");
+        });
+
+        this.camera.position.copy(target).add(offset);
+        this.camera.lookAt(target);
+
+        return urls;
     }
 
     // tinatawag tuwing nagbabago ang laki (kasama ang pagbukas/pagsara ng order)
@@ -803,3 +915,50 @@ if (document.readyState === "loading") {
 }
 
 window.figurifySetupDressUpViewers = setupViewers;
+
+// gumagawa ng nakatagong 3D viewer, kinukuha ang mga larawan sa bawat anggulo, tapos binubura ito.
+// Ibinabalik ang listahan ng image URL, o null kung hindi na-load ang figure.
+window.figurifyDressUpSnapshots = function (design, assetBase, angles) {
+    return new Promise(resolve => {
+        const wrap = document.createElement("div");
+        const stage = document.createElement("div");
+
+        stage.className = "dressup-3d-stage";
+        stage.setAttribute("data-dressup-viewer", "");
+        stage.dataset.assetBase = assetBase;
+        stage.dataset.design = JSON.stringify(design);
+        stage.innerHTML = '<canvas></canvas><div class="dressup-3d-status"><span class="dressup-3d-status-text"></span></div>';
+        Object.assign(stage.style, { position: "fixed", left: "-10000px", top: "0", width: "360px", height: "520px" });
+
+        wrap.appendChild(stage);
+        document.body.appendChild(wrap);
+        setupViewers(wrap);
+
+        const viewer = viewers.get(stage);
+        const startedAt = Date.now();
+
+        const finish = urls => {
+            clearInterval(timer);
+
+            if (viewer) {
+                viewer.stop();
+            }
+
+            if (resizeObserver) {
+                resizeObserver.unobserve(stage);
+            }
+
+            viewers.delete(stage);
+            wrap.remove();
+            resolve(urls);
+        };
+
+        const timer = setInterval(() => {
+            if (stage.classList.contains("is-ready")) {
+                finish(viewer.snapshot(angles));
+            } else if (stage.classList.contains("is-error") || Date.now() - startedAt > 30000) {
+                finish(null);
+            }
+        }, 250);
+    });
+};

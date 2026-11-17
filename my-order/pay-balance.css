@@ -1,191 +1,330 @@
-/* Pay Remaining Balance — Figurify redesign (navbar & footer live in Shared/) */
+/* ==========================================================================
+   PAY REMAINING BALANCE PAGE - CSS   (my-order/pay-balance.css)
+   Lahat ng style ng pay-balance.php ay nandito lang. Ang navbar at footer ay
+   may sariling style sa Shared/navbar.php at Shared/footer.php.
 
-:root {
-    --primary: #c2325f;
-    --primary-dark: #a62a50;
-    --plum: #4a1d3b;
-    --blush: #ffedf2;
-    --cream: #fff8f6;
-    --ink-soft: #7a5a6c;
-    --line: #f3dde5;
-    --field-line: #f0d3de;
-    --warn-bg: #fdefc4;
-    --warn-text: #9a6408;
+   LAMAN (pareho ang ayos sa pay-balance.php, taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              reset, text, lapad ng page
+     [2] PAGE HERO         banner sa taas (peach -> cream -> pink)
+     [3] PAY CARD          card, header, Remaining Balance, paalala
+     [4] FIELDS            label, input, hint
+     [5] QR CODES          GCash / BPI
+     [6] PROOF UPLOAD      upload ng screenshot + preview
+     [7] SUBMIT BUTTON
+     [8] QR LIGHTBOX       pinalaking QR
+     [9] RESPONSIVE        phone
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
 }
 
+/* form controls - hindi sila nagmamana ng font by default */
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+.page-hero h1,
+.pay-card-header h2,
+.payment-total-box strong {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE
+   ========================================================================== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
 body {
-    
-    color: var(--plum);
-    
+    color: #4a1d3b;
     line-height: 1.6;
 }
 
+/* lapad ng laman (ginagamit sa loob ng hero) */
 .page-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+/* ====================== END BASE ====================== */
 
-.page-hero { padding: 44px 0 26px; background: linear-gradient(100deg, #fff4f6 0%, #ffe9ef 100%); }
-.page-eyebrow {
-    display: inline-block;
-    
-    font-style: italic;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: .3px;
-    color: var(--primary);
-    margin-bottom: 2px;
-}
-.page-hero h1 {
-    
-    font-weight: 700;
-    font-size: clamp(34px, 4vw, 48px);
-    line-height: 1.1;
-    color: var(--plum);
-}
-.page-hero p { margin-top: 10px; max-width: 760px; font-size: 16px; color: var(--ink-soft); }
 
-/* card */
-.pay-page { width: min(648px, 100% - 32px); margin: 48px auto 24px; }
-
-.pay-card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 24px;
-    padding: 24px;
-}
-
-.payment-form { display: flex; flex-direction: column; gap: 16px; }
-
-.pay-card-header h2 {
-    
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--plum);
-}
-.pay-card-header p { font-size: 15px; color: var(--ink-soft); margin-top: 2px; }
-
-.payment-total-box {
+/* ==========================================================================
+   [2] PAGE HERO  (dating nasa sariling <style> ng pay-balance.php)
+   ========================================================================== */
+.page-hero {
+    position: relative;
+    min-height: 250px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 20px 18px;
-    background: var(--blush);
-    border-radius: 14px;
-    font-size: 14.5px;
-    color: var(--plum);
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom: 3px solid #ead9f0;
 }
-.payment-total-box strong {
-    
-    font-size: 32px;
+
+/* hanay ng sparkle sa kanang-itaas (kapareho ng Commission page) */
+.page-hero::after {
+    content: "\2726   \2606   \2727   \2661   \2726";
+    position: absolute;
+    top: 25px;
+    right: 7%;
+    font-size: 19px;
+    letter-spacing: 7px;
+    white-space: nowrap;
+    color: #e8bd4d;
+    pointer-events: none;
+}
+
+/* lalagyan ng text */
+.page-hero .page-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* maliit na caps sa taas ng title - body font ang gamit */
+.page-eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a04a78;
+}
+
+.page-hero h1 {
+    margin-top: 8px;
+    font-size: clamp(34px, 5vw, 55px);
     font-weight: 700;
-    line-height: 1;
-    color: var(--primary);
+    line-height: 1.05;
+    letter-spacing: -.5px;
+    color: #86365f;
 }
 
-.notice-box {
-    padding: 16px 18px;
-    border-radius: 14px;
-    font-size: 13.5px;
+.page-hero p {
+    max-width: 720px;
+    margin: 15px auto 0;
+    font-size: 15px;
     line-height: 1.6;
+    color: #8a5870;
 }
-.notice-box-warning { background: var(--warn-bg); color: var(--warn-text); }
+/* ====================== END PAGE HERO ====================== */
 
+
+/* ==========================================================================
+   [3] PAY CARD
+   ========================================================================== */
+.pay-page { width: min(780px, 100% - 32px); margin: 36px auto 48px; }
+
+.pay-card {
+    padding: 36px;
+    background: #fff;
+    border: 1px solid #f3dde5;
+    border-radius: 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.payment-form { display: flex; flex-direction: column; gap: 20px; }
+
+.pay-card-header h2 { font-size: 23px; font-weight: 700; }
+.pay-card-header p { margin-top: 2px; font-size: 14px; color: #7c6670; }
+
+/* "Remaining Balance" - malaking halaga sa gitna */
+.payment-total-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 26px 18px;
+    background: #ffedf2;
+    border-radius: 18px;
+    font-size: 14px;
+    color: #7c6670;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.payment-total-box strong { font-size: 54px; font-weight: 700; line-height: 1.1; color: #c2325f; }
+
+/* dilaw na paalala */
+.notice-box { padding: 14px 16px; border-radius: 12px; font-size: 13px; }
+.notice-box-warning { background: #fdefc4; color: #9a6408; }
+/* ====================== END PAY CARD ====================== */
+
+
+/* ==========================================================================
+   [4] FIELDS
+   ========================================================================== */
 .payment-form-group { display: flex; flex-direction: column; gap: 8px; }
-.payment-form-group > label { font-size: 13.5px; font-weight: 700; color: var(--plum); }
+.payment-form-group > label { font-size: 13px; font-weight: 700; }
 
 .payment-form-group input[type="text"] {
     width: 100%;
-    height: 50px;
+    height: 48px;
     padding: 0 16px;
     background: #fff;
-    border: 1px solid var(--field-line);
+    border: 1.5px solid #f3dde5;
     border-radius: 12px;
-    
-    font-size: 15px;
-    color: var(--plum);
+    font-size: 16px;
+    color: #4a1d3b;
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
-.payment-form-group input[type="text"]::placeholder { color: #bfa3b1; }
-.payment-form-group input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
 
-.payment-form-hint { font-size: 12.5px; color: var(--ink-soft); }
+.payment-form-group input[type="text"]::placeholder { color: #b9a3ad; }
+.payment-form-group input[type="text"]:focus { border-color: #c2325f; box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
 
-/* QR codes */
-.qr-code-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.payment-form-hint { font-size: 12px; color: #7c6670; }
+/* ====================== END FIELDS ====================== */
 
-.qr-code-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+/* ==========================================================================
+   [5] QR CODES  (click = palakihin, [8] QR LIGHTBOX)
+   ========================================================================== */
+.qr-code-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+/* buong box ang clickable; may hover para alam na pwedeng i-click */
+.qr-code-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px;
+    background: #fff8f6;
+    border: 1.5px dashed #f3dde5;
+    border-radius: 16px;
+    cursor: zoom-in;
+    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.qr-code-item:hover {
+    background: #ffedf2;
+    border-color: #c2325f;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
 
 .qr-code-img {
-    width: 150px;
-    height: 150px;
+    display: block;
+    width: 100%;
+    max-width: 190px;
+    aspect-ratio: 1;
     object-fit: contain;
-    padding: 6px;
     background: #fff;
-    border: 1px solid var(--field-line);
-    border-radius: 12px;
-    cursor: zoom-in;
-    transition: border-color .15s ease;
+    border-radius: 10px;
 }
-.qr-code-img:hover { border-color: var(--primary); }
 
-.qr-code-caption { font-size: 14px; font-weight: 700; color: var(--plum); }
+.qr-code-caption { font-size: 14px; font-weight: 800; }
+/* Account Name / Number: tig-isang linya */
+.qr-code-account { display: block; font-size: 11.5px; line-height: 1.35; text-align: center; white-space: nowrap; }
+/* ====================== END QR CODES ====================== */
 
-/* proof upload */
+
+/* ==========================================================================
+   [6] PROOF UPLOAD  (buong box ang clickable - nakapatong ang file input)
+   ========================================================================== */
 .payment-proof-upload { position: relative; }
 
 .payment-proof-preview {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 90px;
-    padding: 20px;
-    background: var(--cream);
-    border: 1.5px dashed #ecc9d6;
-    border-radius: 14px;
-    text-align: center;
+    min-height: 130px;
+    padding: 24px;
     overflow: hidden;
-    transition: background-color .15s ease, border-color .15s ease;
+    background: #ffedf2;
+    border: 2px dashed #e5b8c8;
+    border-radius: 16px;
+    text-align: center;
+    transition: border-color .15s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
-.payment-proof-upload:hover .payment-proof-preview { background: var(--blush); border-color: var(--primary); }
+
+.payment-proof-upload:hover .payment-proof-preview { border-color: #c2325f; }
 
 .payment-proof-placeholder { display: flex; flex-direction: column; gap: 2px; }
-.payment-proof-title { font-size: 15px; color: var(--plum); }
-.payment-proof-placeholder small { font-size: 12.5px; color: var(--ink-soft); }
+.payment-proof-title { font-size: 15px; font-weight: 700; color: #c2325f; }
+.payment-proof-placeholder small { font-size: 12px; color: #7c6670; }
 
 .payment-proof-preview img { max-width: 100%; max-height: 240px; border-radius: 10px; object-fit: contain; }
 
 .payment-proof-upload input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+/* ====================== END PROOF UPLOAD ====================== */
 
-/* submit */
+
+/* ==========================================================================
+   [7] SUBMIT BUTTON
+   ========================================================================== */
+.balance-actions { display: flex; gap: 12px; }
+
+/* Back = puti na may border, Submit = pula (iisang laki) */
+.btn-back,
 .btn-submit {
-    width: 100%;
-    padding: 15px 24px;
-    border: 0;
-    border-radius: 12px;
-    background: var(--primary);
+    flex: 1;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.btn-back {
+    border: 2px solid #c2325f;
+    background: #fff;
+    color: #c2325f;
+    text-decoration: none;
+}
+
+.btn-back:hover { background: #ffedf2; }
+
+.btn-submit {
+    border: 2px solid #c2325f;
+    background: #c2325f;
     color: #fff;
-    
-    font-size: 15px;
-    font-weight: 700;
     cursor: pointer;
     transition: background-color .15s ease;
 }
-.btn-submit:hover { background: var(--primary-dark); }
-.btn-submit:disabled { opacity: .7; cursor: default; }
 
-/* QR lightbox */
+.btn-submit:hover { border-color: #a62a50; background: #a62a50; }
+.btn-submit:disabled { opacity: .7; cursor: default; }
+/* ====================== END SUBMIT BUTTON ====================== */
+
+
+/* ==========================================================================
+   [8] QR LIGHTBOX
+   ========================================================================== */
 .qr-lightbox-overlay {
-    display: none;
     position: fixed;
     inset: 0;
     z-index: 5000;
+    display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(45, 14, 32, .55);
     padding: 20px;
+    background: rgba(45, 14, 32, .55);
 }
+
 .qr-lightbox-overlay.show { display: flex; }
 
 .qr-lightbox-box {
@@ -198,28 +337,74 @@ body {
     padding: 24px 22px 20px;
     background: #fff;
     border-radius: 22px;
-    box-shadow: 0 28px 64px -20px rgba(45, 14, 32, .45);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
-.qr-lightbox-box img { display: block; width: 100%; max-width: 280px; max-height: 60vh; height: auto; object-fit: contain; border-radius: 10px; }
-.qr-lightbox-box p { margin: 0; color: var(--plum); font-size: 15px; font-weight: 700; text-align: center; }
-.qr-lightbox-hint { font-size: 12.5px !important; font-weight: 500 !important; color: var(--ink-soft) !important; }
+
+.qr-lightbox-box img { display: block; width: 100%; max-width: 280px; height: auto; max-height: 60vh; object-fit: contain; border-radius: 10px; }
+.qr-lightbox-box p { font-size: 15px; font-weight: 700; text-align: center; }
+
+/* mas specific kaysa .qr-lightbox-box p kaya ito ang nananalo */
+.qr-lightbox-box .qr-lightbox-hint { font-size: 12.5px; font-weight: 500; color: #7a5a6c; }
+
+.qr-lightbox-frame { position: relative; }
+
+/* close (X): iisang itsura sa buong system - puting bilog, pink na X (dalawang guhit),
+   nasa loob ng larawan sa kanang itaas (kapareho ng Image Submission) */
 .qr-lightbox-close {
     position: absolute;
     top: 10px;
-    right: 12px;
-    width: 32px;
-    height: 32px;
-    border: none;
+    right: 10px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
     border-radius: 50%;
-    background: var(--blush);
-    color: var(--primary);
-    font-size: 20px;
-    line-height: 1;
+    background: #fff;
+    color: #C2325F;
     cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
-.qr-lightbox-close:hover { background: #ffdde8; }
+
+.qr-lightbox-close::before,
+.qr-lightbox-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+.qr-lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.qr-lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.qr-lightbox-close:hover { background: #FFF1F6; }
+
+/* ====================== END QR LIGHTBOX ====================== */
+
+
+/* ==========================================================================
+   [9] RESPONSIVE
+   ========================================================================== */
+@media (max-width: 720px) {
+    .page-hero { min-height: 220px; }
+    .page-hero::after { top: 12px; right: 4%; font-size: 14px; letter-spacing: 4px; }
+    .page-hero .page-wrap { padding: 34px 16px 26px; }
+}
 
 @media (max-width: 600px) {
     .page-wrap { width: calc(100% - 32px); }
-    .qr-code-img { width: 130px; height: 130px; }
+    .pay-card { padding: 24px 18px; }
+    .qr-code-row { gap: 10px; }
+    .qr-code-account { white-space: normal; }   /* maliit na phone: pwedeng bumaba para hindi lumampas */
 }
+/* ====================== END RESPONSIVE ====================== */
+
+/* ===== MODAL BUKAS: hindi gumagalaw ang page sa likod ===== */
+body.no-scroll { overflow: hidden; }
+
+/* ===== nakatago (hidden) ===== */
+#paymentProofPreviewImg[hidden],
+.payment-proof-placeholder[hidden] { display: none; }

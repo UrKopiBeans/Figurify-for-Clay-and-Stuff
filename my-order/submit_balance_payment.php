@@ -1,6 +1,9 @@
 <?php
-
-/* CUSTOMER - AWAITING_BALANCE -> BALANCE_SUBMITTED (OWNER ang mag-a-approve) */
+/* ==========================================================================
+   SUBMIT BALANCE PAYMENT (customer)   (my-order/submit_balance_payment.php)
+   POST galing sa pay-balance.php: proof ng remaining balance.
+   AWAITING_BALANCE -> BALANCE_SUBMITTED. Ang OWNER ang mag-a-approve.
+   ========================================================================== */
 
 require_once __DIR__ . "/_customer_bootstrap.php";
 
@@ -38,7 +41,6 @@ if (!$result["ok"]) {
     figurify_customer_done($conn, "my-orders.php?order_id=" . $order_id, $result["error"], "error");
 }
 
-require_once __DIR__ . "/../helpers/email_template_helper.php";
 figurify_customer_notice(
     $conn,
     (int) $user_id,
@@ -46,12 +48,12 @@ figurify_customer_notice(
     "We received your balance payment for Order #" . $order_id . ". It's now waiting for approval.",
     "We received your balance payment for Order #" . $order_id,
     [
-        "We have received your balance payment for <strong>Order #" . $order_id . "</strong>.",
-        "Your payment is currently awaiting approval by our owner. Once it has been approved, your order will be prepared for shipping.",
+        "We received your balance payment for <strong>Order #" . $order_id . "</strong>.",
+        "We’ll ship your order once it’s approved.",
         figurify_email_status_line(),
-        "Thank you for choosing Clay and Stuff!",
     ]
 );
-figurify_notify_staff($conn, $order_id, "Balance payment submitted for order " . $order_id . " — needs owner approval.");
+figurify_notify_staff($conn, $order_id, "Balance payment submitted for order " . $order_id . " and needs owner approval.");
 
 figurify_customer_done($conn, "my-orders.php?order_id=" . $order_id . "&submitted=1");
+/* ====================== END SUBMIT BALANCE PAYMENT (customer) ====================== */

@@ -1,17 +1,24 @@
 <?php
 
-// Real Gmail SMTP config, used by mailer_helper.php and Login/send_code.php.
-// This file is gitignored on purpose - never commit it, it has the real app password.
-// See mail_config.sample.php if you need to set this up again on a new machine.
+require_once __DIR__ . "/../helpers/security_helper.php";
 
+// LOCALHOST (XAMPP) = Gmail
+if (FIGURIFY_LOCAL) {
+    return [
+        "username"     => FIGURIFY_SECRETS["mail_local_username"] ?? "",
+        "app_password" => FIGURIFY_SECRETS["mail_local_password"] ?? "",
+        "from_name"    => "Clay and Stuff",
+    ];
+}
+
+// PUBLIC (GoDaddy) = mailbox na no-reply@clayandstuff.com
 return [
-
-    "username" => "clayandstuff.system@gmail.com",
-
-    // TODO: palitan ito ng BAGONG App Password mula sa Google
-    // (matapos mo i-revoke ang luma). Walang space sa pagitan.
-    "app_password" => "qiujepgzygxfzdki",
-
-    "from_name" => "Clay and Stuff",
-
+    "host"         => "mail.clayandstuff.com",
+    "port"         => 465,
+    "auth"         => true,
+    "encryption"   => "ssl",
+    "username"     => "no-reply@clayandstuff.com",
+    "app_password" => FIGURIFY_SECRETS["mail_public_password"] ?? "",
+    "from_email"   => "no-reply@clayandstuff.com",
+    "from_name"    => "Clay and Stuff",
 ];

@@ -1,11 +1,12 @@
 <?php
+/* ==========================================================================
+   CHECK ORDER UPDATES   (my-order/check_order_updates.php)
+   JSON endpoint, tinatawag ng [5h] AUTO-REFRESH ng my-orders.php kada 3 segundo.
+   Sagot: {order_id: "status::u<latest update id>::<response>"} - kasama ang
+   latest progress update para ma-detect kahit hindi nagbago ang o.status.
+   ========================================================================== */
 
-/* polled by my-orders.php JS para malaman kung may nagbago sa status.
-   returns JSON {order_id: "status"}. included din ang latest progress
-   update id + response kasi may cases na hindi nagbabago ang o.status
-   pero may bagong update (staff progress check-ins). */
-
-require_once __DIR__ . "/../helpers/session_helper.php";
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 header("Content-Type: application/json");
@@ -17,7 +18,7 @@ if (!isset($_SESSION["user_id"])) {
 }
 
 require_once __DIR__ . "/../Admin/database.php";
-require_once __DIR__ . "/../helpers/expire_helper.php";
+require_once __DIR__ . "/../helpers/expiration_helper.php";
 
 $user_id = (int) $_SESSION["user_id"];
 
@@ -25,7 +26,6 @@ $user_id = (int) $_SESSION["user_id"];
 /* i-check muna kung may expired quotations (2-day deadline) bago kunin ang statuses */
 
 figurify_expire_old_quotes($conn);
-require_once __DIR__ . "/../helpers/order_complete_helper.php";
 figurify_autocomplete_shipped_orders($conn);
 
 
@@ -68,3 +68,4 @@ $stmt->close();
 $conn->close();
 
 echo json_encode($statuses);
+/* ====================== END CHECK ORDER UPDATES ====================== */

@@ -1,9 +1,14 @@
 <?php
 
+/* ==========================================================================
+   OWNER: UPLOAD CONTENT MEDIA   (owner/upload_content_media.php)
+   AJAX endpoint ng Content Management para mag-upload ng larawan o video.
+   ========================================================================== */
+
 // AJAX endpoint ng content-management.php para sa pag-upload ng image/video. Nag-return ng JSON (filename/path)
 // para i-set ng JS ang hidden input at live preview nang walang page reload.
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 header("Content-Type: application/json");
@@ -30,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 /* CSRF - token idinadagdag ng content/collection page sa FormData */
-require_once __DIR__ . "/../helpers/csrf_helper.php";
 
 if (!figurify_verify_csrf($_POST["csrf_token"] ?? null)) {
     figurify_upload_fail("Your session expired. Please reload the page and try again.");
@@ -93,7 +97,7 @@ if (!is_dir($targetDir)) {
 }
 
 if (!is_writable($targetDir)) {
-    figurify_upload_fail("Could not save the file — no write permission on the server folder.");
+    figurify_upload_fail("Could not save the file. There is no write permission on the server folder.");
 }
 
 /* Sanitize + gumawa ng natatanging filename para hindi
@@ -162,3 +166,5 @@ if ($kind === "image") {
     ]);
 
 }
+
+/* ==================== END OWNER: UPLOAD CONTENT MEDIA ==================== */

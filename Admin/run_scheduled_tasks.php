@@ -3,8 +3,8 @@
 /* Patakbuhin bawat oras (Task Scheduler / run_scheduled_tasks.bat o cron).
    Ginagawa nito kahit walang nagbubukas ng site:
    1. cancel ang quotation na lampas 2 araw
-   2. paalala sa progress photo na 48 oras nang walang sagot
-   3. auto-approve ng progress photo pagkalipas ng 72 oras
+   2. paalala sa progress photo na 24 oras nang walang sagot
+   3. auto-approve ng progress photo pagkalipas ng 2 araw (48 oras)
    4. complete ang shipped order pagkalipas ng 7 araw
    5. database backup, isang beses kada araw (huling 14 lang ang tinatabi)
    6. linisin ang lumang login / spam attempts
@@ -16,9 +16,8 @@ if (php_sapi_name() !== "cli") {
 }
 
 require_once __DIR__ . "/database.php";
-require_once __DIR__ . "/../helpers/expire_helper.php";
-require_once __DIR__ . "/../helpers/progress_expire_helper.php";
-require_once __DIR__ . "/../helpers/order_complete_helper.php";
+require_once __DIR__ . "/../helpers/expiration_helper.php";
+require_once __DIR__ . "/../helpers/order_helper.php";
 
 $log = function (string $line): void {
     echo "[" . date("Y-m-d H:i:s") . "] " . $line . PHP_EOL;

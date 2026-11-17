@@ -1,7 +1,15 @@
 <?php
 
-/* staff - shared logic: helpers/order_actions/decline_quote.php */
+/* ==========================================================================
+   STAFF: DECLINE QUOTE   (staff/decline_quote.php)
+   Maikling entry point: i-decline ang quotation. Nasa helpers/order_actions.php ang buong logic.
+   ========================================================================== */
 
-$figurifyPortalRole = "staff";
+/* staff - shared logic: helpers/order_actions.php (action: decline_quote) */
 
-require __DIR__ . "/../helpers/order_actions/decline_quote.php";
+$figurifyPortalRole  = "staff";
+$figurifyOrderAction = "decline_quote";
+
+require __DIR__ . "/../helpers/order_actions.php";
+
+/* ==================== END STAFF: DECLINE QUOTE ==================== */

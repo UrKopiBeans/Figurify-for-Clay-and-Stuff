@@ -1,11 +1,24 @@
 <?php
+/* ==========================================================================
+   PAY REMAINING BALANCE PAGE   (my-order/pay-balance.php)
+   Style: my-order/pay-balance.css      Script: nasa dulo ng file na ito ([3] SCRIPT)
+   Bukas lang kapag "awaiting_balance" ang order. Isinusumite sa submit_balance_payment.php.
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+   LAMAN (taas pababa):
+     [1] SETUP + DATA   helpers, session, order ng customer, bawal kung hindi pa puwedeng bayaran
+     [2] HTML           navbar, page hero, balance payment card, QR lightbox, footer
+     [3] SCRIPT         submit, preview ng proof, QR lightbox
+   ========================================================================== */
+
+
+/* ==========================================================================
+   [1] SETUP + DATA
+   ========================================================================== */
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-require_once __DIR__ . "/../helpers/order_status_helper.php";
-
+require_once __DIR__ . "/../helpers/order_helper.php";
 
 /* must be logged in */
 
@@ -46,7 +59,7 @@ if (!$order) {
 if ($order["status"] !== "awaiting_balance") {
 
     /* nabayaran na ang balance (Back button / double click) - diretso sa order, walang babala */
-    $balanceAlreadyPaidStatuses = ["to_verify_balance", "for_balance_approval", "to_ship", "shipped", "completed"];
+    $balanceAlreadyPaidStatuses = ["to_verify_balance", "for_balance_approval", "to_ship", "address_returned", "shipped", "completed"];
 
     if (in_array(figurify_status_key($order["status"]), $balanceAlreadyPaidStatuses, true)) {
         header("Location: my-orders.php?order_id=" . $order_id);
@@ -58,34 +71,44 @@ if ($order["status"] !== "awaiting_balance") {
 }
 
 $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
+/* ====================== END SETUP + DATA ====================== */
 
+
+/* ==========================================================================
+   [2] HTML
+   ========================================================================== */
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
-    <link rel="icon" type="image/png" href="../Image/brand/logo.png">
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Pay Remaining Balance — Clay and Stuff</title>
-
-
-    <link rel="stylesheet" href="pay-balance.css?v=2">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pay Remaining Balance | Clay and Stuff</title>
+    <link rel="icon" type="image/png" href="../Image/brand/logo.png">
+    <?php include __DIR__ . "/../Shared/popup-and-security.php"; ?>
+    <link rel="stylesheet" href="pay-balance.css">
 </head>
+
 <body>
 
-<?php include "../Shared/navbar.php"; ?>
+<!-- ====================== NAVBAR (Shared/navbar.php) ====================== -->
+<?php include __DIR__ . "/../Shared/navbar.php"; ?>
+<!-- ====================== END NAVBAR ====================== -->
 
+
+<!-- ====================== PAGE HERO (css: pay-balance.css [2]) ====================== -->
 <header class="page-hero">
     <div class="page-wrap">
         <span class="page-eyebrow">LAST STEP</span>
         <h1>Pay Remaining Balance</h1>
-        <p>Please complete your remaining balance so we can ship out your order.</p>
+        <p>You can pay now. We will keep working on your order, but we can only ship it after your balance is paid.</p>
     </div>
 </header>
+<!-- ====================== END PAGE HERO ====================== -->
 
+
+<!-- ====================== BALANCE PAYMENT (css: pay-balance.css [3]-[7]) ====================== -->
 <main class="pay-page">
 
     <?php if ($hasError): ?>
@@ -101,7 +124,7 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
             action="submit_balance_payment.php"
             class="payment-form"
             enctype="multipart/form-data"
-            onsubmit="if (this.dataset.submitting) { return false; } if (window.csConfirmSubmit &amp;&amp; !csConfirmSubmit(this, 'Submit this payment?\nMake sure your screenshot is correct.', { okText: 'Submit', cancelText: 'Back' })) { return false; } this.dataset.submitting = '1'; var b = this.querySelector('button[type=submit]'); if (b) { b.disabled = true; b.textContent = 'Submitting payment…'; } return true;"
+            onsubmit="return submitBalancePayment(this)"
         >
 
             <input
@@ -119,11 +142,11 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
 
             <div class="payment-total-box">
                 <span>Remaining Balance</span>
-                <strong>₱<?php echo fmod($balanceDue, 1.0) == 0.0 ? number_format($balanceDue, 0) : number_format($balanceDue, 2); ?></strong>
+                <strong>₱<?php echo number_format($balanceDue, 2); ?></strong>
             </div>
 
             <div class="notice-box notice-box-warning">
-                Please make sure the amount you pay matches the remaining balance above. An incorrect payment may delay your shipment.
+                Make sure you pay the exact balance above. A wrong amount may delay your shipment.
             </div>
 
             <div class="payment-form-group">
@@ -131,29 +154,24 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
 
                 <div class="qr-code-row">
 
-                    <div class="qr-code-item">
-                        <img
-                            src="../Image/payment/qr-gcash.jpg"
-                            alt="GCash QR Code"
-                            class="qr-code-img"
-                            onclick="openQrLightbox(this.src, 'GCash QR Code')"
-                        >
+                    <!-- buong container ang clickable (hindi lang ang QR) - kapareho ng Payment page -->
+                    <div class="qr-code-item" onclick="openQrLightbox('../Image/payment/qr-gcash.jpg', 'GCash QR Code')">
+                        <img src="../Image/payment/qr-gcash.jpg" alt="GCash QR Code" class="qr-code-img">
                         <span class="qr-code-caption">GCash</span>
+                        <span class="qr-code-account">Account Name: Rosemarie P.</span>
+                        <span class="qr-code-account">Number: 0963 786 2263</span>
                     </div>
 
-                    <div class="qr-code-item">
-                        <img
-                            src="../Image/payment/qr-bpi.jpg"
-                            alt="BPI QR Code"
-                            class="qr-code-img"
-                            onclick="openQrLightbox(this.src, 'BPI QR Code')"
-                        >
+                    <div class="qr-code-item" onclick="openQrLightbox('../Image/payment/qr-bpi.jpg', 'BPI QR Code')">
+                        <img src="../Image/payment/qr-bpi.jpg" alt="BPI QR Code" class="qr-code-img">
                         <span class="qr-code-caption">BPI</span>
+                        <span class="qr-code-account">Account Name: Rosemarie Pia</span>
+                        <span class="qr-code-account">Number: 2669304997</span>
                     </div>
 
                 </div>
 
-                <p class="payment-form-hint">Tap a QR code to enlarge it for scanning.</p>
+                <p class="payment-form-hint">Tap a GCash or BPI box to enlarge the QR code for scanning.</p>
             </div>
 
             <div class="payment-form-group">
@@ -162,7 +180,10 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                     type="text"
                     name="payment_reference"
                     id="balancePaymentReference"
+                    inputmode="numeric"
+                    pattern="[0-9]+"
                     placeholder="e.g. GCash reference number"
+                    data-digits-only
                     required
                 >
             </div>
@@ -183,7 +204,7 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
                         <img
                             id="paymentProofPreviewImg"
                             alt="Payment proof preview"
-                            style="display:none;"
+                            hidden
                         >
 
                     </div>
@@ -201,31 +222,78 @@ $hasError = isset($_GET["error"]) && $_GET["error"] === "1";
 
             </div>
 
-            <button type="submit" class="btn-submit">Submit Balance Payment</button>
+            <!-- Back (pabalik sa My Orders) + Submit, magkatabi -->
+            <div class="balance-actions">
+                <a href="my-orders.php" class="btn-back">Back</a>
+                <button type="submit" class="btn-submit">Submit Balance Payment</button>
+            </div>
 
         </form>
 
     </div>
 
 </main>
+<!-- ====================== END BALANCE PAYMENT ====================== -->
 
 
-<!-- qr code lightbox -->
+<!-- ====================== QR LIGHTBOX (css: pay-balance.css [8] | js: [3c]) ====================== -->
 
 <div class="qr-lightbox-overlay" id="qrLightboxOverlay" onclick="closeQrLightbox(event)">
 
     <div class="qr-lightbox-box">
-        <button type="button" class="qr-lightbox-close" aria-label="Close" onclick="closeQrLightbox()">&times;</button>
-        <img id="qrLightboxImg" alt="">
+        <!-- larawan + close (X) sa loob ng larawan, kanang itaas (kapareho ng ibang image viewer) -->
+        <div class="qr-lightbox-frame">
+            <img id="qrLightboxImg" alt="">
+            <button type="button" class="qr-lightbox-close" aria-label="Close" onclick="closeQrLightbox()"></button>
+        </div>
         <p id="qrLightboxLabel"></p>
         <p class="qr-lightbox-hint">Scan this QR code using your GCash / BPI app</p>
     </div>
 
 </div>
+<!-- ====================== END QR LIGHTBOX ====================== -->
 
 
+<!-- ====================== FOOTER (Shared/footer.php) ====================== -->
+<?php include __DIR__ . "/../Shared/footer.php"; ?>
+<!-- ====================== END FOOTER ====================== -->
+
+
+<!-- ====================== [3] SCRIPT ====================== -->
 <script>
 
+/* ==========================================================================
+   [3a] SUBMIT  (confirm muna; isang beses lang maisusumite - iwas double click)
+   ========================================================================== */
+function submitBalancePayment(form) {
+
+    if (form.dataset.submitting) {
+        return false;
+    }
+
+    /* tanong muna bago i-submit (shared pop up - Shared/popup-and-security.php) */
+    if (window.csConfirmSubmit && !csConfirmSubmit(form, "Submit this payment?\nMake sure your screenshot is correct.", { okText: "Submit", cancelText: "Back" })) {
+        return false;
+    }
+
+    form.dataset.submitting = "1";
+
+    var submitButton = form.querySelector("button[type=submit]");
+
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting payment…";
+    }
+
+    return true;
+
+}
+/* ====================== END SUBMIT ====================== */
+
+
+/* ==========================================================================
+   [3b] PREVIEW NG PROOF OF PAYMENT
+   ========================================================================== */
 function previewPaymentProof(input) {
 
     var placeholder = document.querySelector("#paymentProofPreview .payment-proof-placeholder");
@@ -240,10 +308,10 @@ function previewPaymentProof(input) {
     reader.onload = function (event) {
 
         previewImg.src = event.target.result;
-        previewImg.style.display = "block";
+        previewImg.hidden = false;
 
         if (placeholder) {
-            placeholder.style.display = "none";
+            placeholder.hidden = true;
         }
 
     };
@@ -252,8 +320,12 @@ function previewPaymentProof(input) {
 
 }
 
+/* ====================== END PREVIEW NG PROOF OF PAYMENT ====================== */
 
-/* click a QR code to enlarge it */
+
+/* ==========================================================================
+   [3c] QR LIGHTBOX  (click ng QR = palakihin)
+   ========================================================================== */
 
 function openQrLightbox(src, label) {
 
@@ -273,7 +345,7 @@ function openQrLightbox(src, label) {
     }
 
     overlay.classList.add("show");
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("no-scroll");
 
 }
 
@@ -291,7 +363,7 @@ function closeQrLightbox(event) {
     }
 
     overlay.classList.remove("show");
-    document.body.style.overflow = "";
+    document.body.classList.remove("no-scroll");
 
 }
 
@@ -302,10 +374,10 @@ document.addEventListener("keydown", function (event) {
     }
 
 });
-
+/* ====================== END QR LIGHTBOX ====================== */
 </script>
-
-<?php include "../Shared/footer.php"; ?>
+<!-- ====================== END SCRIPT ====================== -->
 
 </body>
 </html>
+<!-- ====================== END HTML ====================== -->

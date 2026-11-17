@@ -5,11 +5,10 @@
    lang (listahan, walang tanggal). Idagdag ang "?confirm=1" sa URL
    para talagang tanggalin ang mga nakalista. */
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/database.php";
-require_once __DIR__ . "/../helpers/access_helper.php";
 
 // Admin lang na naka-login ang puwedeng magpatakbo nito (may DELETE ito).
 figurify_require_role("admin");
@@ -194,14 +193,45 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
+    <?php /* [POP UP AT SECURITY] pop up at security script lang (walang CSS) - Shared/popup-and-security.php */ include __DIR__ . "/../Shared/popup-and-security.php"; ?>
     <link rel="icon" type="image/png" href="../Image/brand/logo.png">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1400">
 <title>Cleanup Orphaned Uploads</title>
 <style>
+/* ==========================================================================
+   FONT AT BACKGROUND - sariling kopya ng page na ito
+   (dating nasa shared file; ngayon ay hindi na shared)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT - Fraunces (heading) + Plus Jakarta Sans (body) ----- */
+
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+/* form controls - hindi sila nagmamana ng font by default */
+
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* ----- BACKGROUND - cream #FFF8F6 ----- */
+
+
+/* ===== katapusan ng sariling kopya ===== */
+
+
     body {
-        
+
         max-width: 800px;
         margin: 40px auto;
         padding: 0 20px;
@@ -241,7 +271,7 @@ $conn->close();
         background: #d32f2f;
         color: #fff;
         text-decoration: none;
-        border-radius: 6px;
+        border-radius: 999px;
         font-weight: bold;
     }
 </style>

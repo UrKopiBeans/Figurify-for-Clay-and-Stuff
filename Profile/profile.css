@@ -1,91 +1,187 @@
-/* Profile — Figurify redesign (navbar & footer live in Shared/) */
+/* ==========================================================================
+   PROFILE PAGE - CSS   (Profile/profile.css)
+   Lahat ng style ng profile.php ay nandito lang. Ang navbar at footer ay may
+   sariling style sa Shared/navbar.php at Shared/footer.php.
 
-:root {
-    --primary: #c2325f;
-    --primary-dark: #a62a50;
-    --plum: #4a1d3b;
-    --blush: #ffedf2;
-    --cream: #fff8f6;
-    --ink-soft: #7a5a6c;
-    --line: #f3dde5;
-    --field-line: #f0d3de;
+   LAMAN (pareho ang ayos sa profile.php, taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              reset, text, lapad ng page
+     [2] PAGE HERO         banner sa taas (peach -> cream -> pink)
+     [3] LAYOUT            summary card sa kaliwa, forms sa kanan
+     [4] SUMMARY CARD      avatar, Change Photo, role, member since
+     [5] FORMS             Account Information, Change Password, Shipping & Refund Details
+     [6] RESPONSIVE        phone / tablet
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
 }
 
+/* form controls - hindi sila nagmamana ng font by default */
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+.page-hero h1,
+.profile-form-title {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE
+   ========================================================================== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
 body {
-    
-    color: var(--plum);
-    
+    color: #4a1d3b;
     line-height: 1.6;
 }
 
+/* lapad ng laman ng page */
 .page-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+/* ====================== END BASE ====================== */
 
-/* page hero */
-.page-hero { padding: 44px 0 26px; background: linear-gradient(100deg, #fff4f6 0%, #ffe9ef 100%); }
+
+/* ==========================================================================
+   [2] PAGE HERO  (dating nasa sariling <style> ng profile.php)
+   ========================================================================== */
+.page-hero {
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom: 3px solid #ead9f0;
+}
+
+/* hanay ng sparkle sa kanang-itaas */
+.page-hero::after {
+    content: "\2726   \2606   \2727   \2661   \2726";
+    position: absolute;
+    top: 25px;
+    right: 7%;
+    font-size: 19px;
+    letter-spacing: 7px;
+    white-space: nowrap;
+    color: #e8bd4d;
+    pointer-events: none;
+}
+
+/* lalagyan ng text (mas makitid kaysa .page-wrap ng laman) */
+.page-hero .page-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    padding: 30px 20px;
+}
+
+/* "YOUR ACCOUNT" - body font ang gamit (namamana sa body) */
 .page-eyebrow {
-    display: inline-block;
-    
-    font-style: italic;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: .3px;
-    color: var(--primary);
-    margin-bottom: 2px;
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a04a78;
 }
+
 .page-hero h1 {
-    
+    margin-top: 8px;
+    font-size: clamp(34px, 5vw, 55px);
     font-weight: 700;
-    font-size: clamp(34px, 4vw, 48px);
-    line-height: 1.1;
-    color: var(--plum);
+    line-height: 1.05;
+    letter-spacing: -.5px;
+    color: #86365f;
 }
-.page-hero p { margin-top: 10px; max-width: 760px; font-size: 16px; color: var(--ink-soft); }
 
-/* layout */
-.profile-page { padding: 48px 0 24px; }
+.page-hero p {
+    max-width: 720px;
+    margin: 15px auto 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #8a5870;
+}
+/* ====================== END PAGE HERO ====================== */
 
+
+/* ==========================================================================
+   [3] LAYOUT
+   ========================================================================== */
+.profile-page { padding: 48px 0; }
+
+/* 3 card na magkakatabi (Photo | Account Information | Change Password), pare-pareho ang taas */
 .profile-layout {
     display: grid;
-    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-columns: 300px minmax(0, 1fr) minmax(0, 1fr);
     gap: 24px;
     align-items: stretch;
 }
 
-.profile-forms-col { display: flex; flex-direction: column; gap: 24px; }
-
+/* puting card - summary at bawat form */
 .profile-card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
     padding: 24px 24px 26px;
+    background: #fff;
+    border: 1px solid #f3dde5;
+    border-radius: 24px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-/* summary */
+/* ang form ay pumupuno sa card para pantay sa ibaba ang mga button */
+.profile-card .profile-form { flex: 1; }
+.profile-card .form-actions { margin-top: auto; padding-top: 4px; }
+/* ====================== END LAYOUT ====================== */
+
+
+/* ==========================================================================
+   [4] SUMMARY CARD
+   ========================================================================== */
 .profile-summary-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 24px;
 }
 
-/* NAKA-SCOPE sa .profile-summary-card lang. Dati kasi global ang .profile-avatar
-   kaya tumatagas ang 120px / margin-bottom / peach background / !important
-   papunta sa maliit na bilog sa navbar (kaya nagbabago ang itsura nito
-   kapag nasa My Profile page). */
+/* naka-scope sa .profile-summary-card para hindi madamay ang maliit na
+   .profile-avatar ng navbar */
 .profile-summary-card .profile-avatar {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #ffffff;
-    border: 3px solid var(--nb-primary-pink, #e58aa9);
-    box-sizing: border-box;
     margin-bottom: 14px;
+    overflow: hidden;
+    border: 3px solid #e58aa9;
+    border-radius: 50%;
+    background: #fff;
 }
-.profile-summary-card .profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.profile-summary-card .profile-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* unang letra ng pangalan - galing sa figurify_render_avatar() (kulay ng bilog = class na avatar-color-0 ... 7, nasa dulo ng file) */
 .profile-summary-card .profile-avatar .avatar-initials {
     width: 100%;
     height: 100%;
@@ -94,96 +190,137 @@ body {
     justify-content: center;
     font-size: 44px;
     font-weight: 800;
-    /* same kulay at itsura ng avatar sa navbar (galing sa inline style
-       ng figurify_render_avatar), puting letra */
-    color: #ffffff;
+    color: #fff;
 }
 
+/* "Change Photo" - label ng nakatagong file input */
 .profile-avatar-upload-btn {
     display: inline-block;
     padding: 10px 16px;
-    border-radius: 10px;
-    background: var(--blush);
-    color: var(--primary);
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
     font-size: 13.5px;
     font-weight: 700;
     cursor: pointer;
     transition: background-color .15s ease;
 }
+
 .profile-avatar-upload-btn:hover { background: #ffdde8; }
 
+/* Staff / Owner lang (hindi lumalabas sa customer) */
 .profile-role-badge {
     margin-top: 12px;
     padding: 4px 12px;
     border-radius: 999px;
-    background: var(--blush);
-    color: var(--primary);
+    background: #ffedf2;
+    color: #c2325f;
     font-size: 12px;
     font-weight: 700;
 }
 
-.profile-member-since { margin-top: 14px; font-size: 15px; color: var(--ink-soft); }
+.profile-member-since { margin-top: 14px; font-size: 15px; color: #7a5a6c; }
+/* ====================== END SUMMARY CARD ====================== */
 
-/* forms */
+
+/* ==========================================================================
+   [5] FORMS
+   ========================================================================== */
 .profile-form-title {
-    
+    margin-bottom: 14px;
     font-size: 22px;
     font-weight: 600;
-    color: var(--plum);
-    margin-bottom: 14px;
 }
 
 .profile-form { display: flex; flex-direction: column; gap: 16px; }
 
+/* Change Password: 3 field pababa (makitid na ang card) */
+.profile-password-fields { display: flex; flex-direction: column; gap: 16px; }
+
 .field { display: flex; flex-direction: column; gap: 6px; }
 
-.field label { font-size: 13.5px; font-weight: 700; color: var(--plum); }
+.field label { font-size: 13.5px; font-weight: 700; }
 
-.field input {
+.field input,
+.field select {
     width: 100%;
     height: 50px;
     padding: 0 16px;
     background: #fff;
-    border: 1px solid var(--field-line);
+    border: 1px solid #f0d3de;
     border-radius: 12px;
-    
-    font-size: 15px;
-    color: var(--plum);
+    font-size: 16px;
+    color: #4a1d3b;
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
-.field input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
-.field input:disabled { background: #fff; color: var(--ink-soft); cursor: not-allowed; }
 
-.profile-field-hint { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+.field input:focus,
+.field select:focus { border-color: #c2325f; box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
+.field input:disabled { color: #7a5a6c; cursor: not-allowed; }
 
-.field-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.profile-field-hint { margin-top: 4px; font-size: 12.5px; color: #7a5a6c; }
+
+/* Shipping & Refund Details: buong lapad sa ilalim, Shipping | Refund magkatabi */
+.profile-details-card { grid-column: 1 / -1; }
+.profile-details-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 32px; }
+.profile-details-col { display: flex; flex-direction: column; gap: 16px; }
+.profile-details-subtitle { font-size: 16px; font-weight: 700; color: #c2325f; }
 
 .form-actions { display: flex; }
 
+/* Save Changes (puno) at Update Password (outline) */
 .btn-primary,
 .btn-outline {
-    padding: 14px 26px;
-    border-radius: 12px;
-    
-    font-size: 15px;
+    padding: 12px 22px;
+    border: 2px solid #c2325f;
+    border-radius: 999px;
+    font-size: 14.5px;
     font-weight: 700;
     cursor: pointer;
     transition: background-color .15s ease;
 }
-.btn-primary { background: var(--primary); color: #fff; border: 1.5px solid var(--primary); }
-.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
-.btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
-.btn-outline:hover { background: var(--blush); }
 
-/* responsive */
-@media (max-width: 1000px) {
-    .profile-layout { grid-template-columns: 1fr; }
-    .profile-summary-card { padding-bottom: 28px; }
+.btn-primary { background: #c2325f; color: #fff; }
+.btn-primary:hover { background: #a62a50; border-color: #a62a50; }
+
+.btn-outline { background: #fff; color: #c2325f; }
+.btn-outline:hover { background: #ffedf2; }
+/* ====================== END FORMS ====================== */
+
+
+/* ==========================================================================
+   [6] RESPONSIVE
+   ========================================================================== */
+/* tablet: photo sa taas (buong lapad), 2 form na magkatabi sa ilalim */
+@media (max-width: 1100px) {
+    .profile-layout { grid-template-columns: 1fr 1fr; }
+    .profile-summary-card { grid-column: 1 / -1; padding-bottom: 28px; }
 }
+
+/* phone: isa-isa pababa */
 @media (max-width: 760px) {
-    .field-row-3 { grid-template-columns: 1fr; gap: 16px; }
+    .profile-layout { grid-template-columns: 1fr; }
+    .profile-details-grid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 720px) {
+    .page-hero { min-height: 220px; }
+    .page-hero::after { top: 12px; right: 4%; font-size: 14px; letter-spacing: 4px; }
+    .page-hero .page-wrap { padding: 34px 16px 26px; }
+}
+
 @media (max-width: 600px) {
     .page-wrap { width: calc(100% - 32px); }
 }
+/* ====================== END RESPONSIVE ====================== */
+
+/* ===== kulay ng bilog na may unang letra (galing sa figurify_render_avatar) ===== */
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-0 { background: #e77fbd; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-1 { background: #b9a0ef; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-2 { background: #f472b6; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-3 { background: #9b3f72; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-4 { background: #db2777; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-5 { background: #a88be5; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-6 { background: #831843; }
+.profile-summary-card .profile-avatar .avatar-initials.avatar-color-7 { background: #c026d3; }

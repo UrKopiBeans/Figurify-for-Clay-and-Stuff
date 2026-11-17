@@ -1,9 +1,14 @@
 <?php
 
+/* ==========================================================================
+   PROOF DOWNLOAD   (Shared/proof.php)
+   Ligtas na pagbukas ng proof of payment at proof of refund (may access check).
+   ========================================================================== */
+
 /* Authorized download ng proof of payment / proof of refund.
    Tingnan ang helpers/proof_helper.php. */
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session(); // ?portal=owner|staff|customer ang pumipili ng session
 
 require_once __DIR__ . "/../Admin/database.php";
@@ -87,3 +92,5 @@ header("Content-Disposition: inline; filename=\"" . basename($abs) . "\"");
 
 readfile($abs);
 exit();
+
+/* ==================== END PROOF DOWNLOAD ==================== */

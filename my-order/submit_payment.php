@@ -1,40 +1,33 @@
 <?php
-
-/* CUSTOMER - AWAITING_PAYMENT -> PAYMENT_SUBMITTED.
-   Ang OWNER lang ang mag-a-approve o magre-reject nito. */
+/* ==========================================================================
+   SUBMIT PAYMENT (customer)   (my-order/submit_payment.php)
+   POST galing sa payment-shipping.php: shipping, refund details, payment option (50% o full)
+   at proof ng bayad.
+   AWAITING_PAYMENT -> PAYMENT_SUBMITTED. Ang OWNER lang ang mag-a-approve o magre-reject.
+   ========================================================================== */
 
 require_once __DIR__ . "/_customer_bootstrap.php";
+require_once __DIR__ . "/../helpers/saved_details_helper.php";
 
 $order_id = isset($_POST["order_id"]) ? (int) $_POST["order_id"] : 0;
 $errorUrl = "payment-shipping.php?order_id=" . $order_id . "&error=1";
 
 figurify_wf_require_post_csrf($conn, $errorUrl, $order_id);
 
+/* Shipping + Refund details: iisang paglinis at check (helpers/saved_details_helper.php) */
+$details = figurify_saved_details_from_post($_POST, true);
+$d       = $details["data"];
+
 $shipping_name     = mb_substr(trim((string) ($_POST["shipping_name"] ?? "")), 0, 150);
-$shipping_address  = mb_substr(trim((string) ($_POST["shipping_address"] ?? "")), 0, 255);
-$pin_address       = mb_substr(trim((string) ($_POST["pin_address"] ?? "")), 0, 255);
-$shipping_contact  = trim((string) ($_POST["shipping_contact"] ?? ""));
 $payment_reference = mb_substr(trim((string) ($_POST["payment_reference"] ?? "")), 0, 100);
-$courier           = trim((string) ($_POST["courier"] ?? ""));
-
-$refund_account_name   = mb_substr(trim((string) ($_POST["refund_account_name"] ?? "")), 0, 150);
-$refund_account_number = trim((string) ($_POST["refund_account_number"] ?? ""));
-$refund_method         = trim((string) ($_POST["refund_method"] ?? ""));
-$refund_method_other   = mb_substr(trim((string) ($_POST["refund_method_other"] ?? "")), 0, 50);
-
-$refundMethodValid = in_array($refund_method, ["gcash", "bpi", "other"], true)
-    && ($refund_method !== "other" || $refund_method_other !== "");
+$payment_option    = (string) ($_POST["payment_option"] ?? "");
 
 $formOk =
     $order_id > 0 &&
+    $details["error"] === "" &&
     $shipping_name !== "" &&
-    $shipping_address !== "" &&
-    preg_match('/^[0-9]{11}$/', $shipping_contact) &&
-    in_array($courier, ["lbc", "lalamove"], true) &&
+    in_array($payment_option, ["half", "full"], true) &&
     $payment_reference !== "" &&
-    $refund_account_name !== "" &&
-    preg_match('/^[0-9]{1,11}$/', $refund_account_number) &&
-    $refundMethodValid &&
     !empty($_POST["agree_terms"]);
 
 /* i-check muna ang state bago mag-save ng file */
@@ -56,15 +49,16 @@ if ($proofPath === null) {
 
 $result = figurify_wf_perform($conn, $order_id, "submit_payment", [
     "shipping_name"         => $shipping_name,
-    "shipping_address"      => $shipping_address,
-    "pin_address"           => $pin_address,
-    "shipping_contact"      => $shipping_contact,
-    "courier"               => $courier,
+    "shipping_address"      => mb_substr($d["address_line1"] . ", " . $d["address_line2"], 0, 255),
+    "pin_address"           => $d["pin_address"],
+    "shipping_contact"      => $d["shipping_contact"],
+    "courier"               => $d["courier"],
     "payment_reference"     => $payment_reference,
+    "payment_option"        => $payment_option,
     "payment_proof"         => $proofPath,
-    "refund_account_name"   => $refund_account_name,
-    "refund_account_number" => $refund_account_number,
-    "refund_method"         => ($refund_method === "other") ? $refund_method_other : $refund_method,
+    "refund_account_name"   => $d["refund_account_name"],
+    "refund_account_number" => $d["refund_account_number"],
+    "refund_method"         => $d["refund_method"],
 ]);
 
 if (!$result["ok"]) {
@@ -72,9 +66,10 @@ if (!$result["ok"]) {
     figurify_customer_done($conn, "my-orders.php?order_id=" . $order_id, $result["error"], "error");
 }
 
-/* Walang hold ng slot sa pag-submit ng bayad - papasok lang sa slot ang order kapag na-approve na ng owner */
+/* auto-save: ang nilagay sa form ay lalabas na sa My Profile at sa susunod na order */
+figurify_saved_details_save($conn, (int) $user_id, $d);
 
-require_once __DIR__ . "/../helpers/email_template_helper.php";
+/* Walang hold ng slot sa pag-submit ng bayad - papasok lang sa slot ang order kapag na-approve na ng owner */
 
 figurify_notify_user(
     $conn,
@@ -88,6 +83,7 @@ figurify_notify_user(
 
 figurify_email_payment_received($conn, (int) $user_id, (int) $order_id);
 
-figurify_notify_staff($conn, $order_id, "Payment submitted for order " . $order_id . " — please check the details in Verification.");
+figurify_notify_staff($conn, $order_id, "Payment submitted for order " . $order_id . ". Please check the details in Verification.");
 
 figurify_customer_done($conn, "my-orders.php?order_id=" . $order_id . "&submitted=1");
+/* ====================== END SUBMIT PAYMENT (customer) ====================== */

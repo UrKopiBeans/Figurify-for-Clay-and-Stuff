@@ -1,55 +1,93 @@
-/* Leave a Review — Figurify redesign (navbar & footer live in Shared/) */
+/* ==========================================================================
+   LEAVE A REVIEW PAGE - CSS   (my-order/submit_review.css)
+   Lahat ng style ng submit_review.php ay nandito lang. Ang navbar at footer
+   ay may sariling style sa Shared/navbar.php at Shared/footer.php.
 
-:root {
-    --primary: #c2325f;
-    --primary-dark: #a62a50;
-    --plum: #4a1d3b;
-    --blush: #ffedf2;
-    --cream: #fff8f6;
-    --coral: #e8707e;
-    --ink-soft: #7a5a6c;
-    --line: #f3dde5;
-    --field-line: #f0d3de;
+   LAMAN (pareho ang ayos sa submit_review.php, taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              box-sizing, text
+     [2] CARD              puting card, heading, error box
+     [3] FORM              star rating, review text, photos + preview
+     [4] BUTTONS           Submit Review, Back
+     [5] SUBMITTED REVIEW  read-only na review
+     [6] RESPONSIVE        phone
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
 }
 
+/* form controls - hindi sila nagmamana ng font by default */
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+.page-review h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE  (walang global margin reset sa page na ito - sinadya)
+   ========================================================================== */
 * { box-sizing: border-box; }
 
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
 body {
     margin: 0;
-    
-    color: var(--plum);
-    
+    color: #4a1d3b;
     line-height: 1.6;
 }
+/* ====================== END BASE ====================== */
 
+
+/* ==========================================================================
+   [2] CARD  (iisang puting card sa gitna)
+   ========================================================================== */
 .review-page {
     min-height: calc(100vh - 300px);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    padding: 48px 16px 40px;
+    padding: 48px 16px;
 }
 
 .card {
     width: 100%;
     max-width: 648px;
     background: #fff;
-    border: 1px solid var(--line);
+    border: 1px solid #f3dde5;
     border-radius: 24px;
     padding: 24px 24px 26px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-h1 {
-    
+.card h1 {
+    margin: 0 0 4px;
     font-size: 36px;
     font-weight: 600;
     line-height: 1.15;
-    color: var(--plum);
-    margin: 0 0 4px;
 }
 
-.sub { font-size: 15px; color: var(--ink-soft); margin-bottom: 16px; }
+.sub { font-size: 15px; color: #7a5a6c; margin-bottom: 16px; }
 
 .error-box {
     background: #fdeceb;
@@ -57,14 +95,21 @@ h1 {
     border-radius: 12px;
     padding: 14px 16px;
     font-size: 14px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 }
 
-/* rating */
+/* ====================== END CARD ====================== */
+
+
+/* ==========================================================================
+   [3] FORM  (rating, review text, photos)
+   ========================================================================== */
+
+/* ---------- rating ---------- */
 label.field-label {
     display: block;
     font-size: 13.5px;
     font-weight: 700;
-    color: var(--plum);
     margin-bottom: 8px;
 }
 
@@ -80,7 +125,7 @@ label.field-label {
     font-size: 38px;
     line-height: 1;
     color: transparent;
-    -webkit-text-stroke: 1.5px var(--coral);
+    -webkit-text-stroke: 1.5px #e8707e;
     cursor: pointer;
     transition: color .15s, transform .15s;
 }
@@ -88,110 +133,145 @@ label.field-label {
 .stars input:checked ~ label,
 .stars label:hover,
 .stars label:hover ~ label {
-    color: var(--coral);
+    color: #e8707e;
 }
 
-/* review text */
-textarea {
+/* ---------- review text ---------- */
+.card textarea {
     width: 100%;
     min-height: 100px;
     padding: 14px 16px;
     margin-bottom: 18px;
-    
-    font-size: 15px;
-    color: var(--plum);
+    font-size: 16px;
+    color: #4a1d3b;
     background: #fff;
-    border: 1px solid var(--field-line);
+    border: 1px solid #f0d3de;
     border-radius: 12px;
     resize: vertical;
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
-textarea::placeholder { color: #bfa3b1; }
-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
+.card textarea::placeholder { color: #bfa3b1; }
+.card textarea:focus { border-color: #c2325f; box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
 
-/* photos */
+/* ---------- photos (nakatagong file input; label = clickable na box) ---------- */
 .photo-input { display: none; }
 
+/* iisang box (kapareho ng upload box ng Payment page): nasa loob nito ang napiling photos */
 .photo-drop {
+    padding: 18px;
+    background: #ffedf2;
+    border: 2px dashed #e5b8c8;
+    border-radius: 16px;
+    transition: border-color .15s ease;
+}
+.photo-drop:hover { border-color: #c2325f; }
+
+.photo-drop-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 22px 16px;
-    background: var(--cream);
-    border: 1.5px dashed #ecc9d6;
-    border-radius: 14px;
-    color: var(--plum);
+    padding: 18px 8px;
+    color: #c2325f;
     text-align: center;
     cursor: pointer;
-    transition: background-color .15s ease, border-color .15s ease;
 }
-.photo-drop:hover { background: var(--blush); border-color: var(--primary); }
-.photo-drop-icon { display: none; }
-.photo-drop-text { font-size: 15px; color: var(--plum); }
-.photo-drop small { font-size: 12.5px; color: var(--ink-soft); font-weight: 500; }
+.photo-drop-empty[hidden] { display: none; }
+.photo-drop-text { font-size: 14px; font-weight: 700; }
+.photo-drop-empty small { font-size: 12px; color: #7a5a6c; font-weight: 500; }
 
-.photo-preview { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.photo-preview { display: flex; flex-wrap: wrap; gap: 12px; }
 .photo-preview:empty { display: none; }
-.photo-preview figure { position: relative; margin: 0; width: 84px; height: 84px; }
+.photo-preview figure { position: relative; margin: 0; width: 96px; height: 96px; }
 .photo-preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 12px;
-    border: 1px solid var(--field-line);
+    border: 1px solid #f0d3de;
 }
+/* X = tanggalin: nasa loob ng larawan, kanang itaas */
 .photo-preview button {
     position: absolute;
-    top: -7px;
-    right: -7px;
-    width: 22px;
-    height: 22px;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #b83227;
-    color: #fff;
-    font-size: 13px;
-    line-height: 22px;
+    background: #fff;
+    color: #c2325f;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 26px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
     cursor: pointer;
 }
+.photo-preview button:hover { background: #ffedf2; }
+/* "+ Add" = dagdag pa ng photo (hanggang 5) */
+.photo-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border: 2px dashed #e5b8c8;
+    border-radius: 12px;
+    background: #fff;
+    color: #c2325f;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.photo-add:hover { border-color: #c2325f; }
 
-/* actions */
+/* ====================== END FORM ====================== */
+
+
+/* ==========================================================================
+   [4] BUTTONS  (Submit Review, Back)
+   ========================================================================== */
 .form-actions { display: flex; justify-content: flex-start; margin-top: 18px; }
+.form-actions-row { flex-wrap: wrap; gap: 12px; }   /* It's Good + Request Revision (progress_response.php) */
+
+/* larawan ng progress update (progress_response.php) */
+.progress-photo { display: block; width: 100%; max-height: 420px; object-fit: contain; margin: 0 0 12px; border-radius: 12px; background: #fff; }
 
 .btn-submit,
 .btn-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 14px 26px;
-    border-radius: 12px;
-    
-    font-size: 15px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14.5px;
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
     transition: background-color .15s ease;
 }
-.btn-submit { border: 1.5px solid var(--primary); background: var(--primary); color: #fff; }
-.btn-submit:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
-.btn-back { border: 1.5px solid var(--primary); background: #fff; color: var(--primary); }
-.btn-back:hover { background: var(--blush); }
+.btn-submit { border: 2px solid #c2325f; background: #c2325f; color: #fff; }
+.btn-submit:hover { background: #a62a50; border-color: #a62a50; }
+.btn-back { border: 2px solid #c2325f; background: #fff; color: #c2325f; }
+.btn-back:hover { background: #ffedf2; }
 
-/* submitted review (read-only) */
+/* ====================== END BUTTONS ====================== */
+
+
+/* ==========================================================================
+   [5] SUBMITTED REVIEW  (read-only, isang review lang kada order)
+   ========================================================================== */
 .review-stars-readonly {
     font-size: 22px;
     letter-spacing: 3px;
-    color: var(--coral);
+    color: #e8707e;
     margin: 0 0 8px;
 }
 
 .review-text-readonly {
     font-size: 15.5px;
-    line-height: 1.6;
-    color: var(--plum);
     white-space: pre-wrap;
     margin-bottom: 10px;
 }
@@ -204,12 +284,24 @@ textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 5
     height: 96px;
     object-fit: cover;
     border-radius: 12px;
-    border: 1px solid var(--field-line);
+    border: 1px solid #f0d3de;
 }
 
-.meta { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
+.meta { font-size: 13px; color: #7a5a6c; margin-top: 6px; }
 
+/* mensahe ng staff (progress_response.php): may container + kung kanino galing */
+.msg-box { margin: 4px 0 12px; padding: 12px 16px; border-radius: 14px; background: #fff; border: 1px solid #f3dde5; border-left: 4px solid #c2325f; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18); }
+.msg-from { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; color: #c2325f; }
+.msg-box p { font-size: 14.5px; line-height: 1.5; color: #4a1d3b; overflow-wrap: anywhere; }
+
+/* ====================== END SUBMITTED REVIEW ====================== */
+
+
+/* ==========================================================================
+   [6] RESPONSIVE
+   ========================================================================== */
 @media (max-width: 520px) {
-    h1 { font-size: 30px; }
+    .card h1 { font-size: 30px; }
     .stars label { font-size: 32px; }
 }
+/* ====================== END RESPONSIVE ====================== */

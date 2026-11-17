@@ -1,14 +1,16 @@
 <?php
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+/* ==========================================================================
+   STAFF: VERIFY ORDER   (staff/verify_order.php)
+   Action ng Verification page ng staff: i-verify ang details at ipasa sa owner, o i-decline.
+   ========================================================================== */
+
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-define("ALL_IN_ONE_FUNCTIONS_ONLY", true); // [ALL-IN-ONE] pop up functions lang (walang HTML) - redirect file ito
-require_once __DIR__ . "/../Shared/all-in-one.php";
-require_once __DIR__ . "/../helpers/notification_helper.php";
-require_once __DIR__ . "/../helpers/access_helper.php";
-require_once __DIR__ . "/../helpers/order_workflow.php";
+require_once __DIR__ . "/../helpers/messaging_helper.php";
+require_once __DIR__ . "/../helpers/order_helper.php";
 
 figurify_require_role("staff");
 
@@ -30,7 +32,8 @@ if ($action === "reject") {
        kasama ang dahilan. Hindi ito pagpapasya sa bayad - iyon ay sa Owner. */
     $reasonKey = trim((string) ($_POST["decline_reason"] ?? ""));
     $otherText = mb_substr(trim((string) ($_POST["decline_reason_other"] ?? "")), 0, 190);
-    $reason    = FIGURIFY_WF_DETAILS_DECLINE_REASONS[$reasonKey] ?? (($reasonKey === "other") ? $otherText : "");
+    $isOrderFix = isset(FIGURIFY_WF_ORDER_FIX_REASONS[$reasonKey]);   /* mali ang order details -> customer ang mag-e-edit */
+    $reason    = FIGURIFY_WF_ORDER_FIX_REASONS[$reasonKey] ?? FIGURIFY_WF_DETAILS_DECLINE_REASONS[$reasonKey] ?? (($reasonKey === "other") ? $otherText : "");
 
     if ($reason === "") {
         figurify_flash("Pick a reason first.", "error");
@@ -39,7 +42,7 @@ if ($action === "reject") {
         exit();
     }
 
-    $result = figurify_wf_perform($conn, $order_id, "decline_payment_details", ["reason" => $reason]);
+    $result = figurify_wf_perform($conn, $order_id, $isOrderFix ? "return_paid_for_correction" : "decline_payment_details", ["reason" => $reason]);
 
     if (!$result["ok"]) {
         figurify_flash($result["error"], "error");
@@ -48,30 +51,31 @@ if ($action === "reject") {
         exit();
     }
 
-    require_once __DIR__ . "/../helpers/email_template_helper.php";
     figurify_customer_notice(
         $conn,
         (int) $result["order"]["user_id"],
         (int) $order_id,
-        "Your payment details for Order #" . $order_id . " were declined: " . $reason . ". Please submit them again in My Orders.",
-        "Action needed: Payment details for Order #" . $order_id,
+        $isOrderFix
+            ? "Please update the details of Order #" . $order_id . ": " . $reason . ". Click Fix My Order in My Orders. Your payment is kept."
+            : "Your payment details for Order #" . $order_id . " were declined: " . $reason . ". Please submit them again in My Orders.",
+        $isOrderFix ? "Please update your Order #" . $order_id : "Action needed: Payment details for Order #" . $order_id,
         [
-            "We reviewed your payment details for <strong>Order #" . $order_id . "</strong>, but unfortunately we were unable to accept them.",
+            $isOrderFix
+                ? "Please update the order details of <strong>Order #" . $order_id . "</strong>. Your payment is kept."
+                : "We couldn’t accept your payment details for <strong>Order #" . $order_id . "</strong>.",
             "<strong>Reason:</strong> " . figurify_email_e($reason),
-            "Please log in to your account, go to the <strong>My Orders</strong> page, and submit your payment details again.",
-            "You can also view this notification on your <strong>Notifications</strong> page.",
-            "Thank you for choosing Clay and Stuff!",
+            $isOrderFix ? "Go to <strong>My Orders</strong> and click <strong>Fix My Order</strong>." : "Please submit them again in <strong>My Orders</strong>.",
         ]
     );
 
     figurify_notify_staff(
         $conn,
         $order_id,
-        "Payment details for order " . $order_id . " were declined by staff (" . $reason . ") — sent back to the customer.",
+        "Payment details for order " . $order_id . " were declined by staff (" . $reason . ") and sent back to the customer.",
         (int) $_SESSION["user_id"]
     );
 
-    figurify_flash("Order " . $order_id . " declined. The customer was notified.", "success");
+    figurify_flash("Order #" . $order_id . " declined. The customer was notified.", "success");
     $conn->close();
     header("Location: verification.php");
     exit();
@@ -93,13 +97,12 @@ if (!$result["ok"]) {
     exit();
 }
 
-require_once __DIR__ . "/../helpers/email_template_helper.php";
 
 figurify_notify_user(
     $conn,
     (int) $result["order"]["user_id"],
     $order_id,
-    "Your payment details for Order #" . $order_id . " were checked. Waiting for the owner's approval.",
+    "Your payment details for Order #" . $order_id . " were checked. Waiting for payment approval.",
     0,
     null,
     false
@@ -110,13 +113,15 @@ figurify_email_payment_verified($conn, (int) $result["order"]["user_id"], (int) 
 figurify_notify_staff(
     $conn,
     $order_id,
-    "Payment details for order " . $order_id . " were verified by staff — waiting for the owner's approval.",
+    "Payment details for order " . $order_id . " were verified by staff and are waiting for the owner's approval.",
     (int) $_SESSION["user_id"]
 );
 
-figurify_flash("Order " . $order_id . " sent to the owner for approval.", "success");
+figurify_flash("Order #" . $order_id . " verified.", "success");
 
 $conn->close();
 
 header("Location: verification.php");
 exit();
+
+/* ==================== END STAFF: VERIFY ORDER ==================== */

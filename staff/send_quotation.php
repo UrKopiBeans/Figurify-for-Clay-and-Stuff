@@ -1,7 +1,15 @@
 <?php
 
-/* staff - shared logic: helpers/order_actions/send_quotation.php */
+/* ==========================================================================
+   STAFF: SEND QUOTATION   (staff/send_quotation.php)
+   Maikling entry point: magpadala ng quotation. Nasa helpers/order_actions.php ang buong logic.
+   ========================================================================== */
 
-$figurifyPortalRole = "staff";
+/* staff - shared logic: helpers/order_actions.php (action: send_quotation) */
 
-require __DIR__ . "/../helpers/order_actions/send_quotation.php";
+$figurifyPortalRole  = "staff";
+$figurifyOrderAction = "send_quotation";
+
+require __DIR__ . "/../helpers/order_actions.php";
+
+/* ==================== END STAFF: SEND QUOTATION ==================== */

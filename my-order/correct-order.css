@@ -1,0 +1,362 @@
+/* ==========================================================================
+   FIX MY ORDER PAGE - CSS   (my-order/correct-order.php)
+   Lahat ng style ng correct-order.php ay nandito lang. Ang navbar at footer ay
+   may sariling style sa Shared/navbar.php at Shared/footer.php.
+
+   LAMAN (pareho ang ayos sa correct-order.php, taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              reset, text, lapad ng page
+     [2] PAGE HERO         banner sa taas
+     [3] CARD              card, header, paalala ng staff
+     [4] FIGURE BLOCK      bawat figure: kasalukuyang larawan, upload, notes
+     [5] FIELDS            label, textarea, hint
+     [6] BUTTONS           Send Back to Staff, Back to My Orders
+     [7] RESPONSIVE        phone
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
+}
+
+/* form controls - hindi sila nagmamana ng font by default */
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+.page-hero h1,
+.pay-card-header h2,
+.payment-total-box strong {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE
+   ========================================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
+body {
+    color: #4a1d3b;
+    line-height: 1.6;
+}
+
+/* lapad ng laman (ginagamit sa loob ng hero) */
+.page-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+/* ====================== END BASE ====================== */
+
+
+/* ==========================================================================
+   [2] PAGE HERO
+   ========================================================================== */
+.page-hero {
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom: 3px solid #ead9f0;
+}
+
+/* hanay ng sparkle sa kanang-itaas (kapareho ng Commission page) */
+.page-hero::after {
+    content: "\2726   \2606   \2727   \2661   \2726";
+    position: absolute;
+    top: 25px;
+    right: 7%;
+    font-size: 19px;
+    letter-spacing: 7px;
+    white-space: nowrap;
+    color: #e8bd4d;
+    pointer-events: none;
+}
+
+/* lalagyan ng text */
+.page-hero .page-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* maliit na caps sa taas ng title - body font ang gamit */
+.page-eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a04a78;
+}
+
+.page-hero h1 {
+    margin-top: 8px;
+    font-size: clamp(34px, 5vw, 55px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.5px;
+    color: #86365f;
+}
+
+.page-hero p {
+    max-width: 720px;
+    margin: 15px auto 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #8a5870;
+}
+/* ====================== END PAGE HERO ====================== */
+
+/* ==========================================================================
+   [3] CARD
+   ========================================================================== */
+.fix-page { width: min(820px, 100% - 32px); margin: 36px auto 48px; }
+
+.fix-card {
+    padding: 36px;
+    background: #ffffff;
+    border: 1px solid #f3dde5;
+    border-radius: 20px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.fix-form { display: flex; flex-direction: column; gap: 22px; }
+
+.fix-card-header h2 { font-size: 23px; font-weight: 700; }
+.fix-card-header p { margin-top: 2px; font-size: 14px; color: #7c6670; }
+
+/* paalala galing sa staff (dahilan ng correction) */
+.fix-reason {
+    padding: 16px 18px;
+    background: #fdefc4;
+    border-radius: 14px;
+    font-size: 14px;
+    color: #7a4f06;
+}
+
+.fix-reason strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+/* ====================== END CARD ====================== */
+
+
+/* ==========================================================================
+   [4] FIGURE BLOCK
+   ========================================================================== */
+.fix-figure {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: #fff8f6;
+    border: 1.5px solid #f3dde5;
+    border-radius: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.fix-figure-title { font-size: 16px; font-weight: 800; color: #86365f; }
+.fix-figure-meta { margin-top: 2px; font-size: 13px; color: #7c6670; }
+
+/* reference images: dropzone gaya ng Image Submission */
+.fix-limit { margin-left: 6px; color: #a5748e; font-size: 12px; font-weight: 600; }
+
+.fix-dropzone {
+    position: relative;
+    padding: 18px;
+    border: 2px dashed #f2b5ce;
+    border-radius: 18px;
+    background: #fff8fb;
+    cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease;
+}
+
+.fix-dropzone:hover,
+.fix-dropzone.dragover { border-color: #c2325f; background: #fff1f6; }
+
+.fix-file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.fix-count {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #c2325f;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.fix-preview-wrap { position: relative; min-height: 120px; margin-top: 18px; }
+
+.fix-drag-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a6479;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.fix-drag-text[hidden] { display: none; }
+
+.fix-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; }
+
+.fix-image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border: 2px solid #ffffff;
+    border-radius: 13px;
+    overflow: hidden;
+    background: #fdf3f8;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.fix-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* tinanggal na ang larawan */
+.fix-image.is-removed { display: none; }
+
+/* X button (pula, gaya ng Image Submission) */
+.fix-image-delete {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background: #d92d20;
+    box-shadow: 0 2px 6px rgba(74, 29, 59, .3);
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.fix-image-delete:hover { background: #b42318; }
+
+.fix-image-delete::before,
+.fix-image-delete::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+.fix-image-delete::before { transform: translate(-50%, -50%) rotate(45deg); }
+.fix-image-delete::after { transform: translate(-50%, -50%) rotate(-45deg); }
+/* ====================== END FIGURE BLOCK ====================== */
+
+
+/* ==========================================================================
+   [5] FIELDS
+   ========================================================================== */
+.fix-group { display: flex; flex-direction: column; gap: 8px; }
+.fix-group > label { font-size: 13px; font-weight: 700; }
+
+.fix-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1.5px solid #f3dde5;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 15px;
+    color: #4a1d3b;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    min-height: 96px;
+    resize: vertical;
+}
+
+.fix-group textarea:focus { border-color: #c2325f; box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
+
+.fix-hint { font-size: 12px; color: #7c6670; }
+/* ====================== END FIELDS ====================== */
+
+
+/* ==========================================================================
+   [6] BUTTONS
+   ========================================================================== */
+.fix-actions { display: flex; flex-direction: row; gap: 12px; }
+
+/* Send = berde (gaya ng approve/verify); Back = abo/neutral para hindi magkamali sa Cancel na pula */
+.btn-submit {
+    flex: 1;
+    padding: 12px 22px;
+    border: 0;
+    border-radius: 999px;
+    background: #c2325f;
+    color: #ffffff;
+    font-size: 14.5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+
+.btn-submit:hover { background: #a62a50; }
+.btn-submit:disabled { opacity: .7; cursor: default; }
+
+.btn-back {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border: 2px solid #c2325f;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #c2325f;
+    font-size: 14.5px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.btn-back:hover { background: #ffedf2; }
+/* ====================== END BUTTONS ====================== */
+
+
+/* ==========================================================================
+   [7] RESPONSIVE
+   ========================================================================== */
+@media (max-width: 720px) {
+    .page-hero { min-height: 220px; }
+    .page-hero::after { top: 12px; right: 4%; font-size: 14px; letter-spacing: 4px; }
+    .page-hero .page-wrap { padding: 34px 16px 26px; }
+}
+
+@media (max-width: 600px) {
+    .fix-actions { flex-direction: column; }
+    .page-wrap { width: calc(100% - 32px); }
+    .fix-card { padding: 24px 18px; }
+    .fix-figure { padding: 16px; }
+}
+/* ====================== END RESPONSIVE ====================== */

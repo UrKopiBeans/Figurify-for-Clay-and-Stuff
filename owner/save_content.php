@@ -1,15 +1,19 @@
 <?php
 
-require_once __DIR__ . "/../helpers/session_helper.php";
+/* ==========================================================================
+   OWNER: SAVE CONTENT   (owner/save_content.php)
+   Nagse-save ng text at media ng Home, FAQ, Terms at Privacy mula sa Content Management.
+   ========================================================================== */
+
+require_once __DIR__ . "/../helpers/security_helper.php";
 figurify_start_session();
 
 require_once __DIR__ . "/../Admin/database.php";
-require_once __DIR__ . "/../helpers/csrf_helper.php";
 
-/* CSRF - token galing sa Shared/all-in-one.php */
+/* CSRF - token galing sa Shared/popup-and-security.php */
 if (($_SERVER["REQUEST_METHOD"] ?? "") === "POST" && !figurify_verify_csrf($_POST["csrf_token"] ?? null)) {
     http_response_code(403);
-    exit("Your session expired or the request was invalid. Please go back, reload the page, and try again.");
+    exit("Your session has expired. Please reload the page and try again.");
 }
 require_once __DIR__ . "/../helpers/content_helper.php";
 
@@ -58,6 +62,10 @@ $editableFields = [
     "slide3_image",
     "slide3_stamp",
 
+    /* HERO - PARA SA LAHAT NG SLIDE */
+    "hero_button2",
+    "hero_chip1", "hero_chip2", "hero_chip3",
+
     /* ABOUT */
     "about_heading",
     "about_script",
@@ -65,8 +73,30 @@ $editableFields = [
     "about_sign",
     "about_video",
     "about_badge",
+    "about_caption",
+    "about_stat1_value", "about_stat1_label",
+    "about_stat2_value", "about_stat2_label",
+    "about_stat3_value", "about_stat3_label",
+    "about_button",
+
+    /* HOW IT WORKS */
+    "how_eyebrow", "how_heading", "how_subtitle",
+    "how1_title", "how1_text",
+    "how2_title", "how2_text",
+    "how3_title", "how3_text",
+    "how4_title", "how4_text",
+    "how_note_lead", "how_note_text",
+
+    /* COLLECTION STYLES */
+    "styles_eyebrow", "styles_heading", "styles_subtitle",
+    "style1_image", "style1_title", "style1_text", "style1_badge",
+    "style2_image", "style2_title", "style2_text", "style2_badge",
+    "style3_image", "style3_title", "style3_text", "style3_badge",
+    "shortcut1_title", "shortcut1_text", "shortcut1_link",
+    "shortcut2_title", "shortcut2_text", "shortcut2_link",
 
     /* FEATURED ORDERS */
+    "featured_eyebrow",
     "featured_heading",
     "featured_subtitle",
     "product1_image", "product1_title", "product1_price", "product1_caption",
@@ -82,8 +112,14 @@ $editableFields = [
     "feature4_title", "feature4_subtitle",
 
     /* REVIEWS */
+    "reviews_eyebrow",
     "reviews_heading",
     "reviews_subtitle",
+
+    /* START AN ORDER BANNER */
+    "cta_heading",
+    "cta_text",
+    "cta_button",
 
     /* FOOTER / CONTACT */
     "footer_tagline",
@@ -111,6 +147,12 @@ function figurify_clean_social_link(string $field, string $value): string
     return preg_match('#^(https?://|mailto:)[^\s<>"\']+$#i', $value) ? $value : "";
 }
 
+// Legal Pages (Terms and Conditions + Privacy Policy) - listahan galing sa content_helper.php SECTION 5
+$editableFields = array_merge($editableFields, figurify_legal_keys());
+
+// FAQ sa Home - listahan galing sa content_helper.php SECTION 6
+$editableFields = array_merge($editableFields, figurify_faq_keys());
+
 foreach ($editableFields as $field) {
 
     if (!isset($_POST[$field])) {
@@ -127,9 +169,33 @@ foreach ($editableFields as $field) {
 
 }
 
+// PRESYO (Prices tab) - helpers/content_helper.php SECTION 8
+// figure prices: numero lang (0 pataas); kapag mali ang laman, hindi papalitan ang dati
+foreach (array_keys(figurify_price_fields()) as $field) {
+    $value = trim((string) ($_POST[$field] ?? ""));
+    if (is_numeric($value)) {
+        figurify_save_content($conn, $field, (string) max(0, (float) $value), $ownerId);
+    }
+}
+
+// Dress Up items: key => presyo, o "" = walang presyo (isang JSON lang)
+if (isset($_POST["part_price"]) && is_array($_POST["part_price"])) {
+    $partPrices = [];
+    foreach ($_POST["part_price"] as $key => $value) {
+        $value = trim((string) $value);
+        if (preg_match('/^[a-f0-9]{12}$/', (string) $key) && ($value === "" || is_numeric($value))) {
+            $partPrices[$key] = $value === "" ? "" : (string) max(0, (float) $value);
+        }
+    }
+    figurify_save_content($conn, "dressup_part_prices", json_encode($partPrices), $ownerId);
+}
+
 // tanggalin sa Image/carousel/ ang mga file na wala nang gumagamit
 $freshContent = figurify_get_all_content($conn);
 figurify_sync_category_images("carousel", array_values($freshContent));
 
-header("Location: content-management.php?saved=1");
+$returnTab = in_array($_POST["return_tab"] ?? "", ["legal", "prices"], true) ? $_POST["return_tab"] : "";
+header("Location: content-management.php?" . ($returnTab !== "" ? "tab=" . $returnTab . "&" : "") . "saved=1");
 exit();
+
+/* ==================== END OWNER: SAVE CONTENT ==================== */

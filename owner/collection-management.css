@@ -1,0 +1,1111 @@
+/* ==========================================================================
+   FONT AT BACKGROUND - sariling kopya ng page na ito
+   (dating nasa shared file; ngayon ay hindi na shared)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT - Fraunces (heading) + Plus Jakarta Sans (body) ----- */
+/* form controls - hindi sila nagmamana ng font by default */
+
+button,
+input,
+select,
+textarea,
+optgroup { font-family: inherit; }
+
+/* mga heading ng page na ito */
+
+body .app .content-form .content-section-header h3,
+body .portal-title,
+.notif-panel-header { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+/* ----- BACKGROUND - cream #FFF8F6 ----- */
+
+html, body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+
+/* ----- TABLE - laki ng left/right container, Previous / Next ----- */
+/* ---------- parehong laki ng container sa lahat ng page ---------- */
+/* ---------- table: kasya sa lapad, walang slide (bumababa sa 2 linya kapag kulang ang lapad) ---------- */
+/* ----- PANEL - kulay ng filter at header, Payment & Shipping ----- */
+/* ---------- 1. FILTER (left container): laging PUTI sa lahat ng page ---------- */
+/* ---------- 2. HEADER sa right container: kulay ng sidebar, full width ---------- */
+/* title na nasa loob ng pay-section-head: huwag mag-doble ang band */
+/* walang doble: itago ang "Payment & ..." header kung may sariling title na ang unang section */
+/* spacing sa pagitan ng mga section */
+/* ---------- 3. PAYMENT & SHIPPING: walang container (bg/border/shadow) ---------- */
+/* ===== katapusan ng sariling kopya ===== */
+/* Shared dashboard styles (layout, sidebar, cards, tables, status colors) common sa owner AT staff.
+   owner.css/staff.css ay nag-@import na lang dito, role-specific styles na lang ang natitira sa kanila. */
+/* FIGURIFY - OWNER DASHBOARD (Pastel / Cute / Modern / Clean) */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body { min-height: 100vh; }
+
+button,
+a { cursor: pointer; }
+
+/* APP */
+
+.app { min-height: 100vh; }
+
+/* SIDEBAR */
+/* MAIN */
+/* TOPBAR */
+
+.welcome p { color: #81777d; font-size: 12px; margin-top: 5px; }
+
+/* DATE TIME */
+
+#currentDate { color: #765f68; }
+
+#currentTime { color: #a4476d; font-weight: 900; }
+
+/* TOP ACTIONS */
+
+.notification-btn { position: relative; border-radius: 999px; font-size: 17px; }
+
+.notification-btn:hover { background: #fff0f9; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+/* CARDS */
+/* STATISTICS */
+
+.stats {
+    display: grid;
+    grid-template-columns: 3fr 1.1fr;
+    align-items: start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+/* DASHBOARD LAYOUT - left: stats + calendar + recent bookings, right: tall shipment card */
+/* DASHBOARD GRID */
+/* CARD HEADER */
+/* ORDERS */
+
+.customer { display: flex; align-items: center; gap: 8px; }
+
+.customer strong { display: block; font-size: 11px; }
+
+.customer small { display: block; color: #9a8c94; font-size: 9px; margin-top: 2px; }
+
+/* STATUS */
+
+.status {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 99px;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+/* Status colors - pareho sa Staff Dashboard/Calendar/My Orders, galing Admin/order_status_helper.php */
+
+.status-pending { background: #fdefbf; color: #9a6408; }
+
+.status-quoted { background: #dff3e8; color: #2f8f67; }
+
+.status-awaiting_payment { background: #fdefbf; color: #9a6408; white-space: nowrap; }
+
+.status-to_verify { background: #dff3e8; color: #2f8f67; }
+
+.status-for_approval { background: #dff3e8; color: #2f8f67; }
+
+.status-processing { background: #ffedf2; color: #c2325f; }
+
+.status-awaiting_balance { background: #fdefbf; color: #9a6408; }
+
+.status-to_verify_balance { background: #dff3e8; color: #2f8f67; }
+
+.status-for_balance_approval { background: #dff3e8; color: #2f8f67; }
+
+.status-to_ship { background: #e3eafd; color: #3552a8; }
+
+.status-shipped { background: #e3eafd; color: #3552a8; }
+
+.status-completed { background: #dff3e8; color: #2f8f67; }
+
+.status-cancelled { background: #fbdada; color: #b83227; }
+
+/* CALENDAR CONTROLS */
+/* CALENDAR */
+
+.day {
+    height: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    transition: .2s;
+}
+
+.day:hover { background: #fff0f9; cursor: pointer; }
+
+.day.empty { background: transparent; }
+
+.day.today { background: #f78fd4; color: #29252a; font-weight: 900; }
+
+.day.booked { background: #ffc4e8; color: #a4476d; font-weight: 800; }
+
+.day.selected { outline: 2px solid #f78fd4; outline-offset: 1px; }
+
+/* Dashboard calendar is read-only preview (unlike full calendar page), kaya disabled ang hover/pointer */
+/* CALENDAR LEGEND */
+/* SHIPMENTS */
+
+.shipment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff8fa;
+    border: 1px solid #f3e4e9;
+    padding: 10px 11px;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.shipment strong { font-size: 11px; }
+
+.shipment small { display: block; color: #9b8f95; font-size: 9px; margin-top: 3px; }
+
+/* OVERVIEW */
+/* QUICK ACTIONS */
+/* EMPTY */
+/* MODAL */
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(10px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+    .stats { grid-template-columns: 1fr; }
+}
+
+/* INNER PAGE */
+/* BOOKING TABLE */
+/* Completed orders table (completed.php) - hiwalay sa .booking-row, 6 columns ito (may Customer/Courier) */
+/* FULL CALENDAR */
+/* RESPONSIVE INNER PAGES */
+/* CONTENT MANAGEMENT - form styling */
+
+.content-section { display: flex; flex-direction: column; gap: 12px; }
+
+.content-subgroup {
+    border: 1px solid #e6dbe0;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.content-subgroup-title { font-size: 11px; font-weight: 900; text-transform: uppercase; color: #a4476d; }
+
+.content-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #3c3035;
+}
+
+.content-field input, .content-field select, .content-field textarea {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 12px;
+    border: 1px solid #e6dbe0;
+    border-radius: 10px;
+    background: #fffbfc;
+    color: #29252a;
+    resize: vertical;
+}
+
+.content-field input:focus,
+.content-field select:focus,
+.content-field textarea:focus { outline: none; border-color: #ff7aa2; }
+
+
+/* Collection Management - isang column, sariling .card kada section */
+/* Section header: icon + title + short description */
+
+.content-section-header { display: flex; align-items: flex-start; gap: 10px; }
+
+.content-section-header p { color: #9a8c94; font-size: 11px; margin-top: 3px; }
+
+/* 2-column grid for short fields (eyebrow, button text, etc) */
+
+.content-field-full { grid-column: 1 / -1; }
+
+/* Media field (image/video) - malaking preview (same aspect-ratio ng Home page) + input sa ibaba */
+
+.content-media-field { display: flex; flex-direction: column; gap: 10px; }
+
+.content-media-preview {
+    width: 100%;
+    max-width: 220px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #eee7ea;
+    background: #f8f4f5;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.content-media-preview img, .content-media-preview video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Aspect ratios - kopya mula sa Home/Home.css para eksaktong tugma ang proporsyon */
+/* Wide/banner ratio para sa Hero Carousel, larawan ang buong background ng slide */
+
+.cm-ratio-square { aspect-ratio: 1 / 1; }
+
+/* Click-to-upload - buong preview box ang button, i-click para magbukas ng file dialog */
+
+.content-media-upload {
+    position: relative;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.content-media-upload:hover { box-shadow: 0 6px 18px rgba(71,45,55,.14); transform: translateY(-2px); }
+
+.content-media-upload-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    background: rgba(41,37,42,.55);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+
+.content-media-upload:hover .content-media-upload-overlay { opacity: 1; }
+
+.content-media-status { font-size: 11px; font-weight: 700; color: #65a77e; min-height: 14px; }
+
+.content-media-status.error { color: #d96b78; }
+
+/* Side-by-side groups (Hero slides, Products, Features) so they don't stack too tall */
+
+.content-grid-3 { align-items: start; }
+
+/* About Us: video on the left, fields on the right */
+/* bigger preview here than the default, fills the 380px column */
+/* CONTENT MANAGEMENT - TAB SWITCHER (Home / Collection) */
+
+.cm-tab { gap: 6px; transition: .15s; }
+
+.cm-tab:hover { background: #fff0f9; }
+
+/* COLLECTION MANAGEMENT - product items + add/remove */
+
+.cm-add-btn { align-self: flex-start; transition: .15s; }
+
+.cm-remove-btn { align-self: flex-start; }
+
+.cm-checkbox-field { flex-direction: row; align-items: center; gap: 8px; }
+
+.cm-checkbox-field input[type="checkbox"] { width: auto; padding: 0; }
+
+/* Header row: title/description on the left, "+ Add" button on the right */
+
+.content-section-header-row { flex-wrap: wrap; }
+
+/* smaller/compact product cards for the Collection tab */
+
+.cm-compact-grid .content-subgroup { padding: 6px; gap: 5px; }
+
+.cm-compact-grid .content-subgroup-title { font-size: 9px; }
+
+.cm-compact-grid .content-media-preview { max-width: 90px; }
+
+.cm-compact-grid .content-field { font-size: 10px; gap: 3px; }
+
+.cm-compact-grid .content-field input, .cm-compact-grid .content-field select {
+    font-size: 10px;
+    padding: 3px 6px;
+    height: 26px;
+}
+
+.cm-compact-grid .content-media-status { font-size: 9px; }
+
+/* Best Seller checkbox + Remove button in one row */
+
+.cm-item-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+.cm-compact-grid .cm-item-footer .content-field { margin-bottom: 0; }
+
+.cm-compact-grid .cm-remove-btn { align-self: center; }
+
+@media (max-width: 1100px) {
+    .cm-compact-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* textbox - sakto ang taas sa laman (walang sariling scrollbar), para hindi
+   "sumasabit" ang page scroll kapag nasa ibabaw ng textbox ang cursor */
+
+textarea.cs-autogrow { overflow-y: hidden; resize: none; box-sizing: border-box; }
+
+/* phone: 1 o 2 column lang ang collection items para hindi lumampas */
+
+@media (max-width: 600px) {
+    .cm-compact-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+
+    .cm-compact-grid .content-subgroup { min-width: 0; }
+}
+
+/* [RIGHT PANEL] Ayos ng right-side container (owner/staff):
+   - walang border at bg sa presyo, presyo nasa kanan
+   - row: label kaliwa | value gitna | presyo kanan
+   - Quotation / summary sa baba: may bg */
+/* Quotation / summary sa baba: may bg, pare-parehong heading */
+/* label ng notes / reference: ibalik ang sariling style */
+/* [COLLECTION] 6 card magkakatabi sa isang row (hindi na bumababa sa 5/4/3 sa desktop) */
+
+@media (min-width: 1181px) {
+    html body .app .cm-compact-grid .content-subgroup { min-width: 0; }
+
+    html body .app .cm-compact-grid .content-media-preview { max-width: 100%; }
+}
+
+@media (min-width: 1181px) {
+    /* buong section (kasama ang Chibi + Add button) ang nag-i-scroll - hindi naka-fix ang header */
+
+    body.sf-fixed .sf-form > .content-section:not(.sf-off) { min-height: 0; }
+}
+
+
+/* bawat section: putol-putol na guhit sa itaas (resibo), maliban sa una */
+/* My Orders: isang column lang (Figure Details, sunod Custom Box) - parang resibo */
+/* rows */
+/* label | value (sa loob ng body) */
+/* walang presyo -> walang ipapakita */
+/* box spec rows: label | value | price */
+/* staff payment details: "Ship To: value" -> label | value */
+/* walang decorative na larawan */
+/* Custom Box na wala */
+/* notes / reference photos */
+/* Dress Up */
+
+body .dressup-grid > :first-child .detail-item-list,
+body .dressup-grid > :first-child .qv-detail-item-list { display: block; }
+
+body .dressup-grid > :first-child .detail-item-card,
+body .dressup-grid > :first-child .qv-detail-item-card { padding: 8px 0; }
+
+body .dressup-grid > :first-child .detail-item-label,
+body .dressup-grid > :first-child .qv-detail-item-label { font-size: 12.5px; }
+
+body .dressup-grid > :first-child .detail-item-value,
+body .dressup-grid > :first-child .qv-detail-item-value { font-size: 13px; }
+
+body .dressup-grid > :first-child .detail-item-price,
+body .dressup-grid > :first-child .qv-detail-item-price { font-size: 13px; text-align: right; }
+
+/* order summary lines (owner/staff) */
+/* pay-section-head: may badge sa loob (Paid / Not Yet Due) */
+/* nakatagong pop up (modal overlay) sa unahan - hindi kasama sa guhit */
+/* walang Custom Box: isang simpleng linya lang */
+/* Owner/Staff - pink na header band, full width, walang
+   border-radius, walang guhit sa ilalim ng text (border lang) */
+/* header na nasa loob na ng pink band (payments: title + badge) */
+/* Dress Up Design (nasa loob ng Figure Information) - mas maliit na sub-header */
+/* pink band na ang naghihiwalay ng sections - wala nang putol-putol na guhit */
+/* My Orders - resibo pa rin ang listahan, pero may
+   sariling container ang Figure Details at Custom Box (magkatabi),
+   at pati ang Payment / Refund details */
+/* Dress Up 3D: walang guhit sa ilalim / walang hint line */
+
+body .dressup-3d-stage .dressup-3d-hint { display: none; }
+
+/* Payment & Shipping / Refund - kanya-kanyang container */
+/* My Orders containers: mas makitid na label para hindi mag-wrap ang value */
+/* Proof of Payment / Refund - nasa LOOB na ng container (sa baba ng details),
+   walang sariling box at walang guhit sa itaas */
+
+body .customer-payment-proof-inline .customer-payment-proof-thumb {
+    width: 120px;
+    height: 120px;
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: cover;
+}
+
+/* Total Amount - huling linya ng Figure Information (walang box) o ng Custom Box */
+/* subtotal ng bawat figure (at Rush Fee) bago ang Total Amount */
+/* pink na header sa pinakataas - walang puting puwang sa itaas */
+/* rush fee kada figure - nakapasok sa ilalim ng figure niya */
+/* mas malayo ang "Customer Notes" sa reference photos */
+/* My Orders: kasing taas ng Figure Details ang Custom Box container (kahit walang laman) */
+/* buong value ang kita (hal. "Head Only Keychain"), hindi naka-"..." */
+/* mas maliit na text sa listahan para hindi magbanggaan ang value at presyo */
+/* My Orders: kasing taas ng Payment & Shipping Details ang Refund / Return Details */
+/* Customer Notes - naka-container para kita agad kung nasaan
+   (owner / staff right panel at My Orders) */
+/* ==========================================================
+   Figurify redesign - Owner at Staff PAGE STYLES (hindi sidebar)
+   (dating Shared/panel-pages.css - may sariling kopya na ang bawat owner/staff page): iisang topbar,
+   font, kulay, cards, table, buttons at status chips.
+   Sundin ang Design System: Fraunces (headings) + Plus Jakarta Sans (body)
+   Primary #C2325F | Plum #4A1D3B | Blush #FFEDF2 | Cream #FFF8F6 | Coral #E8707E
+   Success #2F8F67 | Warning #9A6408 | Danger #B83227
+
+   Font at background ng page: nasa pinaka-itaas ng CSS ng page na ito. Kapag offline,
+   awtomatikong Georgia / system font ang gagamitin - hindi masisira ang layout.
+   ========================================================== */
+
+html body { color: #4a1d3b; }
+
+/* ---------- TOPBAR (pareho sa lahat ng page) ---------- */
+
+body .app > main.main { padding: 0 clamp(14px, 2.2vw, 28px) 22px; }
+
+body .app > main.main > .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    min-height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+    flex: 0 0 auto;
+    /* hindi lumiliit ang topbar kahit mahaba ang laman ng page - walang "galaw" kapag pumili ng row */
+}
+
+body .portal-title { font-size: 24px; line-height: 1.2; letter-spacing: 0; }
+
+body .app .top-actions { display: flex; align-items: center; gap: 14px; }
+
+@media (max-width: 800px) {
+    body .portal-title { font-size: 20px; }
+}
+
+/* ---------- CARDS ---------- */
+
+body .app :is(.card:not(.qv-workspace), .st-card) {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ---------- TABLES (qv / user / activity) ---------- */
+/* pare-parehong taas ng header/row ng listahan (hindi gumagalaw kapag lumipat ng page) */
+/* ---------- STATUS CHIPS (Design System: Paid / Pending / Overdue / Shipped) ---------- */
+
+body .app :is(.order-status, .status) { border-radius: 999px; font-weight: 700; box-shadow: none; }
+
+body .app :is(.order-status, .status):is(.status-pending, .status-awaiting_payment, .status-awaiting_balance) {
+    background: #fdefbf;
+    color: #9a6408;
+}
+
+body .app :is(.order-status, .status):is(.status-quoted, .status-to_verify, .status-for_approval, .status-to_verify_balance, .status-for_balance_approval, .status-completed) {
+    background: #dff3e8;
+    color: #2f8f67;
+}
+
+body .app :is(.order-status, .status):is(.status-processing) { background: #ffedf2; color: #c2325f; }
+
+body .app :is(.order-status, .status):is(.status-to_ship, .status-shipped) {
+    background: #e3eafd;
+    color: #3552a8;
+}
+
+body .app :is(.order-status, .status):is(.status-cancelled, .status-for_refund) {
+    background: #fbdada;
+    color: #b83227;
+}
+
+body .app :is(.order-status, .status):is(.status-refunded) { background: #efe3f3; color: #6b2f7a; }
+
+/* ---------- FILTER + SEARCH ---------- */
+/* ---------- TABS (Content Management) - pill, kapareho ng Figure tabs ---------- */
+
+body .app .cm-tabs .cm-tab:hover { border-color: #e9a6bd; color: #c2325f; transform: none; }
+
+body .app .cm-tabs .cm-tab.active { background: #c2325f; border-color: #c2325f; color: #ffffff; }
+
+/* ---------- RIGHT PANEL BUTTONS: Primary (tuloy) + Secondary (tanggihan) ---------- */
+/* ---------- PAYMENT & SHIPPING / REFUND rows: label kaliwa, value kanan ---------- */
+
+body .app .staff-payment-details-grid { display: flex; flex-direction: column; gap: 0; }
+
+body .app .staff-payment-details-grid > span {
+    display: grid;
+    grid-template-columns: minmax(96px, 36%) 1fr;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a1d3b;
+    word-break: break-word;
+}
+
+body .app .staff-payment-details-grid > span > strong { font-weight: 500; color: #7c6670; }
+
+/* ---------- pare-parehong pagitan ng mga container sa kanang panel ---------- */
+/* ==========================================================
+   LISTA (kaliwa) + DETALYE (kanan) - All Bookings, Quotation, Verification, atbp.
+   ========================================================== */
+/* ---------- two white cards ---------- */
+/* ---------- left: toolbar ---------- */
+/* ---------- left: table ---------- */
+
+body .app .qv-table thead th {
+    height: 36px;
+    padding: 0 12px;
+    line-height: 1.2;
+    vertical-align: middle;
+    background: transparent;
+    color: #7c6670;
+    border: 0;
+    border-bottom: 1.5px solid #ecd9e0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+body .app .qv-table tbody td {
+    height: 46px;
+    padding: 0 12px;
+    line-height: 1.3;
+    vertical-align: middle;
+    border: 0;
+    border-bottom: 1px solid #f6e8ed;
+    font-size: 12.5px;
+    color: #4a1d3b;
+}
+
+body .app .qv-table tbody tr:hover td { background: #fff8fa; }
+
+body .app .qv-table tbody tr.active td { background: #ffe9ee; }
+
+body .app .qv-table tbody td :is(.order-status, .pay-badge) {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+/* ---------- right: head (title + status) ---------- */
+/* inner cards become plain sections of the single right card */
+/* section headings */
+/* figure tabs */
+/* ---------- key / value rows ---------- */
+
+body .app .qv-detail-item-list { display: flex; flex-direction: column; gap: 0; }
+
+body .app .qv-detail-item-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0 10px;
+    padding: 9px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+body .app .qv-detail-item-image { display: none; }
+
+body .app .qv-detail-item-body { display: contents; }
+
+body .app .qv-detail-item-label { grid-column: 1; font-size: 14px; font-weight: 500; color: #7c6670; }
+
+body .app .qv-detail-item-value {
+    grid-column: 2;
+    justify-self: end;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 800;
+    color: #4a1d3b;
+}
+
+body .app .qv-detail-item-price {
+    grid-column: 3;
+    padding: 2px 9px;
+    border: 1px solid #ecd9e0;
+    border-radius: 999px;
+    background: #fffafb;
+    font-size: 11px;
+    font-weight: 700;
+    color: #7c6670;
+}
+
+/* box spec rows */
+/* reference images */
+/* customer notes */
+/* ---------- quotation lines ---------- */
+/* ---------- buttons: Decline (outline) + Send Quotation (filled) ---------- */
+/* ---------- decline pop-up ---------- */
+/* ==========================================================
+   LISTAHAN SA KALIWA - pare-pareho sa LAHAT ng owner/staff page
+   (All Bookings, Quotation, Verification, For Approval, Active Bookings,
+   Shipments, Completed, Cancelled, Refunds, Payments)
+   - Filter sa kaliwa, Search sa kanan (sakto ang haba)
+   - Kasya ang buong table sa card: walang pahalang na scroll
+   ========================================================== */
+/* toolbar */
+/* table - kasya sa card */
+/* ==============================================================
+   [CONTENT-PAGES.CSS]  (dating Shared/content-pages.css - nasa page na ito na)
+   ANO ITO: PARA SA CONTENT MANAGEMENT: tabs (Home Page / Collection), form cards at section titles.
+   PAANO GUMAGANA: Mga class na .cm-tabs, .content-form, .content-section, .cmx-*.
+   ============================================================== */
+/* ==========================================================
+   Figurify redesign - CONTENT MANAGEMENT (Home Page + Collection)
+   Naka-load pagkatapos ng page styles.
+   Design System: Fraunces (headings) + Plus Jakarta Sans (body)
+   ========================================================== */
+/* ---------- tabs (Home Page / Collection) ---------- */
+
+body .app .cm-tabs { display: flex; gap: 8px; margin: 0 0 18px; }
+
+body .app .cm-tabs .cm-tab {
+    border: 1px solid #f3dce3;
+    border-radius: 999px;
+    background: #ffffff;
+    text-decoration: none;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a1d3b;
+}
+
+/* ---------- form / cards ---------- */
+
+body .app .content-form { display: flex; flex-direction: column; gap: 20px; }
+
+body .app .content-form .content-section { padding: 24px 24px 26px; }
+
+/* section title */
+
+body .app .content-form .content-section-header h3 { margin: 0 0 14px; font-size: 21px; }
+
+body .app .content-form .content-section-header p { display: none; }
+
+/* layout rows (Home Page) */
+/* ---------- fields: label (bold) sa ibabaw, input sa ilalim ---------- */
+
+body .app .content-form .content-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #4a1d3b;
+}
+
+body .app .content-form .content-field :is(input[type="text"], input:not([type]), textarea, select) {
+    width: 100%;
+    min-height: 48px;
+    height: auto;
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #ecd9e0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: none;
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #4a1d3b;
+    outline: none;
+}
+
+body .app .content-form .content-field input[type="text"] { height: 48px; padding: 0 14px; }
+
+body .app .content-form .content-field textarea { resize: none; overflow: hidden; }
+
+body .app .content-form :is(input, textarea, select):focus { border-color: #c2325f; }
+
+body .app .content-form ::placeholder { color: #8f7d86; }
+
+/* ---------- media (larawan / video): maikling blush na kahon, buong lapad ---------- */
+
+body .app .content-form .content-media-field { margin: 0; width: 100%; }
+
+body .app .content-form .content-media-preview {
+    position: relative;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    aspect-ratio: auto;
+    margin: 0;
+    border: 0;
+    border-radius: 16px;
+    background: #ffedf2;
+    box-shadow: none;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+body .app .content-form .cm-ratio-square { height: 100px; }
+
+body .app .content-form .content-media-preview :is(img, video) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+/* "Click to change" - laging nakikita sa video, hover lang sa larawan */
+
+body .app .content-form .content-media-upload-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 237, 242, .78);
+    color: #7c6670;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+
+body .app .content-form .content-media-preview:hover .content-media-upload-overlay { opacity: 1; }
+
+body .app .content-form .content-media-status:empty { display: none; }
+
+body .app .content-form .content-media-status {
+    margin: 6px 0 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7c6670;
+}
+
+body .app .content-form .content-media-status.error { color: #b83227; }
+
+/* ---------- Save Changes ---------- */
+
+body .app .content-form-actions { display: flex; justify-content: flex-end; }
+
+body .app .content-save-btn {
+    height: 44px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 999px;
+    background: #1f9d55;   /* owner/staff: berde = save/confirm */
+    box-shadow: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+body .app .content-save-btn:hover { background: #187f44; }
+
+/* ==========================================================
+   COLLECTION
+   ========================================================== */
+
+body .app .content-section-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 4px;
+}
+
+body .app .cm-add-btn {
+    flex: 0 0 auto;
+    height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: #1f9d55;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+body .app .cm-add-btn:hover { background: #187f44; }
+
+/* item cards */
+
+body .app .content-form .cm-compact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 250px));
+    gap: 16px;
+}
+
+body .app .content-form .cm-compact-grid > .content-subgroup {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 18px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+body .app .content-form .content-subgroup-title {
+    margin: 0 0 -4px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #4a1d3b;
+}
+
+/* "Image" na label - hindi na kailangan (kita na ang larawan) */
+
+body .app .content-form .cm-compact-grid .content-field.content-field-full { font-size: 0; gap: 0; }
+
+body .app .content-form .cm-compact-grid .content-field.content-field-full > * { font-size: 14px; }
+
+body .app .content-form .cm-compact-grid .content-field { font-size: 12.5px; gap: 6px; }
+
+body .app .content-form .cm-compact-grid .content-field input[type="text"],
+body .app .content-form .cm-compact-grid .content-field select {
+    height: 44px;
+    min-height: 44px;
+    font-size: 14px;
+}
+
+/* Best Seller + Remove */
+
+body .app .content-form .cm-item-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 2px 0 0;
+    padding: 0;
+    border: 0;
+}
+
+body .app .content-form .cm-checkbox-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #7c6670;
+    cursor: pointer;
+}
+
+body .app .content-form .cm-checkbox-field input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    min-height: 0;
+    margin: 0;
+    accent-color: #c2325f;
+}
+
+body .app .content-form .cm-remove-btn {
+    height: 26px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: #d92d20;
+    box-shadow: none;
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+body .app .content-form .cm-remove-btn:hover { background: #b42318; }
+
+/* walang item pa */
+
+body .app .content-form .cm-compact-grid:empty::before {
+    content: "No items yet. Click + Add to add one.";
+    grid-column: 1 / -1;
+    padding: 16px 0 4px;
+    font-size: 14px;
+    color: #7c6670;
+}
+
+/* ---------- FILTER (puti, pareho sa ibang page) ---------- */
+
+.sf-bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 14px;
+}
+
+.sf-dropdown { position: relative; flex: 0 0 auto; z-index: 40; }
+
+html body .sf-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #ecd9e0;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #4a1d3b;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+html body .sf-trigger:hover,
+html body .sf-dropdown.open .sf-trigger { border-color: #e9a6bd; background: #ffffff; }
+
+.sf-caret { width: 13px; height: 13px; flex-shrink: 0; transition: transform .15s ease; }
+
+.sf-dropdown.open .sf-caret { transform: rotate(180deg); }
+
+.sf-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 100%;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #ecd9e0;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.sf-dropdown.open .sf-menu { display: block; }
+
+html body .sf-option {
+    display: block;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #4a1d3b;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+html body .sf-option:hover { background: rgba(246, 189, 209, .45); }
+
+html body .sf-option.active { background: #f6bdd1; color: #a3204c; }
+
+/* section na hindi napili */
+
+.sf-off { display: none; }
+
+/* ---------- NAKA-FIX NA PAGE: walang scroll ang Chrome, ang container ang nag-i-scroll ---------- */
+
+@media (min-width: 1181px) {
+    html:has(body.sf-fixed),
+    body.sf-fixed { overflow: hidden; }
+
+    body.sf-fixed .app { min-height: 0; }
+
+    body.sf-fixed .app > main.main { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ito ang pinaka-laman ng page: kinukuha ang natitirang taas */
+
+    body.sf-fixed .sf-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+    body.sf-fixed .sf-form { flex: 1 1 auto; min-height: 0; }
+
+    body.sf-fixed .sf-form > .content-form-actions { flex: 0 0 auto; }
+
+    /* ang mismong container ang nag-i-scroll */
+
+    body.sf-fixed .sf-scroll > * { flex-shrink: 0; }
+
+    body.sf-fixed .sf-scroll { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; }
+}
+
+.cs-tb-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.cs-tb-datetime .cs-tb-date { color: #85506b; font-weight: 800; }
+
+.cs-tb-datetime .cs-tb-dot { color: #c7aeb8; }
+
+.cs-tb-datetime .cs-tb-time { color: #43142f; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+    .cs-tb-datetime .cs-tb-date,
+    .cs-tb-datetime .cs-tb-dot { display: none; }
+}
+
+/* ===== tinanggal na item (hinihintay ma-save) ===== */
+.content-subgroup[hidden] { display: none; }

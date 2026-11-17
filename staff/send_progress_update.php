@@ -1,7 +1,15 @@
 <?php
 
-/* staff - shared logic: helpers/order_actions/send_progress_update.php */
+/* ==========================================================================
+   STAFF: SEND PROGRESS UPDATE   (staff/send_progress_update.php)
+   Maikling entry point: magpadala ng progress update. Nasa helpers/order_actions.php ang buong logic.
+   ========================================================================== */
 
-$figurifyPortalRole = "staff";
+/* staff - shared logic: helpers/order_actions.php (action: send_progress_update) */
 
-require __DIR__ . "/../helpers/order_actions/send_progress_update.php";
+$figurifyPortalRole  = "staff";
+$figurifyOrderAction = "send_progress_update";
+
+require __DIR__ . "/../helpers/order_actions.php";
+
+/* ==================== END STAFF: SEND PROGRESS UPDATE ==================== */

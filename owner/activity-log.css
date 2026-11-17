@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   BASE - font, background, reset
+   ========================================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+html { scroll-behavior: smooth; }
+
+body { color: #4a1d3b; min-height: 100vh; }
+
+button { font-family: inherit; cursor: pointer; }
+
+.portal-title,
+.notif-panel-header { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+
+/* ==========================================================================
+   PAGE LAYOUT - sidebar, main, topbar
+   (margin-left at width ng .main: nasa Shared/sidebar.php)
+   ========================================================================== */
+
+.app { min-height: 100vh; }
+
+.main { padding: 0 clamp(14px, 2.2vw, 28px) 22px; }
+
+.topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    min-height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+    flex: 0 0 auto;
+}
+
+.portal-title { line-height: 1.2; }
+
+.top-actions { display: flex; align-items: center; gap: 14px; }
+
+/* petsa at oras sa kaliwa ng notification bell (script sa ibaba ng topbar) */
+
+.cs-tb-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.cs-tb-datetime .cs-tb-date { color: #85506b; font-weight: 800; }
+
+.cs-tb-datetime .cs-tb-dot { color: #c7aeb8; }
+
+.cs-tb-datetime .cs-tb-time { color: #43142f; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* laki, background, border at hover ng bell: nasa Shared/notification-bell.php (#notifBtn) */
+
+.notification-btn { position: relative; border-radius: 999px; font-size: 17px; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+/* ==========================================================================
+   CARD
+   ========================================================================== */
+
+.card {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.al-card { padding: 22px 24px 18px; overflow: hidden; }
+
+/* ==========================================================================
+   ACTIVITY LOG - table, chip, empty state
+   ========================================================================== */
+
+.al-scroll { overflow: auto; max-height: calc(100vh - 210px); }
+
+.al-table { min-width: 720px; border-collapse: collapse; }
+
+.al-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 40px;
+    padding: 0 8px;
+    background: #ffffff;
+    border-bottom: 1.5px solid #ecd9e0;
+    text-align: left;
+    font-size: 11.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #7c6670;
+    white-space: nowrap;
+}
+
+.al-table tbody td { height: 42px; padding: 0 8px; border-bottom: 1px solid #f6e8ed; font-size: 13px; }
+
+.al-table tbody tr:hover td { background: #fff8fa; }
+
+.al-order { font-weight: 800; white-space: nowrap; }
+
+.al-date,
+.al-actor { white-space: nowrap; }
+
+.al-details { color: #7c6670; }
+
+.al-chip { font-weight: 600; line-height: 1.4; white-space: nowrap; color: #000000; }
+
+.al-empty { padding: 56px 20px; text-align: center; font-size: 14px; color: #7c6670; }
+
+/* ==========================================================================
+   ACTIVITY LOG - pager (Previous / Next)
+   ========================================================================== */
+
+.al-pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding-top: 16px;
+}
+
+.al-pager-info { font-size: 14px; }
+
+.al-pager-next { justify-self: end; }
+
+.al-pager-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 108px;
+    max-width: 108px;
+    height: 36px;
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition: background .15s ease;
+}
+
+.al-pager-btn:hover { background: #ffd9e3; }
+
+.al-pager-btn.is-disabled { opacity: .45; pointer-events: none; }
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px) {
+    .cs-tb-datetime .cs-tb-date,
+    .cs-tb-datetime .cs-tb-dot { display: none; }
+}
+
+@media (max-width: 800px) {
+    .portal-title { font-size: 20px; }
+}
+
+@media (max-width: 520px) {
+
+
+    .al-pager-btn { min-width: 96px; max-width: 96px; }
+}

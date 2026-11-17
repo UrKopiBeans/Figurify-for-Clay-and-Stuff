@@ -13,7 +13,7 @@ if (php_sapi_name() !== "cli") {
 }
 
 require_once __DIR__ . "/database.php";
-require_once __DIR__ . "/../helpers/expire_helper.php";
+require_once __DIR__ . "/../helpers/expiration_helper.php";
 
 figurify_expire_old_quotes($conn);
 

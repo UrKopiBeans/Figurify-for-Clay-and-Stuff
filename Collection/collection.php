@@ -1,168 +1,227 @@
 <?php
+/* ==========================================================================
+   COLLECTION PAGE   (Collection/collection.php)
+   Style: Collection/collection.css      Script: Collection/collection.js
+   Walang CSS o JS sa file na ito - PHP at HTML lang.
 
-require_once __DIR__ . "/../helpers/session_helper.php";
-figurify_start_session();
+   LAMAN (taas pababa):
+     [1] SETUP           helpers, session, database
+     [2] FUNCTIONS       format_size()
+     [3] DATA            mga natapos na figure (iisang listahan)
+     [4] HTML            navbar, page hero, filters, collection,
+                         empty search result, call to action, footer
+   ========================================================================== */
 
+
+/* ==========================================================================
+   [1] SETUP
+   - security_helper.php : figurify_start_session(), e()
+   - content_helper.php  : figurify_collection_get_grouped(),
+                           figurify_collection_build_filter_tag(),
+                           figurify_collection_display_price(),
+                           figurify_resolve_image_src()
+   - database.php        : gumagawa ng $conn
+   ========================================================================== */
+require_once __DIR__ . "/../helpers/security_helper.php";
 require_once __DIR__ . "/../helpers/content_helper.php";
-require_once __DIR__ . "/../helpers/collection_helper.php";
+require_once __DIR__ . "/../Admin/database.php";
 
-// db connection
-$conn = new mysqli("localhost", "root", "", "figurify_db");
+figurify_start_session();
+/* ====================== END SETUP ====================== */
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+
+/* ==========================================================================
+   [2] FUNCTIONS
+   ========================================================================== */
+
+// format_size() = gawing "3.5 inches" ang 3.5", 3.5in, o 3.5 in
+function format_size($size)
+{
+    return trim(preg_replace('/\s*(?:"|”|″|in\.?|inches)\s*$/iu', " inches", trim($size)));
 }
+/* ====================== END FUNCTIONS ====================== */
 
-// products come from the db now, not hardcoded
+
+/* ==========================================================================
+   [3] DATA
+   ========================================================================== */
+
+// lahat ng natapos na figure sa database - iisang listahan na lang (dating "normal" + "special")
 $collectionGroups = figurify_collection_get_grouped($conn);
-$normalProducts = $collectionGroups["normal"];
-$specialProducts = $collectionGroups["special"];
+$collectionItems  = array_merge($collectionGroups["normal"], $collectionGroups["special"]);
 
-$customer_name = "";
-$customer_email = "";
-$profile_picture = "";
+// mga pill sa taas: data-filter => text (binabasa ng collection.js)
+$filterPills = [
+    "all"        => "All Collections",
+    "bestseller" => "★ Best Sellers",
+    "chibi"      => "Chibi",
+    "hirono"     => "Hirono",
+    "funko"      => "Funko Pop",
+    "custom"     => "Box & Add-ons",
+];
 
-// get logged in customer, if any
-if (isset($_SESSION["user_id"])) {
+// pagpipilian sa Sort By: data-sort => text (binabasa ng collection.js)
+$sortOptions = [
+    "random"     => "Random",
+    "size-asc"   => "Size: Small to Large",
+    "size-desc"  => "Size: Large to Small",
+    "price-asc"  => "Price: Low to High",
+    "price-desc" => "Price: High to Low",
+];
+/* ====================== END DATA ====================== */
 
-    $user_id = $_SESSION["user_id"];
 
-    $stmt = $conn->prepare("
-        SELECT full_name, email, profile_picture
-        FROM users
-        WHERE user_id = ?
-    ");
-
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-
-    if ($user) {
-        $customer_name = $user["full_name"];
-        $customer_email = $user["email"];
-        $profile_picture = $user["profile_picture"];
-    }
-
-    $stmt->close();
-}
-
+/* ==========================================================================
+   [4] HTML
+   ========================================================================== */
 ?>
 <!doctype html>
 <html lang="en">
+
 <head>
-    <?php /* [ALL-IN-ONE] font, background at pop up ng buong system - Shared/all-in-one.php */ include __DIR__ . "/../Shared/all-in-one.php"; ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clay and Stuff | Our Collection</title>
     <link rel="icon" type="image/png" href="../Image/brand/logo.png">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clay and Stuff — Our Collection</title>
-
-
-    <link rel="stylesheet" href="collection.css?v=8" />
+    <?php include __DIR__ . "/../Shared/popup-and-security.php"; ?>
+    <link rel="stylesheet" href="collection.css">
 </head>
+
 <body>
 
-<!-- navbar -->
-<?php include "../Shared/navbar.php"; ?>
 
+<!-- ====================== NAVBAR (Shared/navbar.php) ====================== -->
+<?php include __DIR__ . "/../Shared/navbar.php"; ?>
+<!-- ====================== END NAVBAR ====================== -->
+
+
+<!-- ====================== PAGE HERO (css: collection.css [2]) ====================== -->
 <header class="page-hero">
-    <div class="page-wrap">
-        <span class="page-eyebrow">✦ Crafted with love ✦</span>
+    <div class="page-hero-inner">
+        <span class="page-eyebrow">Crafted with love</span>
         <h1>Made for You</h1>
-        <p>Browse our ready-made figures, or get inspired before you commission your very own.</p>
+        <p>Browse figures we have made for our customers and get ideas for your own.</p>
     </div>
 </header>
+<!-- ====================== END PAGE HERO ====================== -->
+
 
 <main class="collection-page page-wrap">
 
-    <!-- filters, search, sort -->
+
+    <!-- ====================== FILTERS, SEARCH, SORT (css: collection.css [3] | js: collection.js [3][4]) ====================== -->
     <section class="filter-section">
 
         <div class="pill-row" id="tagFilters">
-            <button type="button" class="pill active" data-filter="all">All Collections</button>
-            <button type="button" class="pill" data-filter="bestseller">Best Sellers</button>
-            <button type="button" class="pill" data-filter="chibi">Chibi</button>
-            <button type="button" class="pill" data-filter="hirono">Hirono</button>
-            <button type="button" class="pill" data-filter="funko">Funko Pop</button>
-            <button type="button" class="pill" data-filter="custom">Custom Box</button>
+            <?php foreach ($filterPills as $filter => $label): ?>
+                <button type="button" class="pill<?php echo $filter === "all" ? " active" : ""; ?>" data-filter="<?php echo $filter; ?>"><?php echo $label; ?></button>
+            <?php endforeach; ?>
         </div>
 
         <div class="filter-tools">
 
+            <div class="sort-dropdown" id="sortDropdown">
+                <button type="button" class="sort-button" id="sortButton">
+                    Sort By: <span id="sortLabel">Random</span>
+                </button>
+                <div class="sort-menu" id="sortMenu">
+                    <?php foreach ($sortOptions as $sort => $label): ?>
+                        <button type="button" data-sort="<?php echo $sort; ?>"<?php echo $sort === "random" ? ' class="active"' : ""; ?>><?php echo $label; ?></button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- search: pinakadulo sa kanan, ang Sort By ay nasa kaliwa nito -->
             <div class="search-box">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
                 <input type="text" id="searchInput" placeholder="Search a figure...">
             </div>
 
-            <div class="sort-dropdown" id="sortDropdown">
-                <button class="sort-button" id="sortButton" type="button">
-                    Sort By: <span id="sortLabel">Random</span>
-                </button>
-
-                <div class="sort-menu" id="sortMenu">
-                    <button type="button" data-sort="random" class="active">Random</button>
-                    <button type="button" data-sort="size-asc">Size: Small to Large</button>
-                    <button type="button" data-sort="size-desc">Size: Large to Small</button>
-                    <button type="button" data-sort="price-asc">Price: Low to High</button>
-                    <button type="button" data-sort="price-desc">Price: High to Low</button>
-                </div>
-            </div>
-
         </div>
 
     </section>
+    <!-- ====================== END FILTERS, SEARCH, SORT ====================== -->
 
-    <!-- Normal Figures -->
-    <section class="collection-block" id="normal">
+
+    <!-- ====================== COLLECTION: mga natapos na figure (css: collection.css [4][5]) ====================== -->
+    <section class="collection-block" id="collection">
+
         <div class="block-heading">
             <p class="eyebrow">♡ Our little clay family ♡</p>
-            <h2>Normal Figures</h2>
-            <p class="subtitle">Choose a figure and make it uniquely yours!</p>
+            <h2>Our Finished Figures</h2>
+            <p class="subtitle">Figures we have already made for our customers.</p>
         </div>
 
         <div class="card-grid">
 
-            <?php foreach ($normalProducts as $product): ?>
-                <?php figurify_collection_render_card($product, "../Image/figures/chibi/chibi-head-keychain-pair.jpg"); ?>
+            <?php foreach ($collectionItems as $product): ?>
+                <?php
+                $image = figurify_resolve_image_src($product["image"] ?? "", "../Image/figures/chibi/chibi-head-keychain-pair.jpg");
+                $title = $product["type"] !== "" ? $product["type"] : $product["style"];
+                $size  = format_size($product["size"]);
+                $price = figurify_collection_display_price($product["price"]);
+                $tags  = figurify_collection_build_filter_tag($product);
+                ?>
+                <!-- isang card ng natapos na figure -->
+                <article class="card" data-filter="<?php echo e($tags); ?>">
+
+                    <div class="card-thumb">
+                        <?php if (!empty($product["is_bestseller"])): ?>
+                            <span class="badge">★ Best seller</span>
+                        <?php endif; ?>
+                        <img src="<?php echo e($image); ?>" alt="<?php echo e($title . ", " . $product["size"]); ?>">
+                    </div>
+
+                    <div class="card-body">
+                        <?php if ($product["style"] !== ""): ?>
+                            <span class="card-tag tag-<?php echo e($product["category"]); ?>"><?php echo e($product["style"]); ?></span>
+                        <?php endif; ?>
+                        <h3><?php echo e($title); ?></h3>
+                        <div class="card-footer">
+                            <span class="meta-chip"><?php echo $size !== "" ? e($size) : "N/A"; ?></span>
+                            <span class="price"><?php echo e($price); ?></span>
+                        </div>
+                    </div>
+                </article>
             <?php endforeach; ?>
 
-            <?php if (empty($normalProducts)): ?>
-                <p class="empty-state">Wala pang naka-listang produkto dito.</p>
+            <?php if (empty($collectionItems)): ?>
+                <p class="empty-state">No figures listed here yet.</p>
             <?php endif; ?>
 
         </div>
+
     </section>
+    <!-- ====================== END COLLECTION ====================== -->
 
-    <!-- Special Figures -->
-    <section class="collection-block" id="special">
-        <div class="block-heading">
-            <p class="eyebrow">✦ There is no limit to imagination ✦</p>
-            <h2>Special Figures</h2>
-            <p class="subtitle">For the people, places, and moments you want to remember.</p>
+
+    <!-- ====================== EMPTY SEARCH RESULT (css: collection.css [6] | js: collection.js [3]) ====================== -->
+    <p class="empty-state" id="emptyState" hidden>No figures match your search. Try another category or keyword.</p>
+    <!-- ====================== END EMPTY SEARCH RESULT ====================== -->
+
+
+    <!-- ====================== CALL TO ACTION (css: collection.css [7]) ====================== -->
+    <section class="cta-box">
+        <div>
+            <h2>Can't find what you're looking for?</h2>
+            <p>Send us your photos and we'll sculpt a figure made just for you.</p>
         </div>
-
-        <div class="card-grid">
-
-            <?php foreach ($specialProducts as $product): ?>
-                <?php figurify_collection_render_card($product, "../Image/figures/hirono/hirono-style.jpg"); ?>
-            <?php endforeach; ?>
-
-            <?php if (empty($specialProducts)): ?>
-                <p class="empty-state">Wala pang naka-listang produkto dito.</p>
-            <?php endif; ?>
-
-        </div>
+        <a class="cta-button" href="../Commission/commission.php">Commission a figure</a>
     </section>
+    <!-- ====================== END CALL TO ACTION ====================== -->
 
-    <p class="empty-state" id="emptyState" hidden>No figures match your search just yet — try another category</p>
 
 </main>
 
-<!-- footer -->
-<?php include "../Shared/footer.php"; ?>
 
-<script src="collection.js?v=2"></script>
+<!-- ====================== FOOTER (Shared/footer.php) ====================== -->
+<?php include __DIR__ . "/../Shared/footer.php"; ?>
+<!-- ====================== END FOOTER ====================== -->
+
+
+<!-- ====================== SCRIPT (Collection/collection.js) ====================== -->
+<script src="collection.js"></script>
 
 </body>
 </html>
+<!-- ====================== END HTML ====================== -->

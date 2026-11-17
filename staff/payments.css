@@ -1,0 +1,924 @@
+/* ==========================================================================
+   STYLE NG PAGE NA ITO (staff/payments.css)
+   Walang "important" na pilit, walang CSS variable (root / var). Bawat bahagi ay may sariling
+   ==== marker at END marker. Ang responsive (@media) ay nasa dulo ng bawat bahagi.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   BASE - font, background at reset ng page
+   ========================================================================== */
+
+select,
+textarea,
+optgroup { font-family: inherit; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    background: #FFF8F6;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    scroll-behavior: smooth;
+}
+
+button { font-family: inherit; cursor: pointer; }
+
+body { background: #FFF8F6; min-height: 100vh; color: #4a1d3b; }
+
+:is(.order-status, .status) { border-radius: 999px; font-weight: 700; box-shadow: none; }
+
+:is(.order-status, .status):is(.status-pending, .status-awaiting_payment, .status-awaiting_balance) {
+    background: #fdefbf;
+    color: #9a6408;
+}
+
+:is(.order-status, .status):is(.status-quoted, .status-to_verify, .status-for_approval, .status-to_verify_balance, .status-for_balance_approval, .status-completed) {
+    background: #dff3e8;
+    color: #2f8f67;
+}
+
+:is(.order-status, .status):is(.status-processing) { background: #ffedf2; color: #c2325f; }
+
+:is(.order-status, .status):is(.status-to_ship, .status-shipped) { background: #e3eafd; color: #3552a8; }
+
+:is(.order-status, .status):is(.status-cancelled, .status-for_refund) { background: #fbdada; color: #b83227; }
+
+:is(.order-status, .status):is(.status-refunded) { background: #efe3f3; color: #6b2f7a; }
+
+:is(.order-status, .status):is(.status-needs_correction, .status-address_returned) { background: #fde2d2; color: #b4532a; }
+
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+@media (min-width: 1181px) {
+    html,
+    body.quotation-page { overflow: hidden; }
+}
+
+
+/* ==================== END BASE ==================== */
+/* ==========================================================================
+   PAGE LAYOUT - app, main area, topbar, petsa at oras
+   ========================================================================== */
+
+.welcome p { color: #81777d; font-size: 12px; margin-top: 5px; }
+
+.notif-panel-header { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+.app { min-height: 100vh; }
+
+.notification-btn { position: relative; border-radius: 999px; font-size: 17px; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+.app > main.main { padding: 0 clamp(14px, 2.2vw, 28px) 22px; }
+
+.app > main.main > .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    min-height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+    flex: 0 0 auto;
+}
+
+.cs-tb-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.cs-tb-datetime .cs-tb-date { color: #85506b; font-weight: 800; }
+
+.cs-tb-datetime .cs-tb-dot { color: #c7aeb8; }
+
+.cs-tb-datetime .cs-tb-time { color: #43142f; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.top-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.qv-right-col :is(.qv-figure-card, .qv-box-card, .qv-summary, .qv-summary-body, .staff-payment-details, .staff-payment-proof, .pv-proofs, .rf-box, .qv-header-card, .pay-section) {
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 1181px) {
+    .main { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+}
+
+@media (max-width: 900px) {
+    .cs-tb-datetime .cs-tb-date,
+    .cs-tb-datetime .cs-tb-dot { display: none; }
+}
+
+/* ==================== END PAGE LAYOUT ==================== */
+/* ==========================================================================
+   LEFT CONTAINER - listahan ng orders, search, filter, table, Previous / Next
+   ========================================================================== */
+
+.cs-pager-btn svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cs-pager-info strong { display: block; font-size: 13px; font-weight: 700; color: #4a1d3b; }
+
+.qv-list-panel .qv-search svg { flex: 0 0 auto; width: 14px; height: 14px; color: #9a8c94; }
+
+.qv-list-panel .qv-search input {
+    font-family: inherit;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    font-size: 13.5px;
+    color: #4a1d3b;
+}
+
+.qv-list-panel .qv-table thead th {
+    padding: 0 5px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 34px;
+    background: #ffffff;
+    border: 0;
+    border-bottom: 1.5px solid #ecd9e0;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    line-height: 1.2;
+    color: #7c6670;
+    text-transform: uppercase;
+    overflow-wrap: normal;
+    vertical-align: middle;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.qv-list-panel .qv-table tbody td {
+    padding: 6px 5px;
+    font-weight: 500;
+    height: 40px;
+    border: 0;
+    border-bottom: 1px solid #f6e8ed;
+    font-size: 11.5px;
+    line-height: 1.3;
+    color: #4a1d3b;
+    vertical-align: middle;
+    white-space: normal;
+    overflow-wrap: normal;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.qv-list-panel .qv-table tbody tr { cursor: pointer; }
+
+.qv-list-panel .qv-table tbody tr:hover td { background: #fff8fa; }
+
+.qv-list-panel .qv-table tbody tr.active td { background: #ffe9ee; }
+
+tr.cs-pg-off { display: none; }
+
+.cs-pager {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+    min-height: 52px;
+    padding: 12px 2px 0;
+    box-sizing: border-box;
+}
+
+.cs-pager[hidden] { display: none; }
+
+.cs-pager-btn {
+    border: 0;
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s ease, opacity .15s ease;
+}
+
+.cs-pager-btn.cs-pager-next { justify-self: end; }
+
+.cs-pager-btn:hover:not(:disabled) { background: #ffd9e3; }
+
+.cs-pager-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.cs-pager-info { text-align: center; font-size: 12px; line-height: 1.35; color: #7c6670; }
+
+.cs-pager .cs-pager-btn {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 108px;
+    min-width: 108px;
+    max-width: 108px;
+    height: 36px;
+    padding: 0;
+    white-space: nowrap;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.qv-list-panel .qv-table :is(th, td) {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: normal;
+}
+
+/* Email lang ang puwedeng hatiin kahit saan (mahaba); ang ibang column ay bumababa sa 2 linya sa espasyo lang */
+.qv-list-panel .qv-table tbody td:nth-child(2) { overflow-wrap: anywhere; }
+
+
+.qv-list-panel .qv-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 14px;
+}
+
+.qv-list-panel .qv-table tbody td:first-child { font-weight: 800; }
+
+.qv-shell > .qv-list-panel {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    align-self: stretch;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.qv-list-panel .qv-list {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.qv-list-panel .qv-table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 11.5px;
+    width: 100%;
+    table-layout: auto;
+}
+
+.qv-list-panel .cs-pager ~ .qv-list-footer { display: none; }
+
+.qv-list-panel .qv-filter-dropdown .qv-filter-trigger,
+.qv-list-panel .qv-filter-dropdown.is-filtered .qv-filter-trigger { border: 1px solid #ecd9e0; }
+
+.qv-list-panel .qv-filter-trigger .qv-filter-caret {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+    transition: transform .15s ease;
+}
+
+.qv-list-panel .qv-filter-option:hover { background: rgba(246, 189, 209, .45); }
+
+.qv-list-panel .qv-filter-option.active { color: #a3204c; background: #f6bdd1; }
+
+.qv-filter-dropdown { position: relative; }
+
+.qv-filter-dropdown.open .qv-filter-caret { transform: rotate(180deg); }
+
+.qv-filter-menu {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    min-width: 180px;
+    max-height: 320px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #eee7ea;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    padding: 6px;
+}
+
+.qv-filter-dropdown.open .qv-filter-menu { display: flex; }
+
+.qv-filter-option {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #29252a;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.qv-row { transition: .15s ease; }
+
+.qv-row:hover { background: #f8f4f5; }
+
+.qv-row.active { background: #FFF3C4; }
+
+.qv-row.active td:first-child { box-shadow: none; }
+
+.qv-row.qv-hidden { display: none; }
+
+.qv-filter-dropdown .qv-filter-trigger {
+    height: 42px;
+    padding: 0 14px;
+    gap: 8px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    color: #4a1d3b;
+    font-weight: 600;
+}
+
+.qv-filter-dropdown.is-filtered .qv-filter-trigger { box-shadow: none; color: #4a1d3b; font-weight: 600; }
+
+.qv-filter-dropdown .qv-filter-trigger:hover,
+.qv-filter-dropdown.is-filtered .qv-filter-trigger:hover,
+.qv-filter-dropdown.open .qv-filter-trigger { background: #ffffff; border-color: #e9a6bd; }
+
+.qv-table tbody td :is(.order-status, .pay-badge) {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.qv-list-panel .qv-toolbar > :is(.qv-filter-dropdown, .qv-tabs, .ab-status-tabs, .qv-status-tabs) {
+    flex: 0 0 auto;
+    margin: 0 auto 0 0;
+}
+
+.qv-list-panel .qv-search {
+    flex: 0 1 280px;
+    max-width: 55%;
+    min-width: 160px;
+    height: 42px;
+    margin: 0 0 0 auto;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ecd9e0;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.qv-list-panel .qv-search:focus-within { border-color: #c2325f; }
+
+.qv-list-panel .qv-table tbody td :is(.order-status, .status, .op-chip, .pay-badge) {
+    display: inline-block;
+    max-width: none;
+    padding: 3px 8px;
+    font-size: 10.5px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+.qv-list-panel .qv-list-footer {
+    margin-top: 14px;
+    padding: 12px 0 0;
+    text-align: left;
+    font-size: 12px;
+    color: #7c6670;
+}
+
+.qv-list-panel .qv-search input::placeholder { color: #8f7d86; }
+
+@media (min-width: 1181px) {
+    .qv-list-panel { min-height: 0; }
+}
+
+@media (max-width: 520px) {
+    .cs-pager { grid-template-columns: auto 1fr auto; gap: 8px; }
+
+    .cs-pager .cs-pager-btn { width: 96px; min-width: 96px; max-width: 96px; }
+}
+
+@media (max-width: 600px) {
+    .qv-list-panel .qv-toolbar { flex-wrap: wrap; }
+
+    .qv-list-panel .qv-search { flex: 1 1 100%; max-width: none; }
+}
+
+/* ==================== END LEFT CONTAINER ==================== */
+/* ==========================================================================
+   RIGHT CONTAINER - detalye ng napiling order
+   ========================================================================== */
+
+.qv-right-col > [class*="-overlay"] + :not([class*="-overlay"]),
+.qv-right-col > style + *,
+.qv-right-col > input[type="hidden"] + * { margin-top: 0; padding-top: 0; border-top: 0; }
+
+.qv-right-col .staff-payment-details-grid a { color: #c2325f; }
+
+.qv-right-col .pv-proof figcaption { font-size: 11.5px; color: #7c6670; }
+
+.qv-right-col .qv-summary-body > * { padding-top: 0; padding-bottom: 0; }
+
+.qv-right-col.qv-right-col--blank > * { display: none; }
+
+.qv-right-col .qv-summary {
+    padding: 16px 18px;
+    outline: 0;
+    flex-direction: column;
+    flex-shrink: 0;
+    padding-top: 0;
+}
+
+.qv-summary-head { flex-shrink: 0; }
+
+.qv-line-list { font-weight: 500; }
+
+.op-pay-chip {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.op-pay-chip.is-full { background: #dff3e8; color: #2f8f67; }
+
+.op-pay-chip.is-partial { background: #fdefbf; color: #9a6408; }
+
+.qv-right-col .pay-note { line-height: 1.45; margin: 2px 0 0; font-size: 12.5px; color: #7c6670; }
+
+.qv-right-col .qv-line-list { display: flex; flex-direction: column; gap: 0; margin: 0; }
+
+.qv-right-col .qv-line-value { font-size: 14px; font-weight: 800; color: #4a1d3b; text-align: right; }
+
+.qv-empty { padding: 40px 16px; text-align: center; font-size: 13px; color: #7c6670; }
+
+.qv-shell > .qv-right-col {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    padding: 26px 26px 26px;
+    gap: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.qv-right-col :is( .qv-details-head, .qv-box-info-head, .qv-summary-head, .staff-payment-details-title, .pay-section-head, .rf-title, .dressup-design-title) {
+    box-sizing: border-box;
+    max-width: none;
+    align-self: stretch;
+}
+
+.qv-right-col :is( .qv-summary, .qv-summary-body, .staff-payment-details, .staff-payment-details-grid, .staff-payment-proof, .pv-proofs, .rf-box, .pay-section) {
+    background: transparent;
+    background-image: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.qv-right-col :is(.qv-summary, .qv-summary-body, .staff-payment-details) {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.qv-right-col .staff-payment-details + .staff-payment-details { margin-top: 16px; }
+
+.staff-payment-details-grid { font-size: 11px; color: #81777d; }
+
+.staff-payment-proof-thumb {
+    max-width: 220px;
+    max-height: 220px;
+    outline: 1px solid #e4d5df;
+    transition: .15s ease;
+}
+
+.staff-payment-proof-thumb:hover { transform: translateY(-2px); }
+
+.qv-right-col .qv-summary-body > :is(.staff-payment-details, .rf-box, .qv-price-breakdown, .qv-line-list, .qv-note-box, details) + :is(.staff-payment-details, .rf-box, .qv-price-breakdown, .qv-line-list, .qv-note-box, details) {
+    margin-top: 16px;
+}
+
+.qv-right-col :is( .qv-details-head, .qv-box-info-head, .qv-summary-head, .staff-payment-details-title, .rf-title, .dressup-design-title, .pay-section-head ) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: auto;
+    min-height: 0;
+    margin: 0 0 8px;
+    padding: 10px 14px;
+    background: #ffedf2;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: none;
+    color: #c2325f;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    line-height: 1.3;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.qv-right-col .qv-summary-head h2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font: inherit;
+}
+
+.qv-right-col .pay-section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.qv-right-col .pay-section-head .staff-payment-details-title {
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+}
+
+.qv-right-col :is( .qv-detail-item-list, .dressup-picks, .qv-box-spec-grid, .staff-payment-details-grid ) {
+    display: block;
+    grid-template-columns: none;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+}
+
+.qv-right-col :is( .qv-detail-item-card, .dressup-pick, .qv-box-spec-grid > div, .staff-payment-details-grid > span ) {
+    grid-template-columns: 128px minmax(0, 1fr) auto;
+    grid-auto-flow: row;
+    column-gap: 14px;
+    row-gap: 2px;
+    justify-items: start;
+    width: 100%;
+    min-width: 0;
+    padding: 9px 0;
+    text-align: left;
+}
+
+.qv-right-col :is(.qv-detail-item-body, .dressup-pick-body) { display: contents; }
+
+.qv-right-col :is( .qv-detail-item-label, .dressup-pick-label, .qv-box-spec-grid .qv-spec-label, .staff-payment-details-grid > span > strong ) {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    margin: 0;
+    padding: 0;
+    color: #7c6670;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.4;
+    text-align: left;
+    text-transform: none;
+    overflow-wrap: anywhere;
+}
+
+.qv-right-col :is( .qv-detail-item-value, .dressup-pick-value, .qv-box-spec-grid .qv-spec-value ) {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    color: #4a1d3b;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+}
+
+.qv-right-col .staff-payment-details-grid > span {
+    display: grid;
+    border: 0;
+    word-break: break-word;
+    align-items: baseline;
+    margin: 0;
+    min-height: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    flex-direction: row;
+    color: #4a1d3b;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.qv-right-col :is( .qv-detail-item-price, .dressup-pick-price, .qv-box-spec-grid .qv-spec-price ) {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: #4a1d3b;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.qv-right-col :is(.qv-detail-item-price, .dressup-pick-price):empty { display: none; }
+
+.qv-right-col :is( .verify-actions, .ab-bottom-actions, .qv-summary, .qv-summary-body, .qv-quote-actions, .qv-actions, .qv-order-actions, [class*="-actions"] ) {
+    border-top: 0;
+    box-shadow: none;
+}
+
+.qv-right-col .qv-summary::before { display: none; }
+
+.qv-right-col .qv-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border: 0;
+    background: none;
+    border-radius: 0;
+}
+
+.qv-right-col .staff-payment-details-grid { flex-direction: column; }
+
+.qv-right-col :is(.staff-payment-proof-title, .pv-proofs ) {
+    margin: 10px 0 6px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #4a1d3b;
+}
+
+.qv-right-col .pv-proofs { margin-top: 6px; }
+
+.qv-right-col :is(img.staff-payment-proof-thumb, .pv-proof img) {
+    width: 120px;
+    height: 120px;
+    padding: 4px;
+    object-fit: cover;
+    border: 2px dashed #f1c4d2;
+    border-radius: 14px;
+    background: #fff8fa;
+    cursor: zoom-in;
+}
+
+.qv-right-col .staff-payment-details { outline: 0; padding-bottom: 0; }
+
+.qv-right-col .staff-payment-details::before,
+.qv-right-col .staff-payment-details::after { display: none; }
+
+.qv-right-col .qv-line-label { font-size: 14px; font-weight: 500; color: #7c6670; }
+
+.pay-amount { font-weight: 700; color: #29252a; }
+
+@media (min-width: 1181px) {
+    .qv-shell > .qv-right-col { min-height: 0; overflow-y: auto; }
+}
+
+@media (max-width: 700px) {
+    .qv-right-col :is( .qv-detail-item-card, .dressup-pick, .qv-box-spec-grid > div, .staff-payment-details-grid > span ) {
+        grid-template-columns: 104px minmax(0, 1fr) auto;
+        column-gap: 10px;
+    }
+
+    .qv-right-col .dressup-pick-body { grid-template-columns: 100px minmax(0, 1fr); }
+}
+
+/* ==================== END RIGHT CONTAINER ==================== */
+/* ==========================================================================
+   MODALS - mga pop up window (modal, overlay, lightbox)
+   ========================================================================== */
+
+.image-lightbox-content img {
+    display: block;
+    max-width: 100%;
+    max-height: 78vh;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    object-fit: contain;
+    background: #fff;
+}
+
+.image-lightbox-label { position: absolute; top: 100%; left: 0; right: 0; margin-top: 12px; color: #fff0f7; font-size: 12px; font-weight: 700; }
+
+.image-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(60,30,45,.75);
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.image-lightbox.show { display: flex; }
+
+.image-lightbox-content { position: relative; max-width: min(600px,92vw); text-align: center; }
+
+/* close (X): iisang itsura sa buong system - puting bilog, pink na X (dalawang guhit),
+   nasa loob ng larawan sa kanang itaas (kapareho ng Image Submission) */
+.image-lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #C2325F;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.image-lightbox-close::before,
+.image-lightbox-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+.image-lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.image-lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.image-lightbox-close:hover { background: #FFF1F6; }
+
+
+
+/* ==================== END MODALS ==================== */
+/* ==========================================================================
+   OTHER PARTS - iba pang bahagi ng page
+   ========================================================================== */
+
+.customer strong { display: block; font-size: 11px; }
+
+.customer small { display: block; color: #9a8c94; font-size: 9px; margin-top: 2px; }
+
+.portal-title { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; line-height: 1.2; }
+
+.op-chip { border-radius: 999px; font-weight: 700; }
+
+.op-head { margin-bottom: 14px; }
+
+.status {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 99px;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.qv-workspace { border: none; }
+
+.qv-shell { display: grid; gap: 22px; align-items: stretch; }
+
+.op-head .order-status {
+    flex: 0 0 auto;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.customer { display: flex; align-items: center; gap: 8px; }
+
+@media (min-width: 1181px) {
+    .qv-shell {
+        flex: 1 1 auto;
+        min-height: 0;
+        grid-template-columns: minmax(0, 1fr) 460px;
+        gap: 20px;
+    }
+
+    .qv-workspace {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+}
+
+@media (max-width: 800px) {
+    .portal-title { font-size: 20px; }
+}
+
+/* ==================== END OTHER PARTS ==================== */
+/* ==========================================================================
+   ANIMATIONS (@keyframes)
+   ========================================================================== */
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(10px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+@view-transition { navigation: auto; }
+
+/* ==================== END ANIMATIONS ==================== */
+
+/* ===== MODAL BUKAS: hindi gumagalaw ang page sa likod ===== */
+body.no-scroll { overflow: hidden; }

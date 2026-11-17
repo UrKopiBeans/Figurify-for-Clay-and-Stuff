@@ -21,9 +21,9 @@
     width: 46px;
     height: 46px;
 
-    background: var(--white);
+    background: #ffffff;
 
-    border: 1.5px solid var(--gray-light);
+    border: 1.5px solid #eee7ea;
 
     box-shadow: 0 2px 8px rgba(41, 37, 42, .08);
 
@@ -35,15 +35,15 @@
 }
 
 #notifBtn:hover {
-    background: var(--pink-soft);
-    border-color: var(--pink-light);
+    background: #fff0f9;
+    border-color: #ffc4e8;
 }
 
 #notifBtn svg {
     width: 21px;
     height: 21px;
 
-    stroke: var(--pink-dark);
+    stroke: #b23e82;
     fill: none;
 
     stroke-width: 2;
@@ -52,14 +52,15 @@
 }
 
 .notification-badge {
-    min-width: 19px !important;
-    height: 19px !important;
+    display: flex;
+    min-width: 19px;
+    height: 19px;
 
-    font-size: 10px !important;
+    font-size: 10px;
 
-    border: 2px solid var(--white) !important;
+    border: 2px solid #ffffff;
 
-    background: var(--red, #d96b78) !important;
+    background: #d96b78;
 
     box-shadow: 0 0 0 1px rgba(217, 107, 120, .35);
 
@@ -80,15 +81,15 @@
 
     width: 420px;
     max-width: calc(100vw - 32px);
-    max-height: 440px;
+    max-height: min(560px, calc(100vh - 90px));   /* mga 7 notification bago mag-scroll */
 
     overflow-y: auto;
-    padding: 22px 16px 14px;
+    padding: 18px 14px 12px;
 
     background: #ffffff;
-    border: 1px solid var(--p-line, #f3dce3);
+    border: 1px solid #f3dce3;
     border-radius: 22px;
-    box-shadow: 0 22px 48px -20px rgba(74, 29, 59, .38);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
 
     z-index: 60;
     text-align: left;
@@ -102,13 +103,12 @@
 .notif-panel-header {
     padding: 0 8px 10px;
 
-    
     font-size: 21px;
     font-weight: 700;
     letter-spacing: 0;
     text-transform: none;
 
-    color: var(--p-plum, #4a1d3b);
+    color: #4a1d3b;
 }
 
 /* isang linya: mensahe sa kaliwa, oras sa kanan */
@@ -116,13 +116,13 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 14px;
+    gap: 12px;
 
-    padding: 14px 14px;
-    border-radius: 12px;
+    padding: 9px 12px;
+    border-radius: 10px;
 
     text-decoration: none;
-    color: var(--p-plum, #4a1d3b);
+    color: #4a1d3b;
     transition: background .12s ease;
 }
 
@@ -131,16 +131,16 @@
 }
 
 .notif-item.unread {
-    background: var(--p-blush, #ffedf2);
+    background: #ffedf2;
 }
 
 .notif-item p {
     flex: 1 1 auto;
     min-width: 0;
     margin: 0;
-    font-size: 14.5px;
+    font-size: 13.5px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 .notif-item:not(.unread) p {
@@ -151,16 +151,18 @@
     flex: 0 0 auto;
     font-size: 12px;
     white-space: nowrap;
-    color: var(--p-muted, #7c6670);
+    color: #7c6670;
 }
 
 .notif-empty {
     padding: 26px 16px;
     text-align: center;
     font-size: 14px;
-    color: var(--p-muted, #7c6670);
+    color: #7c6670;
 }
 
+/* ===== walang bagong notification = nakatago ===== */
+.notification-badge[hidden] { display: none; }
 </style>
 
 
@@ -183,7 +185,7 @@
         <span
             class="notification-badge"
             id="notifBadge"
-            style="display:none;"
+            hidden
         >
             0
         </span>
@@ -313,11 +315,11 @@
         if (count > 0) {
 
             notifBadge.textContent = count > 9 ? "9+" : String(count);
-            notifBadge.style.display = "flex";
+            notifBadge.hidden = false;
 
         } else {
 
-            notifBadge.style.display = "none";
+            notifBadge.hidden = true;
 
         }
 

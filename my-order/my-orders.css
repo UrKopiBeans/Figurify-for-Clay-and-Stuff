@@ -1,2076 +1,900 @@
-/* My Orders page */
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-body{
-    
-    color:#75445e;
-
-    
-
-
-    line-height:1.5;
-}
-
-
-/* hero banner - same size/pwesto ng bilog gaya ng sa Commission page,
-   iba lang ang kulay ng bilog per page (My Orders / Payment /
-   Notifications / My Profile) para hindi magkamukha lahat */
-
-.hero{
-    position:relative;
-
-    min-height:220px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    text-align:center;
-
-    overflow:hidden;
-
-    background:
-        linear-gradient(
-            120deg,
-            #d9c8ff,
-            #fffbe8 45%,
-            #ffe7f5
-        );
-
-    border-bottom:3px solid #e8d9ed;
-
-    margin-bottom:24px;
-}
-
-.hero:before{
-    content:"";
-
-    position:absolute;
-
-    width:300px;
-    height:300px;
-
-    left:-130px;
-    top:-150px;
-
-    border-radius:50%;
-
-    background:#bba5ed;
-}
-
-.hero:after{
-    content:"✦   ☆   ✧   ♡   ✦";
-
-    position:absolute;
-
-    right:7%;
-    top:25px;
-
-    color:#edc95d;
-
-    font-size:19px;
-
-    letter-spacing:7px;
-}
-
-.hero-content{
-    position:relative;
-    z-index:2;
-
-    max-width:680px;
-
-    padding:26px 20px;
-}
-
-.hero-small{
-    color:#a04a78;
-
-    font-size:11px;
-    font-weight:bold;
-
-    letter-spacing:2px;
-}
-
-.hero h1{
-    margin-top:8px;
-
-    color:#86365f;
-
-    
-
-    font-size:clamp(30px,4.4vw,46px);
-
-    line-height:1.05;
-}
-
-.hero p{
-    margin-top:15px;
-
-    color:#8a5870;
-
-    font-size:14px;
-}
-
-/* per-page circle color - same size/pwesto lang, iba ang kulay */
-
-.hero-orders:before{
-    background:#7fa3e0;
-}
-
-.hero-payment:before{
-    background:#6fc191;
-}
-
-.hero-notif:before{
-    background:#e88891;
-}
-
-.hero-profile:before{
-    background:#e0bb5b;
-}
-
-/* Pay Remaining Balance - peach na bilog at mas mainit na gradient */
-.hero-balance{
-    background:linear-gradient(120deg, #ffd9c2, #fffbe8 45%, #ffe1ee) !important;
-    border-bottom-color:#f3dccd !important;
-}
-.hero-balance:before{
-    background:#f2a77c;
-}
-
-
-/* page / header */
-
-.orders-page{
-    width:min(1400px,95%);
-    margin:auto;
-    padding:6px 0 24px;
-}
-
-.orders-header{
-    margin-bottom:10px;
-    flex-shrink:0;
-}
-
-.orders-header h1{
-    color:#86365f;
-    
-    font-size:clamp(26px,4vw,34px);
-}
-
-.orders-header p{
-    margin-top:6px;
-    color:#956d80;
-    font-size:13px;
-}
-
-
-/* notice banner */
-
-.order-notice{
-    margin-bottom:20px;
-    padding:12px 16px;
-    border-radius:14px;
-    font-size:12px;
-    font-weight:800;
-}
-
-.order-notice-success{
-    background:#e3f6ea;
-    color:#2f6b46;
-    border:1px solid #bfe4cc;
-}
-
-.order-notice-cancel{
-    background:#fdeaea;
-    color:#a3403f;
-    border:1px solid #f3c6c6;
-}
-
-.order-notice-info{
-    background:#eef3fb;
-    color:#33517a;
-    border:1px solid #cddaf0;
-}
-
-
-/* empty state */
-
-.no-orders{
-    text-align:center;
-    padding:60px 20px;
-    background:rgba(255,255,255,.92);
-    border:2px solid white;
-    outline:1px solid #e4d5df;
-    border-radius:22px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.3);
-}
-
-.no-orders-icon{
-    font-size:42px;
-    margin-bottom:10px;
-}
-
-.no-orders p{
-    color:#956d80;
-    font-size:13px;
-    margin-bottom:14px;
-}
-
-.no-orders a{
-    display:inline-block;
-    padding:12px 26px;
-    border-radius:20px;
-    background:linear-gradient(135deg,#f2699b,#e0447f);
-    color:white;
-    text-decoration:none;
-    font-size:11px;
-    font-weight:900;
-    box-shadow:0 6px 14px rgba(224,68,127,.35);
-    transition:.15s;
-}
-
-.no-orders a:hover{
-    filter:brightness(1.05);
-}
-
-
-/* main layout: order list + details */
-
-.orders-layout{
-    display:grid;
-    grid-template-columns:270px 1fr;
-    gap:22px;
-    align-items:start;
-}
-
-@media (max-width:800px){
-
-    .orders-layout{
-        grid-template-columns:1fr;
-    }
-
-    .orders-list-col{
-        position:static;
-    }
-
-}
-
-
-/* normal na scroll ng page, sticky ang list at summary */
-
-
-/* far left: order list (sidebar) */
-
-.orders-list-col{
-    position:sticky;
-    top:98px; /* 78px navbar clearance + 20px breathing room, para di matakpan ng navbar */
-}
-
-.orders-list-shell{
-    background:rgba(255,255,255,.92);
-    border:2px solid white;
-    outline:1px solid #e4d5df;
-    border-radius:22px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.3);
-    padding:18px 14px 14px;
-}
-
-.orders-toolbar{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom:12px;
-}
-
-/* status filter dropdown, katabi ng search bar - shortcut para i-filter
-   ang mga order per status, gaya ng filter sa staff/owner pages */
-
-.orders-filter-dropdown{
-    position:relative;
-    flex-shrink:0;
-}
-
-.orders-filter-trigger{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    padding:9px 13px;
-    border-radius:999px;
-    font-size:11px;
-    font-weight:800;
-    
-    color:#b23e82;
-    background:#ffe4f2;
-    border:1px solid #f2a4ca;
-    cursor:pointer;
-    white-space:nowrap;
-}
-
-.orders-filter-caret{
-    width:10px;
-    height:10px;
-    flex-shrink:0;
-    transition:transform .15s ease;
-}
-
-.orders-filter-dropdown.open .orders-filter-caret{
-    transform:rotate(180deg);
-}
-
-.orders-filter-menu{
-    display:none;
-    flex-direction:column;
-    gap:2px;
-
-    position:absolute;
-    top:calc(100% + 6px);
-    left:0;
-    z-index:20;
-
-    min-width:180px;
-    max-height:320px;
-    overflow-y:auto;
-
-    background:white;
-    border:1px solid #f0d9e4;
-    border-radius:12px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.25);
-    padding:6px;
-}
-
-.orders-filter-dropdown.open .orders-filter-menu{
-    display:flex;
-}
-
-.orders-filter-option{
-    display:block;
-    padding:8px 10px;
-    border-radius:8px;
-    font-size:11.5px;
-    font-weight:700;
-    color:#4a2a3a;
-    text-decoration:none;
-    white-space:nowrap;
-    cursor:pointer;
-}
-
-.orders-filter-option:hover{
-    background:#fff3f8;
-}
-
-.orders-filter-option.active{
-    background:#ffe4f2;
-    color:#b23e82;
-}
-
-.orders-search-wrap{
-    position:relative;
-    margin-bottom:0;
-    flex:1;
-    min-width:0;
-}
-
-.orders-search-input{
-    width:100%;
-    
-    font-size:13px;
-    color:#4a2a3a;
-    background:#fff8fb;
-    border:1px solid #f0d9e4;
-    border-radius:12px;
-    padding:10px 12px;
-    box-sizing:border-box;
-    outline:none;
-    transition:.15s;
-}
-
-.orders-search-input:focus{
-    border-color:#f2a4ca;
-    box-shadow:0 0 0 3px rgba(242,164,202,.25);
-}
-
-.orders-search-empty{
-    text-align:center;
-    font-size:12.5px;
-    color:#a58a95;
-    padding:14px 6px;
-}
-
-.orders-list-scroll{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    max-height:calc(100vh - 228px); /* 150px + 78px para sa navbar */
-    overflow-y:auto;
-    padding:3px 4px 5px 2px;
-    scrollbar-width:thin;
-    scrollbar-color:#f2a4ca transparent;
-}
-
-.orders-list-scroll::-webkit-scrollbar{width:6px;}
-.orders-list-scroll::-webkit-scrollbar-track{background:transparent;}
-.orders-list-scroll::-webkit-scrollbar-thumb{background:#f2a4ca;border-radius:10px;}
-
-.order-list-item{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    width:100%;
-    text-align:left;
-    cursor:pointer;
-    
-    color:inherit;
-    background:rgba(255,255,255,.92);
-    border:2px solid white;
-    outline:1px solid #e4d5df;
-    border-radius:16px;
-    padding:12px 14px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.25);
-    transition:.15s;
-}
-
-.order-list-item:hover{
-    transform:translateY(-2px);
-}
-
-.order-list-item.active{
-    border-color:#f2a4ca;
-    background:#fff0f7;
-    box-shadow:5px 7px 0 rgba(242,164,202,.4);
-}
-
-.order-list-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    margin-bottom:6px;
-}
-
-.order-list-id{
-    
-    font-weight:bold;
-    color:#873c63;
-    font-size:13px;
-}
-
-.order-list-date{
-    color:#a17488;
-    font-size:9px;
-    margin-bottom:4px;
-}
-
-.order-list-count{
-    color:#a17488;
-    font-size:9px;
-    margin-top:2px;
-}
-
-
-/* status badge colors, source: order_status_helper.php */
-
-.order-status{
-    flex-shrink:0;
-    padding:5px 10px;
-    border-radius:20px;
-    font-size:8px;
-    font-weight:900;
-    letter-spacing:.4px;
-    white-space:nowrap;
-}
-
-.status-pending{background: #FFF3C4;color: #29252A;}
-.status-quoted{background: #E1F3E7;color: #29252A;}
-.status-awaiting_payment{background: #FBE8D6;color: #29252A; white-space: nowrap; }
-.status-to_verify{background: #E1F3E7;color: #29252A;}
-.status-for_approval{background: #E1F3E7;color: #29252A;}
-.status-processing{background: #FBE8D6;color: #29252A;}
-.status-awaiting_balance{background: #FBE8D6;color: #29252A;}
-.status-to_verify_balance{background: #E1F3E7;color: #29252A;}
-.status-for_balance_approval{background: #E1F3E7;color: #29252A;}
-
-/* not from order_status_helper.php, overlay lang for pending revision requests */
-.status-revision{background: #FBE8D6;color: #29252A;}
-.status-to_ship{background: #E8EDFF;color: #29252A;}
-.status-shipped{background: #E8EDFF;color: #29252A;}
-.status-completed{background: #E1F3E7;color: #29252A;}
-.status-cancelled{background: #FADCDC;color: #29252A;}
-
-
-/* order detail: placeholder / panel toggle */
-
-.orders-detail-col{
-    min-width:0;
-}
-
-.order-detail-placeholder{
-    display:none;
-    text-align:center;
-    padding:70px 20px;
-    background:rgba(255,255,255,.85);
-    border:2px solid white;
-    outline:1px solid #e4d5df;
-    border-radius:24px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.3);
-}
-
-.order-detail-placeholder.active{
-    display:block;
-}
-
-.order-detail-placeholder .no-orders-icon{
-    font-size:34px;
-}
-
-.order-detail-placeholder p{
-    color:#956d80;
-    font-size:13px;
-}
-
-.order-detail-panel{
-    display:none;
-}
-
-.order-detail-panel.active{
-    display:block;
-}
-
-
-/* order card panel */
-
-.order-card{
-    background:rgba(255,255,255,.95);
-    border:3px solid white;
-    outline:1px solid #e4d5df;
-    border-radius:22px;
-    padding:20px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.3);
-    scroll-margin-top:98px; /* para pag scrollIntoView, di matabunan ng navbar */
-}
-
-/* detail grid: main info + side summary */
-
-.detail-grid{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:20px;
-    align-items:start;
-}
-
-@media (max-width:1100px){
-    .detail-grid{
-        grid-template-columns:1fr;
-    }
-}
-
-.detail-main{
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-    min-width:0;
-}
-
-.detail-side{
-    min-width:0;
-}
-
-@media (min-width:801px){
-    .detail-side{
-        position:sticky;
-        top:98px; /* pareho ng left order-list para same ang space nila sa navbar */
-        align-self:start;
-    }
-}
-
-
-/* generic card style */
-
-.card{
-    background:rgba(255,255,255,.92);
-    border:2px solid white;
-    outline:1px solid #e4d5df;
-    border-radius:20px;
-    box-shadow:5px 7px 0 rgba(216,194,222,.25);
-    padding:20px;
-}
-
-
-/* order information card */
-
-.order-info-title{
-    color:#d2417a;
-    font-weight:bold;
-    font-size:13px;
-    letter-spacing:.2px;
-    margin-bottom:14px;
-}
-
-.order-info-grid{
-    display:grid;
-    grid-template-columns:repeat(3, minmax(0, 1fr));
-    gap:10px;
-}
-
-@media (max-width:900px){
-    .order-info-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
-}
-
-@media (max-width:520px){
-    .order-info-grid{grid-template-columns:1fr;}
-}
-
-.info-chip{
-    display:flex;
-    align-items:center;
-    gap:9px;
-    background:#fffaf6;
-    border:1px solid #f5e6ee;
-    border-radius:12px;
-    padding:9px 12px;
-    font-size:12.5px;
-    min-width:0;
-}
-
-.info-chip .icon{
-    font-size:16px;
-    flex-shrink:0;
-}
-
-.info-chip .txt{
-    display:flex;
-    flex-direction:column;
-    min-width:0;
-}
-
-.info-chip .dt{
-    font-size:10px;
-    color:#a97b90;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-}
-
-.info-chip .dd{
-    font-weight:bold;
-    color:#75445e;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-
-/* figure viewer card */
-
-.order-figures-title{
-    color:#a17488;
-    font-size:10px;
-    font-weight:900;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-    margin-bottom:12px;
-}
-
-.figure-tabs{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    margin-bottom:18px;
-}
-
-.figure-tab-btn{
-    border:none;
-    background:transparent;
-    font-size:12px;
-    font-weight:bold;
-    color:#a97b90;
-    padding:8px 16px;
-    border-radius:14px;
-    cursor:pointer;
-    transition:.15s;
-    
-}
-
-.figure-tab-btn.active{
-    color:#d2417a;
-    background:#fdeaf1;
-}
-
-.figure-tab-btn:hover:not(.active){
-    color:#d2417a;
-}
-
-.order-figure:not(.active){
-    display:none;
-}
-
-
-/* viewer grid: figure details | custom box */
-
-.viewer-grid{
-    display:grid;
-    grid-template-columns:1.1fr 1.3fr;
-    gap:22px;
-    align-items:start;
-}
-
-@media (max-width:650px){
-    .viewer-grid{grid-template-columns:1fr;}
-}
-
-.viewer-column{
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-}
-
-.details-title{
-    color:#d2417a;
-    font-weight:bold;
-    font-size:13px;
-    letter-spacing:.3px;
-    margin-bottom:14px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-
-
-/* reusable line item card (image + label + value + price) */
-
-.detail-item-list{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    margin-bottom:8px;
-}
-
-.detail-item-card{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    background:#fffaf6;
-    border:1px solid #f5e6ee;
-    border-radius:14px;
-    padding:9px 12px;
-}
-
-.detail-item-image{
-    width:44px;
-    height:44px;
-    border-radius:10px;
-    object-fit:cover;
-    flex-shrink:0;
-    background:#fff0f7;
-}
-
-.detail-item-noimage{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:19px;
-    background:#fdeaf1;
-}
-
-.detail-item-body{
-    display:flex;
-    flex-direction:column;
-    flex:1;
-    min-width:0;
-    gap:1px;
-}
-
-.detail-item-label{
-    font-size:10px;
-    color:#a97b90;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-}
-
-.detail-item-value{
-    font-size:13px;
-    color:#75445e;
-    word-break:break-word;
-}
-
-.detail-item-price{
-    flex-shrink:0;
-    font-size:13px;
-    font-weight:bold;
-    color:#d2417a;
-    white-space:nowrap;
-    text-align:right;
-}
-
-.detail-item-price.muted{
-    color:#c9b3bf;
-    font-weight:normal;
-}
-
-
-/* notes to artist */
-
-.notes-box{
-    margin:4px 0 8px;
-    padding:10px 12px;
-    background:#fff8fc;
-    border:1px dashed #e5a7c6;
-    border-radius:12px;
-    font-size:12.5px;
-}
-
-.notes-box strong{
-    display:block;
-    margin-bottom:4px;
-    color:#873c63;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-}
-
-.notes-box p{
-    color:#5c3348;
-    line-height:1.5;
-    word-break:break-word;
-    white-space:pre-wrap;
-}
-
-
-/* reference image gallery */
-
-.reference-section,
-.box-reference-section{
-    margin-top:auto;
-    padding-top:14px;
-}
-
-.gallery-label{
-    font-size:11.5px;
-    font-weight:bold;
-    color:#75445e;
-    margin-bottom:10px;
-    display:flex;
-    align-items:baseline;
-    gap:6px;
-}
-
-.gallery-label-count{
-    font-weight:normal;
-    font-size:10px;
-    color:#a97b90;
-}
-
-.gallery-row{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.gallery-thumb{
-    width:66px;
-    height:66px;
-    border-radius:12px;
-    object-fit:cover;
-    cursor:pointer;
-    border:2px solid white;
-    outline:1px solid #e6d4e4;
-    background:#f3eef1;
-    transition:.15s;
-}
-
-.gallery-thumb:hover{
-    outline-color:#f2a4ca;
-    transform:scale(1.05);
-}
-
-.no-image{
-    width:100%;
-    padding:16px 0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#a99da4;
-    font-size:11px;
-    text-align:center;
-    border-radius:12px;
-    border:2px dashed #e6d4e4;
-    background:#f9f5f4;
-}
-
-
-/* custom box card */
-
-.box-card{
-    background:#fdf4f8;
-    border:1px solid #f4d9e6;
-    border-radius:16px;
-    padding:16px;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-}
-
-.box-card-title{
-    color:#d2417a;
-    font-weight:bold;
-    font-size:13px;
-    margin-bottom:14px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-}
-
-/* custom box empty state (walang add-on) */
-
-.box-card-empty{
-    flex:1;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    background:#fdf4f8;
-    border:2px dashed #f0c6dc;
-}
-
-.box-empty-state{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    padding:26px 14px;
-}
-
-.box-empty-icon{
-    font-size:32px;
-    opacity:.55;
-    margin-bottom:4px;
-}
-
-.box-empty-title{
-    font-weight:bold;
-    color:#a4476d;
-    font-size:12.5px;
-}
-
-.box-empty-text{
-    color:#b696a4;
-    font-size:11px;
-    max-width:220px;
-    line-height:1.5;
-}
-
-.box-detail-grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:11px 18px;
-    font-size:12.5px;
-    margin-bottom:6px;
-}
-
-.box-detail-grid div{
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    gap:1px;
-}
-
-.box-detail-grid div.full-row{
-    grid-column:1 / -1;
-}
-
-.box-detail-grid div span:first-child{
-    color:#a97b90;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-}
-
-
-/* payment/shipping/refund card, separate container from figure viewer */
-
-.customer-payment-card{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-}
-
-.customer-payment-details-title{
-    color:#d2417a;
-    font-weight:bold;
-    font-size:13px;
-    letter-spacing:.2px;
-    margin-bottom:14px;
-}
-
-.customer-payment-details-grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:11px 18px;
-    font-size:12.5px;
-}
-
-.customer-payment-details-grid span{
-    display:block;
-}
-
-.customer-payment-details-grid strong{
-    color:#a97b90;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-    display:block;
-    margin-bottom:2px;
-    font-weight:700;
-}
-
-.customer-payment-proof{
-    margin-top:14px;
-}
-
-.customer-payment-proof-title{
-    color:#a97b90;
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-    margin-bottom:8px;
-}
-
-.customer-payment-proof-thumb{
-    display:block;
-    max-width:220px;
-    max-height:220px;
-    width:auto;
-    height:auto;
-    object-fit:cover;
-    border-radius:12px;
-    border:2px solid white;
-    outline:1px solid #e4d5df;
-    cursor:pointer;
-    transition:.15s ease;
-}
-
-.customer-payment-proof-thumb:hover{
-    transform:translateY(-2px);
-}
-
-/* Gap hawak na ng .customer-payment-card, divider line na lang dito */
-.customer-payment-details + .customer-payment-details{
-    padding-top:18px;
-    border-top:1px solid #f0dbe7;
-}
-
-.box-detail-grid div span:last-child{
-    font-weight:bold;
-    color:#873c63;
-    word-break:break-word;
-}
-
-@media (max-width:520px){
-    .box-detail-grid{grid-template-columns:1fr;}
-}
-
-
-/* progress update box */
-
-.progress-update-box{
-    background:#fff5f8;
-    border:2px solid #f2a4ca;
-    border-radius:16px;
-    padding:16px;
-    margin-bottom:18px;
-}
-
-/* Iba't ibang border color per status, para agad makilala kahit di pa nababasa ang text */
-
-.progress-update-box.progress-update-approved,
-.progress-update-box.progress-update-final{
-    border-color:#7fc98a;
-    background:#f2faf3;
-}
-
-.progress-update-box.progress-update-revision{
-    border-color:#f2a4ca;
-    background:#fff5f8;
-}
-
-.progress-update-box.progress-update-in_progress{
-    border-color:#7ec8e3;
-    background:#f0f9fd;
-}
-
-.progress-update-box.progress-update-declined{
-    border-color:#e0a458;
-    background:#fdf6ec;
-}
-
-.progress-update-title{
-    
-    font-weight:bold;
-    font-size:14.5px;
-    color:#86365f;
-    margin-bottom:12px;
-}
-
-.progress-update-image{
-    width:100%;
-    border-radius:14px;
-    border:1px solid #eee0e9;
-    margin-bottom:12px;
-    display:block;
-    cursor:zoom-in;
-}
-
-.progress-update-caption{
-    background:white;
-    color:#75445e;
-    padding:12px 14px;
-    border-radius:12px;
-    font-size:12.5px;
-    line-height:1.5;
-    margin-bottom:12px;
-}
-
-.progress-update-question{
-    color:#75445e;
-    font-size:13px;
-    font-weight:700;
-    margin-bottom:12px;
-}
-
-.progress-update-buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-}
-
-.progress-update-buttons button,
-.progress-update-revision-box button{
-    padding:12px 20px;
-    border:none;
-    border-radius:14px;
-    font-weight:900;
-    font-size:12px;
-    cursor:pointer;
-    transition:.15s;
-    
-    flex:1;
-}
-
-.btn-progress-good{
-    background:#7fc98a;
-    color:white;
-    box-shadow:0 4px 0 #5da76a;
-}
-
-.btn-progress-good:hover{
-    background:#6bb877;
-}
-
-.btn-progress-revise{
-    background:#f2a4ca;
-    color:white;
-    box-shadow:0 4px 0 #d17ca7;
-}
-
-.btn-progress-revise:hover{
-    background:#e98db9;
-}
-
-.progress-update-revision-box{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    margin-top:4px;
-}
-
-.progress-update-revision-box label{
-    font-size:12px;
-    font-weight:700;
-    color:#75445e;
-}
-
-.progress-update-revision-box textarea{
-    padding:12px 14px;
-    border-radius:12px;
-    border:2px solid #ecd9e4;
-    background:#fffdf8;
-    color:#75445e;
-    
-    font-size:13px;
-    resize:vertical;
-}
-
-.btn-progress-send-revision{
-    align-self:flex-start;
-    background:#f2a4ca;
-    color:white;
-    box-shadow:0 4px 0 #d17ca7;
-}
-
-.btn-progress-send-revision:hover{
-    background:#e98db9;
-}
-
-
-/* status text lang (walang buttons) kapag na-respond na or final na */
-
-.progress-update-status{
-    padding:12px 14px;
-    border-radius:12px;
-    font-size:12.5px;
-    font-weight:700;
-    line-height:1.5;
-    background:white;
-}
-
-.progress-status-approved{
-    color:#3f8a4c;
-}
-
-.progress-status-revision{
-    color: #29252A;
-}
-
-.progress-status-in-progress{
-    color:#2f7fa6;
-}
-
-.progress-status-declined{
-    color:#b57327;
-}
-
-
-/* action box (Quoted / Awaiting Payment / To Verify), top of summary card */
-
-.action-box{
-    border-radius:16px;
-    padding:16px;
-    margin-bottom:18px;
-}
-
-.action-box.action-quoted{
-    background:#fdeaf1;
-}
-
-.action-box.action-awaiting{
-    background:#fff3e2;
-}
-
-.action-box.action-verify{
-    background:#eef6ee;
-}
-
-.action-box.action-completed{
-    background:#e9f7ef;
-}
-
-.action-title{
-    font-weight:bold;
-    font-size:13.5px;
-    color:#75445e;
-    margin-bottom:6px;
-}
-
-.action-text{
-    font-size:12.5px;
-    color:#8a6b78;
-    line-height:1.5;
-}
-
-.action-deadline{
-    display:block;
-    margin-top:6px;
-    font-size:11.5px;
-    color:#c94f4f;
-    font-weight:bold;
-}
-
-.action-buttons{
-    display:flex;
-    gap:10px;
-    margin-top:14px;
-    flex-wrap:nowrap;
-}
-
-.action-buttons form{
-    display:inline-block;
-    flex:1;
-    min-width:0;
-}
-
-@media (max-width:420px){
-    .action-buttons{
-        flex-wrap:wrap;
-    }
-}
-
-.btn-continue,
-.btn-cancel{
-    display:inline-block;
-    border:none;
-    padding:11px 20px;
-    border-radius:14px;
-    font-size:12.5px;
-    font-weight:bold;
-    
-    cursor:pointer;
-    text-align:center;
-    text-decoration:none;
-    transition:.15s;
-    width:100%;
-}
-
-.btn-continue{
-    background:linear-gradient(135deg,#f2699b,#e0447f);
-    color:white;
-    box-shadow:0 6px 14px rgba(224,68,127,.35);
-}
-
-.btn-continue:hover{
-    filter:brightness(1.05);
-}
-
-.btn-cancel{
-    border:1px solid #e0447f;
-    background:white;
-    color:#d2417a;
-}
-
-.btn-cancel:hover{
-    background:#fdf4f8;
-}
-
-.btn-link{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    flex:1;
-    min-width:0;
-}
-
-/* proceed/cancel pair (Continue Order / Proceed to Payment & Shipping,
-   paired with Cancel Order) - dapat magkatabi lagi, green ang proceed,
-   red ang cancel */
-
-.action-buttons .btn-continue{
-    background:#4f9d6c;
-    box-shadow:0 6px 14px rgba(79,157,108,.35);
-    white-space:nowrap;
-}
-
-.action-buttons .btn-continue:hover{
-    background:#3f8558;
-}
-
-.action-buttons .btn-cancel{
-    border:1px solid #d9534f;
-    background:#d9534f;
-    color:white;
-}
-
-.action-buttons .btn-cancel:hover{
-    background:#c1443f;
-}
-
-
-/* order summary (right column) */
-
-.detail-side .summary-card{
-    position:sticky;
-    top:98px; /* pareho ng left order-list para same ang space nila sa navbar */
-}
-
-.summary-title{
-    color:#d2417a;
-    
-    font-weight:bold;
-    font-size:15px;
-    margin-bottom:14px;
-}
-
-.summary-lines{
-    display:flex;
-    flex-direction:column;
-}
-
-.summary-line{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:13px;
-    padding:8px 0;
-    gap:10px;
-}
-
-.summary-line .icon{
-    margin-right:8px;
-}
-
-.summary-line .label-wrap{
-    display:flex;
-    align-items:center;
-    color:#75445e;
-}
-
-.summary-divider{
-    height:1px;
-    background:#f0e3ea;
-    margin:8px 0;
-}
-
-.summary-total{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-top:6px;
-}
-
-.summary-total .label{
-    color:#d2417a;
-    font-weight:bold;
-    font-size:11.5px;
-    letter-spacing:.3px;
-    text-transform:uppercase;
-}
-
-.summary-total .amount{
-    color:#d2417a;
-    font-weight:bold;
-    font-size:22px;
-    white-space:nowrap;
-}
-
-.expiry-note{
-    margin-top:14px;
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    background:#fff7f0;
-    border-radius:14px;
-    padding:12px 14px;
-    font-size:12px;
-    color:#8a6b78;
-}
-
-
-/* image lightbox */
-
-.image-lightbox{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(60,30,45,.75);
-    z-index:5000; /* mas mataas sa navbar */
-    align-items:center;
-    justify-content:center;
-    padding:30px;
-}
-
-.image-lightbox.show{
-    display:flex;
-}
-
-.image-lightbox-content{
-    position:relative;
-    max-width:min(600px,92vw);
-    text-align:center;
-}
-
-.image-lightbox-content img{
-    max-width:100%;
-    max-height:78vh;
-    border-radius:14px;
-    box-shadow:0 20px 60px rgba(0,0,0,.35);
-    object-fit:contain;
-    background:#fff;
-}
-
-.image-lightbox-label{
-    margin-top:12px;
-    color:#fff0f7;
-    font-size:12px;
-    font-weight:700;
-}
-
-.image-lightbox-close{
-    position:absolute;
-    top:-18px;
-    right:-18px;
-    width:34px;
-    height:34px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:none;
-    border-radius:50%;
-    background:white;
-    color:#d2417a;
-    font-size:14px;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:0 2px 6px rgba(0,0,0,.15);
-    transition:.15s;
-}
-
-.image-lightbox-close:hover{
-    background:#fdeaf1;
-    transform:scale(1.08);
-}
-
-@media(max-width:500px){
-    .image-lightbox-close{top:-14px;right:0;}
-}
-
-
-
-
-
-/* IMAGE SUBMISSION - Figure Details kagaya ng Dress Up: walang larawan,
-   maliliit na card na magkakatabi (Figure Style, Product Type, Size,
-   Figure Name). Custom Box pa rin sa kanan. */
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-list{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:8px;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-image{
-    display:none;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-card{
-    flex-direction:column;
-    align-items:flex-start;
-    justify-content:flex-start;
-    gap:3px;
-    padding:8px 10px;
-    min-width:0;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-body{
-    width:100%;
-    min-width:0;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-label{
-    font-size:9px;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-value{
-    font-size:12px;
-    line-height:1.25;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-price{
-    font-size:11px;
-}
-
-.viewer-grid:not(.dressup-grid) > .viewer-column:first-child .detail-item-price.muted{
-    display:none;
-}
-
-.status-for_refund{background: #FFE4C7;color: #29252A;}
-.status-refunded{background: #E6E1F7;color: #29252A;}
-
-/* Order workflow additions (status labels, history) */
-
-.order-status.status-needs_correction{
-    background:#FDE2D2;
-    color:#29252A;
-}
-
-.order-history-box{
-    margin:14px 0 6px;
-}
-
-.order-history-box > summary{
-    list-style:none;
-}
-
-.order-history-box > summary::-webkit-details-marker{
-    display:none;
-}
-
-.order-history-box > summary::after{
-    content:" ▾";
-    font-size:11px;
-}
-
-.order-history-list{
-    list-style:none;
-    margin:8px 0 0;
-    padding:0 0 0 14px;
-    border-left:2px solid #f0dce8;
-}
-
-.order-history-list li{
-    position:relative;
-    padding:0 0 10px 6px;
-    font-size:12px;
-    display:flex;
-    flex-direction:column;
-}
-
-.order-history-list li::before{
-    content:"";
-    position:absolute;
-    left:-20px;
-    top:4px;
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background:#f2bad8;
-}
-
-.order-history-label{
-    font-weight:800;
-    color:#8c3764;
-}
-
-.order-history-date{
-    color:#956d80;
-    font-size:11px;
-}
-
-.order-history-reason{
-    color:#75445e;
-    font-style:italic;
-}
-
-/* Order progress tracker */
-.order-tracker-card{
-    background:#fff; border:2px solid #f0dce8; border-radius:18px;
-    padding:14px 16px; margin-bottom:16px;
-    /* sariling stacking context - para hindi lumutang ang mga dot sa ibabaw
-       ng sticky order list sa mobile */
-    position:relative; z-index:0; isolation:isolate;
-}
-.order-tracker-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
-.order-tracker-title{ font-weight:900; color:#8c3764; font-size:14px; }
-.order-tracker-state{ font-size:12px; font-weight:800; color:#fff; background:#c9689a; border-radius:999px; padding:4px 12px; }
-/* status badge, kulay galing sa .status-* sa itaas */
-.order-tracker-badge{ display:inline-block; font-size:12px; font-weight:800; letter-spacing:.2px; border-radius:999px; padding:5px 13px; color:#29252A; box-shadow:inset 0 0 0 1px rgba(41,37,42,.08); white-space:nowrap; line-height:1.3; }
-.order-tracker-badge.status-awaiting_payment{ white-space:nowrap; max-width:none; }
-.order-tracker-badge.status-needs_correction{ background:#FDE2D2; }
-.order-tracker{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(11, minmax(0,1fr)); gap:4px; }
-.order-tracker-step{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; position:relative; }
-.order-tracker-step::before{
-    content:""; position:absolute; top:11px; left:-50%; width:100%; height:3px; background:#f0dce8; z-index:0;
-}
-.order-tracker-step:first-child::before{ display:none; }
-.order-tracker-step.done::before, .order-tracker-step.current::before{ background:#e58fb8; }
-.order-tracker-dot{
-    position:relative; z-index:1; width:24px; height:24px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900;
-    background:#fff; border:3px solid #f0dce8; color:#fff;
-}
-.order-tracker-step.done .order-tracker-dot{ background:#3fa36b; border-color:#3fa36b; }
-.order-tracker-step.current .order-tracker-dot{ border-color:#e0447f; background:#fff0f6; box-shadow:0 0 0 4px rgba(224,68,127,.15); }
-.order-tracker-step.attention .order-tracker-dot{ border-color:#e08a2c; background:#fff4e8; }
-.order-tracker-label{ font-size:10.5px; line-height:1.25; color:#956d80; font-weight:700; }
-.order-tracker-step.done .order-tracker-label{ color:#3d7a57; }
-.order-tracker-step.current .order-tracker-label{ color:#8c3764; font-weight:900; }
-.order-tracker-stopped{ margin:0; font-size:13px; color:#a4394a; font-weight:700; }
-
-@media (max-width: 900px){
-    .order-tracker{ grid-template-columns:1fr !important; gap:0; }
-    .order-tracker-step{ flex-direction:row; text-align:left; gap:10px; padding:4px 0; }
-    .order-tracker-step::before{ top:-50%; left:11px; width:3px; height:100%; }
-    .order-tracker-label{ font-size:12.5px; }
-    .order-tracker-step{ padding:3px 0; }
-}
-
-/* Quotation breakdown */
-.quote-breakdown{ display:flex; flex-direction:column; gap:4px; margin:8px 0; font-size:13px; }
-.quote-line{ display:flex; justify-content:space-between; gap:10px; }
-.quote-line span:last-child{ font-weight:800; white-space:nowrap; }
-.quote-total{ border-top:1.5px dashed #e8cfdc; padding-top:6px; margin-top:2px; font-weight:900; color:#8c3764; }
-
-/* mobile: hindi na sticky ang order list para hindi magpatong sa details */
-@media (max-width:800px){
-    .orders-list-col,
-    .detail-side .summary-card{
-        position:static;
-        top:auto;
-    }
-}
-
-/* Payment & Shipping Details - list (label kaliwa, value kanan), 2 column, maliit ang proof */
-.customer-payment-card{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    column-gap:28px;
-    row-gap:12px;
-    align-items:start;
-}
-.customer-payment-card > .customer-payment-details:only-child,
-.customer-payment-card > .customer-payment-col:only-child{
-    grid-column:1 / -1;
-}
-.customer-payment-col{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    min-width:0;
-}
-.customer-payment-details + .customer-payment-details{
-    padding-top:0;
-    border-top:0;
-}
-.customer-payment-details-title{
-    margin-bottom:6px;
-}
-.customer-payment-details-grid{
-    grid-template-columns:1fr;
-    gap:0;
-    font-size:12px;
-}
-.customer-payment-details-grid span{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    gap:14px;
-    padding:5px 0;
-    border-bottom:1px dashed #f0dbe7;
-    text-align:right;
-    color:#75445e;
-    font-weight:600;
-    word-break:break-word;
-}
-.customer-payment-details-grid span:last-child{
-    border-bottom:0;
-}
-.customer-payment-details-grid strong{
-    flex:0 0 auto;
-    margin:0;
-    text-align:left;
-    white-space:nowrap;
-}
-.customer-payment-proofs{
-    grid-column:1 / -1;
-    display:flex;
-    flex-wrap:wrap;
-    gap:16px;
-    padding-top:10px;
-    border-top:1px solid #f0dbe7;
-}
-.customer-payment-proofs .customer-payment-proof{
-    margin-top:0;
-}
-.customer-payment-proofs .customer-payment-proof-thumb{
-    max-width:110px;
-    max-height:110px;
-    width:110px;
-    height:110px;
-}
-.customer-payment-proof-title{
-    margin-bottom:6px;
-}
-.payment-split-box{
-    margin-bottom:14px;
-}
-.payment-split-box .quote-line{
-    font-size:13px;
-}
-@media (max-width:760px){
-    .customer-payment-card{
-        grid-template-columns:1fr;
-    }
-}
-.payment-split-box{
-    background:#fff5fa;
-    border:1px solid #f0d5e5;
-    border-radius:14px;
-    padding:12px 16px;
-}
-.payment-split-box .quote-line{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    padding:3px 0;
-    color:#75445e;
-    font-weight:700;
-}
-.customer-payment-card:not(:has(.customer-payment-col)) > .customer-payment-details{
-    grid-column:1 / -1;
-}
-
-/* status badge nasa left list (katabi ng Order number) */
-.order-list-badge{ font-size:8.5px; font-weight:800; padding:2px 7px; letter-spacing:0; min-width:0; overflow:hidden; text-overflow:ellipsis; max-width:70%; }
-.order-list-id{ white-space:nowrap; }
-.order-list-top{ flex-direction:row; flex-wrap:nowrap; align-items:center; justify-content:space-between; gap:6px; }
-
-/* progress update - simpleng sagot (green / red) */
-.progress-update-note{
-    margin:8px 0 0;
-    font-size:12.5px;
-    line-height:1.5;
-    color:#6b4c5c;
-}
-.pu-choice-buttons{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    gap:10px;
-    margin-top:12px;
-}
-.pu-choice-btn{
-    height:40px;
-    padding:0 6px;
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    border:0;
-    border-radius:10px;
-    
-    font-size:12px;
-    font-weight:700;
-    white-space:nowrap;
-    color:#fff;
-    cursor:pointer;
-    box-shadow:none;
-    transition:background-color .15s ease;
-}
-.pu-choice-good{ background:#22a35a; }
-.pu-choice-good:hover{ background:#1b8a4b; }
-.pu-choice-revise{ background:#dc3b3b; }
-.pu-choice-revise:hover{ background:#c02f2f; }
-.progress-update-revision-box{ flex-direction:column; gap:8px; margin-top:12px; }
-.progress-update-revision-box textarea{ width:100%; box-sizing:border-box; }
-.progress-update-revision-box .pu-choice-buttons{ margin-top:2px; }
-.pu-choice-buttons[id^="progressButtonsRow-"]{ grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr); }
-
-/* Pay Balance button sa loob ng Down Payment / Remaining Balance box */
-.payment-split-box .split-pay-btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    height:40px;
-    margin-top:12px;
-    border-radius:10px;
-    background:#22a35a;
-    color:#fff;
-    font-size:13px;
-    font-weight:700;
-    text-decoration:none;
-    transition:background-color .15s ease;
-}
-.payment-split-box .split-pay-btn:hover{ background:#1b8a4b; }
-.payment-split-box .split-note{ margin:10px 0 0; font-size:12px; line-height:1.45; color:#8a4b12; }
-.progress-update-box + .payment-split-box{ margin-top:14px; }
-
-/* Paid / Checking na tag sa Down Payment at Remaining Balance */
-.payment-split-box .pay-tag{
-    display:inline-block;
-    margin-left:6px;
-    padding:1px 8px;
-    border-radius:999px;
-    background:#fff1d6;
-    color:#9a6a12;
-    font-size:10.5px;
-    font-weight:800;
-    font-style:normal;
-    text-transform:uppercase;
-    letter-spacing:.3px;
-    vertical-align:1px;
-}
-.payment-split-box .pay-tag.is-paid{ background:#dcf5e7; color:#167a43; }
-.awaiting-note{ margin:0 0 12px; padding:0; font-size:12.5px; line-height:1.5; color:#8a4b12; }
-.quoted-actions .action-buttons{ display:grid !important; grid-template-columns:1fr 1fr; gap:10px; }
-.quoted-actions .action-buttons form{ margin:0; }
-.quoted-actions .btn-continue,
-.quoted-actions .btn-cancel{ width:100%; height:42px; padding:0 10px !important; box-shadow:none !important; border-radius:10px !important; font-size:13px !important; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
-
-.summary-line.summary-line-rush .label-wrap{ padding-left:14px; color:#9a7a8a; font-weight:600; }
-.summary-line.summary-line-rush span:last-child{ color:#6b4c5c; }
-.pending-actions form{ margin:0; }
-.pending-actions .btn-cancel{ width:100%; height:42px; border-radius:10px !important; box-shadow:none !important; font-size:13px !important; display:flex; align-items:center; justify-content:center; }
-.pending-actions .btn-cancel{ background:#dc3b3b !important; color:#fff !important; border:0 !important; }
-.pending-actions .btn-cancel:hover{ background:#c02f2f !important; }
-/* Cancel Order (pending) - sakto lang ang laki, nasa gitna */
-.pending-actions{ display:flex; justify-content:center; }
-.pending-actions form{ display:flex; justify-content:center; width:auto; }
-.pending-actions .btn-cancel{ width:auto !important; min-width:150px; padding:0 26px !important; }
-.pending-actions{ margin-top:14px; }
-
-/* revision note ng customer sa ilalim ng larawan */
-.progress-update-revision-note{
-    margin:10px 0 0;
-    padding:10px 12px;
-    border-radius:10px;
-    background:#fff4e5;
-    border:1px solid #f6d7a8;
-    font-size:12.5px;
-    line-height:1.5;
-    color:#3b1f2e;
-}
-.progress-update-revision-note strong{ display:block; margin-bottom:2px; color:#8a4b12; font-size:11.5px; }
-
-/* Order Received */
-.order-received-box{ margin-top:14px; padding-top:12px; border-top:1px dashed #f1d3e2; text-align:center; }
-.order-received-box .action-text{ margin:0 0 4px; }
-.order-received-note{ margin:0 0 10px; font-size:11.5px; color:#a0798c; }
-.order-received-box form{ display:flex; justify-content:center; margin:0; }
-.order-received-box .btn-order-received{ width:auto !important; min-width:170px; padding:10px 26px; }
-
-/* Down Payment / Remaining Balance sa ilalim ng Order Summary - walang container */
-html body .payment-split-box.payment-split-plain{
-    background:none !important;
-    border:0 !important;
-    border-radius:0 !important;
-    box-shadow:none !important;
-    padding:10px 0 0 !important;
-    margin:0 !important;
-}
-html body .payment-split-plain .quote-line{
-    padding:4px 0;
-    font-size:13px;
-    font-weight:600;
-    color:#75445e;
-}
-html body .payment-split-plain .pay-tag,
-html body .payment-split-plain .pay-tag.is-paid{
-    background:none !important;
-    padding:0 !important;
-    border-radius:0 !important;
-    margin-left:6px;
-    color:#167a43;
-}
-
-/* left list - status nasa ilalim ng Order number, mas malaki at buo */
-html body .order-list-top{
-    flex-direction:column !important;
-    align-items:flex-start !important;
-    gap:6px !important;
-}
-html body .order-list-badge{
-    font-size:11px !important;
-    padding:3px 10px !important;
-    max-width:100% !important;
-    overflow:visible !important;
-    white-space:normal !important;
-    text-overflow:clip !important;
-    line-height:1.3;
-}
-html body .order-list-date{ font-size:12px !important; margin-top:6px; color:#8a6878 !important; }
-
-/* Leave a Review / View My Review - sakto ang button, naka-center; gold stars */
-html body .action-buttons.review-btn-row{ display:flex !important; justify-content:center; grid-template-columns:none !important; }
-html body .action-buttons.review-btn-row .btn-continue{ width:auto !important; min-width:170px; padding:10px 26px !important; flex:0 0 auto; }
-.review-gold-stars{ color:#f0a63e; letter-spacing:1px; }
-.action-completed:has(.review-btn-row) .action-title, .action-completed:has(.review-btn-row) .action-text{ text-align:center; }
-
-/* left list - status nasa taas, kanan (katabi ng Order number), buo at nababasa */
-html body .order-list-top{
-    flex-direction:row !important;
-    align-items:flex-start !important;
-    justify-content:space-between !important;
-    gap:8px !important;
-}
-html body .order-list-id{ flex-shrink:0; }
-html body .order-list-badge{
-    font-size:10.5px !important;
-    padding:3px 9px !important;
-    max-width:62% !important;
-    white-space:normal !important;
-    text-align:center;
-    line-height:1.25;
-}
-
-/* My Orders - mga huling ayos */
-/* left list - status isang linya lang, mas maliit na sulat */
-html body .order-list-badge{
-    font-size:9.5px !important;
-    padding:3px 8px !important;
-    max-width:none !important;
-    white-space:nowrap !important;
-    overflow:visible !important;
-    letter-spacing:0 !important;
-    line-height:1.3;
-}
-html body .order-list-top{ align-items:center !important; }
-
-/* Down Payment / Remaining Balance - nasa itaas na ng Order Summary */
-html body .payment-split-box.payment-split-plain{
-    padding:14px 0 16px !important;
-    margin:6px 0 4px !important;
-    border-bottom:1px dashed #efc9da !important;
-}
-html body .payment-split-plain .quote-line{ padding:6px 0; }
-
-/* Order Summary - may sapat na space sa taas at baba */
-.summary-title{
-    margin-top:18px;
-    margin-bottom:16px;
-    padding-top:2px;
-}
-.summary-lines .summary-line{ padding:8px 0; }
-.summary-divider{ margin:12px 0 !important; }
-.summary-total{ padding:6px 0 4px; }
-.expiry-note{ margin-top:0; margin-bottom:6px; line-height:1.5; }
-
-/* napuno ang date - pumili ng bagong petsa */
-.date-full-box{
-    margin-top:12px;
-    padding:14px 16px;
-    border:1px solid #f3d3df;
-    border-radius:14px;
-    background:#fff8fb;
-}
-.date-full-text{ margin:0; font-size:13px; line-height:1.55; color:#7a4a62; }
-.date-full-form{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
-.date-full-form select{
-    flex:1 1 160px;
-    height:40px;
-    padding:0 12px;
-    border:1px solid #ecc6d6;
-    border-radius:10px;
-    background:#fff;
-    font:inherit;
-    font-size:13px;
-    color:#5a2d45;
-}
-.date-full-form .btn-continue{ flex:0 0 auto; width:auto !important; height:40px; padding:0 20px !important; }
-
-/* Payment & Shipping / Refund details - nasa loob na ng figure container */
-.customer-payment-card.customer-payment-inner{
-    margin:18px 0 0 !important;
-    padding:18px 0 0 !important;
-    border:0 !important;
-    border-top:1px dashed #efc9da !important;
-    border-radius:0 !important;
-    background:none !important;
-    box-shadow:none !important;
-}
-
-/* Pay Balance - kapareho ng "It's Good" button (laki, kulay, font), walang effect */
-html body .payment-split-box .split-pay-btn{
-    display:flex;
-    width:150px;
-    height:40px;
-    margin:12px auto 0;
-    padding:0 6px;
-    border:0;
-    border-radius:10px;
-    background:#22a35a;
-    color:#fff;
-    font-size:12px;
-    font-weight:700;
-    box-shadow:none;
-    transform:none;
-    transition:none;
-}
-html body .payment-split-box .split-pay-btn:hover,
-html body .payment-split-box .split-pay-btn:active{ background:#22a35a; box-shadow:none; transform:none; }
-html body .pu-choice-btn{ transition:none; }
-html body .pu-choice-good:hover{ background:#22a35a; }
-html body .pu-choice-revise:hover{ background:#dc3b3b; }
-html body .pu-choice-buttons[id^="progressButtonsRow-"]{ display:flex; justify-content:center; }
-html body .pu-choice-buttons[id^="progressButtonsRow-"] .pu-choice-btn{ width:150px; flex:0 0 150px; }
+/* ==========================================================================
+   MY ORDERS PAGE - CSS   (my-order/my-orders.css)
+   Lahat ng style ng my-orders.php ay nandito lang. Ang navbar at footer ay
+   may sariling style sa Shared/navbar.php at Shared/footer.php.
+   Halos lahat ay naka-scope sa .orders-page / .mo-hero / .image-lightbox para
+   hindi tumagas sa navbar o footer.
+
+   LAMAN (taas pababa):
+     [0] FONT AT BACKGROUND   font at cream bg (pop up: Shared/popup-and-security.php)
+     [1] BASE              reset, text, lapad ng page (.mo-wrap)
+     [2] PAGE HERO         banner sa taas (peach -> cream -> pink)
+     [3] PAGE              padding ng .orders-page
+     [4] - [17]            buttons, filter pills + order cards, detail (kaliwa/kanan),
+                           tracker, figures, summary, payment, lightbox, responsive
+   ========================================================================== */
+
+/* ==========================================================================
+   [0] FONT AT BACKGROUND
+   Sariling kopya ng page na ito (hindi na galing sa shared file).
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ----- FONT at BACKGROUND - Fraunces (heading), Plus Jakarta Sans (body), cream bg ----- */
+html,
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;   /* cream */
+}
+
+/* form controls - hindi sila nagmamana ng font by default */
+button,
+input,
+select,
+textarea,
+optgroup {
+    font-family: inherit;
+}
+
+/* mga heading ng page na ito */
+.mo-hero h1,
+.orders-page .mo-card-title,
+.orders-page .mo-sum-total span:last-child {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+}
+
+
+/* ====================== END FONT AT BACKGROUND ====================== */
+
+
+/* ==========================================================================
+   [1] BASE
+   ========================================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* kulay ng text sa buong page (headings at text ay namamana ito) */
+body {
+    color: #4a1d3b;
+    line-height: 1.6;
+}
+
+/* lapad ng laman ng page */
+.mo-wrap { width: min(1328px, 100% - 48px); margin: 0 auto; }
+/* ====================== END BASE ====================== */
+
+
+/* ==========================================================================
+   [2] PAGE HERO
+   ========================================================================== */
+.mo-hero {
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(100deg, #ffe2cf 0%, #fffbe8 50%, #ffe3f0 100%);
+    border-bottom: 3px solid #ead9f0;
+}
+
+/* hanay ng sparkle sa kanang-itaas (kapareho ng Commission page) */
+.mo-hero::after {
+    content: "\2726   \2606   \2727   \2661   \2726";
+    position: absolute;
+    top: 25px;
+    right: 7%;
+    font-size: 19px;
+    letter-spacing: 7px;
+    white-space: nowrap;
+    color: #e8bd4d;
+    pointer-events: none;
+}
+
+/* lalagyan ng text */
+.mo-hero .mo-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* maliit na caps sa taas ng title - body font ang gamit */
+.mo-eyebrow {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a04a78;
+}
+
+.mo-hero h1 {
+    margin-top: 8px;
+    font-size: clamp(34px, 5vw, 55px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.5px;
+    color: #86365f;
+}
+
+.mo-hero p {
+    max-width: 720px;
+    margin: 15px auto 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #8a5870;
+}
+/* ====================== END PAGE HERO ====================== */
+
+
+/* ==========================================================================
+   [3] PAGE
+   ========================================================================== */
+.orders-page { padding: 50px 0 48px; }
+/* ====================== END PAGE ====================== */
+
+
+/* ==========================================================================
+   [4] BUTTONS
+   ========================================================================== */
+.orders-page .mo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease;
+    white-space: nowrap;
+}
+/* pula = pangunahing action, puti na may border = back / cancel / iba pang pagpipilian */
+.orders-page .mo-btn-primary { background: #c2325f; border-color: #c2325f; color: #fff; }
+.orders-page .mo-btn-primary:hover { background: #a62a50; border-color: #a62a50; }
+.orders-page .mo-btn-secondary { background: #fff; border-color: #c2325f; color: #c2325f; }
+.orders-page .mo-btn-secondary:hover { background: #ffedf2; }
+.orders-page .mo-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.orders-page .mo-inline-form { display: inline-flex; margin: 0; }
+.orders-page .mo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+
+/* ====================== END BUTTONS ====================== */
+
+
+/* ==========================================================================
+   [5] STATUS PILLS
+   ========================================================================== */
+.orders-page .mo-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+.orders-page .tone-yellow { background: #fdefbf; color: #9a6408; }
+.orders-page .tone-green  { background: #dff3e8; color: #2f8f67; }
+.orders-page .tone-blue   { background: #e3eafd; color: #3552a8; }
+.orders-page .tone-red    { background: #fbdada; color: #b83227; }
+.orders-page .tone-pink   { background: #ffedf2; color: #c2325f; }
+.orders-page .tone-purple { background: #efe3f3; color: #6b2f7a; }
+.orders-page .tone-orange { background: #fde2d2; color: #b4532a; }
+
+/* ====================== END STATUS PILLS ====================== */
+
+
+/* ==========================================================================
+   [6] EMPTY STATE
+   ========================================================================== */
+.orders-page .no-orders {
+    text-align: center;
+    padding: 56px 20px;
+    border: 2px dashed #f0cdd9;
+    border-radius: 20px;
+    background: transparent;
+}
+.orders-page .no-orders p { color: #7a5a6c; font-size: 15px; margin-bottom: 6px; }
+.orders-page .no-orders a { color: #c2325f; font-weight: 700; text-decoration: none; font-size: 15px; }
+.orders-page .no-orders a:hover { text-decoration: underline; }
+
+/* ====================== END EMPTY STATE ====================== */
+
+
+/* ==========================================================================
+   [7] FILTER PILLS + SEARCH + ORDER CARDS
+   ========================================================================== */
+.orders-page .orders-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid #f3dde5;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(74, 29, 59, .09);
+    margin-bottom: 20px;
+}
+
+/* iisang dropdown ng filter (All + bawat status) */
+.orders-page .orders-filter-select {
+    min-width: 220px;
+    height: 42px;
+    padding: 0 16px;
+    border: 1.5px solid #f0d3de;
+    border-radius: 999px;
+    background: #fff;
+    color: #4a1d3b;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.orders-page .orders-filter-select:focus { outline: none; border-color: #c2325f; }
+
+.orders-page .orders-search-wrap { width: 320px; max-width: 100%; }
+.orders-page .orders-search-input {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 16px;
+    color: #4a1d3b;
+    background: #fff;
+    border: 1px solid #f0d3de;
+    border-radius: 12px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.orders-page .orders-search-input::placeholder { color: #7a5a6c; opacity: .85; }
+.orders-page .orders-search-input:focus { border-color: #c2325f; box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
+
+.orders-page .orders-search-empty { width: 100%; text-align: center; font-size: 13px; color: #7a5a6c; padding: 14px 6px; }
+
+/* ===== ORDERS LAYOUT: kaliwa = listahan ng order, kanan = details ===== */
+.orders-page .orders-layout {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* listahan sa kaliwa - patayo; scroll kapag lampas 5 (ang eksaktong taas ay galing sa myOrdersFitListHeight) */
+.orders-page .orders-list-scroll {
+    position: sticky;
+    top: 98px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 640px;
+    overflow-y: auto;
+    padding: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #f0c3d2 transparent;
+}
+.orders-page .orders-list-scroll::-webkit-scrollbar { width: 6px; }
+.orders-page .orders-list-scroll::-webkit-scrollbar-thumb { background: #f0c3d2; border-radius: 10px; }
+
+.orders-page .order-list-item {
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    text-align: left;
+    color: inherit;
+    background: #fff;
+    border: 1.5px solid #f3dde5;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.orders-page .order-list-item:hover { background: #fff8f6; }
+.orders-page .order-list-item.active { background: #ffedf2; border-color: #c2325f; box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); }
+
+.orders-page .mo-list-main { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.4; }
+.orders-page .mo-list-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+.orders-page .order-list-id { font-size: 16px; font-weight: 800; color: #4a1d3b; white-space: nowrap; }
+.orders-page .order-list-date { font-size: 12px; color: #7a5a6c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.orders-page .order-list-badge { flex-shrink: 0; font-size: 11.5px; padding: 2px 10px; }
+
+/* ====================== END FILTER PILLS + SEARCH + ORDER CARDS ====================== */
+
+
+/* ==========================================================================
+   [8] DETAIL: kaliwa (.mo-main) + kanan (.mo-side)  at CARDS
+   ========================================================================== */
+.orders-page .orders-detail-col { min-width: 0; }
+.orders-page .order-detail-panel { display: none; grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; align-items: start; scroll-margin-top: 98px; }
+.orders-page .order-detail-panel.active { display: grid; }
+.orders-page .mo-main,
+.orders-page .mo-side { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+
+.orders-page .mo-card {
+    background: #fff;
+    border: 1px solid #f3dde5;
+    border-radius: 22px;
+    padding: 28px;
+    min-width: 0;
+}
+
+/* shadow ng lahat ng container: order cards, mga card sa detail */
+.orders-page .order-list-item,
+.orders-page .mo-card {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+.orders-page .mo-card-title {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #4a1d3b;
+}
+
+/* "Order #3" sa itaas ng card */
+.orders-page .mo-order-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.orders-page .mo-order-head .mo-sub { margin-bottom: 0; }
+
+/* section sub-heading: "ORDER PROGRESS", "FIGURE 1 INFORMATION" */
+.orders-page .mo-sub {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: #c2325f;
+    margin-bottom: 6px;
+}
+
+/* ====================== END DETAIL + CARDS ====================== */
+
+
+/* ==========================================================================
+   [9] ORDER PROGRESS TRACKER
+   done = berde na may check | current = pink na may numero | susunod = puti na may numero
+   ========================================================================== */
+.orders-page .mo-tracker {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    margin-top: 8px;
+}
+.orders-page .mo-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.orders-page .mo-step::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: #f3dde5;
+    z-index: 0;
+}
+.orders-page .mo-step:first-child::before { display: none; }
+.orders-page .mo-step.done::before,
+.orders-page .mo-step.current::before { background: #2f8f67; }
+
+.orders-page .mo-dot {
+    position: relative;
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #f0d3de;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #7a5a6c;
+}
+.orders-page .mo-dot .mo-dot-check { display: none; width: 15px; height: 15px; }
+
+.orders-page .mo-step.done .mo-dot { background: #2f8f67; border-color: #2f8f67; color: #fff; }
+.orders-page .mo-step.done .mo-dot-check { display: block; }
+.orders-page .mo-step.done .mo-dot-num { display: none; }
+
+.orders-page .mo-step.current .mo-dot { background: #c2325f; border-color: #c2325f; color: #fff; box-shadow: 0 0 0 5px rgba(194, 50, 95, .16); }
+
+.orders-page .mo-step.attention .mo-dot { background: #b83227; border-color: #b83227; color: #fff; box-shadow: 0 0 0 5px rgba(184, 50, 39, .16); }
+.orders-page .mo-step.attention .mo-dot-num { display: none; }
+.orders-page .mo-step.attention .mo-dot::after { content: "!"; font-weight: 800; font-size: 15px; line-height: 1; }
+
+.orders-page .mo-step-label { font-size: 12.5px; font-weight: 700; color: #7a5a6c; line-height: 1.3; padding: 0 2px; }
+.orders-page .mo-step.current .mo-step-label { color: #c2325f; }
+.orders-page .mo-step.attention .mo-step-label { color: #b83227; }
+
+.orders-page .mo-tracker.is-stopped .mo-step::before { background: #f1e6ea; }
+.orders-page .mo-tracker.is-stopped .mo-dot { border-color: #ead8df; color: #b9a3ad; }
+.orders-page .mo-tracker.is-stopped .mo-step-label { color: #b9a3ad; }
+
+/* ====================== END ORDER PROGRESS TRACKER ====================== */
+
+
+/* ==========================================================================
+   [10] STATE / ACTION CARDS
+   ========================================================================== */
+/* pink na banner sa loob ng status card */
+.orders-page .mo-state { margin-top: 16px; padding: 16px 20px; border-radius: 14px; background: #ffedf2; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18); }
+.orders-page .mo-state .mo-pill { margin-bottom: 8px; }
+.orders-page .mo-state-making { display: flex; align-items: center; gap: 14px; }
+.orders-page .mo-state-icon { font-size: 28px; line-height: 1; }
+.orders-page .mo-state-title { font-size: 16px; font-weight: 800; line-height: 1.3; }
+.orders-page .mo-state-text { font-size: 14.5px; color: #4a1d3b; line-height: 1.55; }
+.orders-page .mo-state-text strong { font-weight: 700; }
+.orders-page .mo-state-sub { margin-top: 8px; font-size: 13px; color: #7a5a6c; }
+.orders-page .mo-state-meta { margin-top: 10px; display: grid; gap: 4px; font-size: 13.5px; }
+.orders-page .mo-state-meta div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 10px; }
+.orders-page .mo-state-meta span:first-child { color: #7a5a6c; }
+.orders-page .mo-state-meta span:last-child { font-weight: 700; }
+
+/* Fix shipping details (ibinalik ng staff): simpleng form */
+.orders-page .mo-address-form { display: grid; gap: 10px; margin-top: 12px; }
+.orders-page .mo-address-form label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: #7a5a6c; }
+.orders-page .mo-address-form :is(input, select) { padding: 10px 14px; border: 1px solid #f0d3de; border-radius: 12px; background: #fff; font: inherit; font-size: 14.5px; color: #4a1d3b; }
+.orders-page .mo-address-form :is(input, select):focus { outline: none; border-color: #c2325f; }
+.orders-page .mo-gold-stars { color: #d99a1c; letter-spacing: 2px; margin-left: 6px; }
+
+.orders-page .mo-date-form { display: flex; gap: 10px; margin-top: 12px; align-items: flex-end; }
+.orders-page .mo-cal { flex: 1; min-width: 0; max-width: 340px; padding: 12px; background: #fff; border: 1px solid #f0d3de; border-radius: 12px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18); }
+.orders-page .mo-cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: #4a1d3b; }
+.orders-page .mo-cal-nav { width: 32px; height: 32px; border: 0; border-radius: 999px; background: #fbeef3; color: #c2325f; font-size: 20px; cursor: pointer; }
+.orders-page .mo-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.orders-page .mo-cal-dow { font-size: 12px; color: #7a5a6c; }
+.orders-page .mo-cal-day { height: 34px; line-height: 34px; padding: 0; border: 0; border-radius: 8px; background: none; font-size: 14px; color: #c9b6bf; }
+.orders-page .mo-cal-day.is-open { background: #fbeef3; color: #4a1d3b; font-weight: 600; cursor: pointer; }
+.orders-page .mo-cal-day.is-open:hover { background: #f5d3e0; }
+.orders-page .mo-cal-day.is-picked { background: #c2325f; color: #fff; }
+.orders-page .mo-cal-picked { margin: 8px 0 0; font-size: 13px; color: #7a5a6c; }
+.orders-page .mo-date-cancel { margin-top: 14px; }
+.orders-page .mo-date-form .mo-btn { padding: 0 20px; height: 44px; font-size: 14px; }
+
+.orders-page .mo-proof-link { display: inline-flex; align-items: center; gap: 10px; margin-top: 12px; cursor: zoom-in; }
+.orders-page .mo-proof-link img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; border: 1px solid #f3dde5; }
+.orders-page .mo-proof-link span { font-size: 13px; font-weight: 700; color: #c2325f; }
+
+.orders-page .mo-received { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #f0d3de; }
+.orders-page .mo-received p { font-size: 14px; }
+.orders-page .mo-received .mo-state-sub { margin-top: 4px; }
+
+/* ====================== END STATE / ACTION CARDS ====================== */
+
+
+/* ==========================================================================
+   [11] PROGRESS UPDATE CARD
+   ========================================================================== */
+/* walang container: guhit sa ilalim ng tracker, tapos may kulay na background ang update */
+.orders-page .mo-progress-card { margin-top: 18px; padding-top: 18px; border-top: 1px solid #f3dde5; }
+.orders-page .mo-progress { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 18px; align-items: stretch; padding: 16px; border-radius: 14px; background: #fff5f8; }
+/* malaking larawan: kasing-taas ng laman sa kanan (mula "Progress update" hanggang buttons) */
+.orders-page .mo-progress-img {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+    contain: size;   /* hindi ang larawan ang nagtatakda ng taas - sumusunod sa laman sa kanan */
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid #f3dde5;
+    cursor: zoom-in;
+    display: block;
+    background: #ffedf2;
+}
+.orders-page .mo-progress-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.orders-page .mo-progress-title { font-size: 16px; font-weight: 800; line-height: 1.3; white-space: nowrap; }
+.orders-page .mo-progress-note { font-size: 14px; color: #7a5a6c; line-height: 1.55; }
+/* It's Good / Request Revision: nasa kanan */
+.orders-page .progress-update-form > .mo-actions { justify-content: flex-end; }
+.orders-page .mo-progress-note strong { color: #4a1d3b; }
+/* Mensahe / dahilan (mo_message_box): may container + kung kanino galing */
+.orders-page .mo-msg-box { margin: 10px 0 4px; padding: 12px 16px; border-radius: 14px; background: #fff; border: 1px solid #f3dde5; border-left: 4px solid #c2325f; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18); }
+.orders-page .mo-msg-box.is-customer { background: #fff8e6; border-color: #f6e2b3; border-left-color: #d69e2e; }
+.orders-page .mo-msg-from { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; color: #c2325f; }
+.orders-page .mo-msg-box.is-customer .mo-msg-from { color: #9a6408; }
+.orders-page .mo-msg-box p { font-size: 14.5px; line-height: 1.5; color: #4a1d3b; overflow-wrap: anywhere; }
+.orders-page .mo-progress-status { margin-top: 10px; font-size: 14px; font-weight: 600; }
+.orders-page .mo-progress-status.is-approved { color: #2f8f67; }
+
+.orders-page .progress-update-revision-box { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.orders-page .progress-update-revision-box label { font-size: 14px; font-weight: 700; color: #4a1d3b; }
+.orders-page .progress-update-revision-box textarea {
+    width: 100%;
+    min-height: 56px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid #f0d3de;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #4a1d3b;
+    resize: vertical;
+    outline: none;
+}
+.orders-page .progress-update-revision-box .mo-actions { margin-top: 2px; }   /* dating inline style */
+.orders-page .progress-update-revision-box textarea:focus { border-color: #c2325f; box-shadow: 0 0 0 3px rgba(194, 50, 95, .12); }
+
+/* ====================== END PROGRESS UPDATE CARD ====================== */
+
+
+/* ==========================================================================
+   [12] KEY / VALUE ROWS  (Label | Value | Price, may linya sa pagitan)
+   ========================================================================== */
+.orders-page .mo-rows,
+.orders-page .mo-inline-trio { display: flex; flex-direction: column; }
+
+.orders-page .mo-row,
+.orders-page .mo-inline-trio > div {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr) auto;   /* Label | Value | Presyo - pare-pareho sa lahat ng row */
+    align-items: baseline;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f6e9ee;
+    font-size: 14.5px;
+}
+.orders-page .mo-row dt,
+.orders-page .mo-row .mo-k,
+.orders-page .mo-inline-trio .mo-k { color: #7a5a6c; font-weight: 500; }
+.orders-page .mo-row dd,
+.orders-page .mo-row .mo-v,
+.orders-page .mo-inline-trio .mo-v { min-width: 0; text-align: left; color: #4a1d3b; font-weight: 700; overflow-wrap: anywhere; }
+.orders-page .mo-row a { color: #c2325f; font-weight: 700; text-decoration: none; }
+.orders-page .mo-row a:hover { text-decoration: underline; }
+
+/* presyo = pangatlong column (Label | Value | Price); walang presyo = walang laman */
+.orders-page .mo-row .mo-p { text-align: right; white-space: nowrap; color: #4a1d3b; font-weight: 700; }
+
+
+.orders-page .mo-muted { color: #7a5a6c; font-size: 14px; }
+
+/* ====================== END KEY / VALUE ROWS ====================== */
+
+
+/* ==========================================================================
+   [13] FIGURES CARD
+   ========================================================================== */
+.orders-page .figure-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.orders-page .figure-tab-btn {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1.5px solid #f0d3de;
+    background: #fff;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #7a5a6c;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.orders-page .figure-tab-btn:hover:not(.active) { background: #fff8f6; color: #c2325f; }
+.orders-page .figure-tab-btn.active { background: #c2325f; border-color: #c2325f; color: #fff; }
+
+.orders-page .order-figures { margin-top: 16px; }
+.orders-page .order-figure { display: none; }
+.orders-page .order-figure.active { display: block; }
+
+/* Figure Information = buong lapad (Figure Style hanggang Rush Fee);
+   sa ilalim nito ang Dress Up Design container; ang Box & Add-ons ay nasa ibaba */
+.orders-page .box-addons-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0e4ea; }
+
+.orders-page .mo-gallery-label { margin: 14px 0 8px; font-size: 14.5px; font-weight: 500; color: #7a5a6c; }
+.orders-page .gallery-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.orders-page .gallery-thumb {
+    width: 78px;
+    height: 78px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 1px solid #f3dde5;
+    cursor: zoom-in;
+    background: #ffedf2;
+    transition: transform .15s ease;
+}
+.orders-page .gallery-thumb:hover { transform: scale(1.05); }
+.orders-page .no-image { font-size: 13px; color: #7a5a6c; }
+
+/* Your Notes / Letter: label sa taas, ang isinulat ng customer ay nasa ilalim (hindi sa kanan) */
+.orders-page .notes-box {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid #f6e9ee;
+    font-size: 14.5px;
+}
+.orders-page .notes-box strong { color: #7a5a6c; font-weight: 500; }
+.orders-page .notes-box p { color: #4a1d3b; font-weight: 700; overflow-wrap: anywhere; }
+
+/* ===== DRESS UP DESIGN (markup galing sa helpers/dressup_helper.php) =====
+   isang container: kaliwa = napili (larawan | pangalan | kulay | presyo), kanan = 3D figure */
+.orders-page .mo-dressup-box {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid #f3dde5;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+.orders-page .mo-dressup-list,
+.orders-page .mo-dressup-view { min-width: 0; display: flex; flex-direction: column; }
+.orders-page .dressup-design { flex: 1; gap: 8px; margin-top: 0; }
+.orders-page .dressup-design-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: #c2325f;
+}
+
+/* Gender at Skin Tone: magkatabi sa iisang linya (maliit na text); Hair / Top / Bottom / Shoes: buong linya */
+.orders-page .order-figure .dressup-picks { display: flex; flex-wrap: wrap; column-gap: 18px; }
+.orders-page .order-figure .dressup-pick {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 10px;
+    padding: 8px 0;
+    border: 0;
+    border-bottom: 1px solid #f6e9ee;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+.orders-page .order-figure .dressup-pick-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; grid-column: 2; }
+.orders-page .order-figure .dressup-pick-img { grid-column: 1; width: 40px; height: 40px; }
+.orders-page .order-figure .dressup-pick-label { text-transform: none; letter-spacing: 0; font-size: 11.5px; font-weight: 600; color: #7a5a6c; }
+/* pangalan ng napili (kaliwa) | kulay (kanan) */
+.orders-page .order-figure .dressup-pick-value { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 700; color: #4a1d3b; }
+.orders-page .order-figure .dressup-pick-color { margin-top: 0; font-size: 11.5px; color: #7a5a6c; white-space: nowrap; }
+.orders-page .order-figure .dressup-pick-price { grid-column: 3; justify-self: end; font-size: 13px; font-weight: 700; color: #4a1d3b; }
+
+.orders-page .order-figure .dressup-pick-basic { flex: 0 0 auto; display: block; padding: 4px 0 8px; border-bottom: 0; }
+.orders-page .order-figure .dressup-pick-basic .dressup-pick-body { flex-direction: row; align-items: center; gap: 6px; white-space: nowrap; }
+.orders-page .order-figure .dressup-pick-basic .dressup-pick-label { font-size: 11px; }
+.orders-page .order-figure .dressup-pick-basic .dressup-pick-value { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.orders-page .order-figure .dressup-pick-basic + .dressup-pick:not(.dressup-pick-basic) { border-top: 1px solid #f6e9ee; }
+
+/* 3D figure: kasing-taas ng listahan sa kaliwa (hindi mahaba) */
+.orders-page .mo-dressup-view .dressup-viewer-block { flex: 1; }
+.orders-page .dressup-3d-stage { flex: 1; height: auto; min-height: 280px; border-color: #f3dde5; border-radius: 16px; background: radial-gradient(circle at 50% 35%, #fff 0%, #fff6f6 60%, #ffeaf0 100%); }
+
+/* ====================== END FIGURES CARD ====================== */
+
+
+/* ==========================================================================
+   [14] ORDER SUMMARY
+   ========================================================================== */
+.orders-page .mo-sum { display: flex; flex-direction: column; margin-top: 14px; }
+/* isang figure: "Figure 1" + ano ito, tapos Price / Quantity / Rush Fee / Subtotal */
+.orders-page .mo-sum-fig { padding: 12px 0; border-bottom: 1px solid #f3dde5; }
+.orders-page .mo-sum-fig:first-child { padding-top: 0; }
+.orders-page .mo-sum-fig-head { display: flex; flex-direction: column; margin-bottom: 4px; }
+.orders-page .mo-sum-fig-head span { font-size: 15px; font-weight: 800; color: #4a1d3b; }
+.orders-page .mo-sum-fig-head small { font-size: 12.5px; color: #7a5a6c; }
+.orders-page .mo-sum-line { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 14px; }
+.orders-page .mo-sum-sub { margin-top: 4px; padding-top: 8px; border-top: 1px dashed #f0d3de; }
+.orders-page .mo-sum-sub span:first-child { color: #4a1d3b; font-weight: 700; }
+.orders-page .mo-sum-line span:first-child { color: #7a5a6c; }
+.orders-page .mo-sum-line span:last-child { font-weight: 700; }
+.orders-page .mo-sum-line.is-paid span:last-child { color: #2f8f67; }
+.orders-page .mo-sum-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; padding-top: 12px; }
+.orders-page .mo-sum-total span:first-child { font-size: 15px; font-weight: 800; }
+.orders-page .mo-sum-total span:last-child { font-size: 24px; font-weight: 700; color: #c2325f; }
+.orders-page .mo-split { margin-top: 8px; }
+.orders-page .pay-tag { margin-left: 8px; padding: 1px 9px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 700; background: #fdeec4; color: #9a6408; }
+.orders-page .pay-tag.is-paid { background: #dcf3e7; color: #2f8f67; }
+
+/* ====================== END ORDER SUMMARY ====================== */
+
+
+/* ==========================================================================
+   [15] PAYMENT & SHIPPING
+   ========================================================================== */
+.orders-page .mo-pay-block { margin-top: 18px; }
+/* proof of payment / shipping receipt - galing sa helpers/content_helper.php (may sariling maliit na style);
+   mas specific ang .orders-page kaya ito ang nananalo */
+.orders-page .pv-proof img { border-radius: 14px; border-color: #f3dde5; }
+.orders-page .pv-proof figcaption { color: #7a5a6c; }
+.orders-page .customer-payment-proof-title { font-size: 14px; font-weight: 700; color: #4a1d3b; margin-bottom: 8px; }
+
+/* ====================== END PAYMENT & SHIPPING ====================== */
+
+
+/* ==========================================================================
+   [16] IMAGE LIGHTBOX
+   ========================================================================== */
+.image-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(74, 29, 59, .75);
+    z-index: 5000;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+.image-lightbox.show { display: flex; }
+.image-lightbox-content { position: relative; max-width: min(600px, 92vw); text-align: center; }
+.image-lightbox-content img {
+    display: block;
+    max-width: 100%;
+    max-height: 78vh;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+    object-fit: contain;
+    background: #fff;
+}
+.image-lightbox-label { position: absolute; top: 100%; left: 0; right: 0; margin-top: 12px; color: #fff0f4; font-size: 13px; font-weight: 700; }
+/* close (X): iisang itsura sa buong system - puting bilog, pink na X (dalawang guhit),
+   nasa loob ng larawan sa kanang itaas (kapareho ng Image Submission) */
+.image-lightbox-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #C2325F;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+.image-lightbox-close::before,
+.image-lightbox-close::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+.image-lightbox-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.image-lightbox-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.image-lightbox-close:hover { background: #FFF1F6; }
+
+/* ====================== END IMAGE LIGHTBOX ====================== */
+
+
+/* ==========================================================================
+   [17] RESPONSIVE
+   ========================================================================== */
+@media (max-width: 1280px) {
+    .orders-page .order-detail-panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 1100px) {
+    .orders-page .orders-layout { grid-template-columns: 1fr; }
+    .orders-page .orders-list-scroll { position: static; max-height: 360px; }
+}
+@media (max-width: 700px) {
+    .orders-page .mo-dressup-box { grid-template-columns: minmax(0, 1fr); }
+    .orders-page .mo-progress { grid-template-columns: 1fr; }
+    .orders-page .mo-progress-img { height: auto; aspect-ratio: 1 / 1; max-width: 320px; }
+    .orders-page .mo-step-label { font-size: 11px; }
+    .orders-page .mo-card { padding: 18px; }
+    .orders-page .orders-search-wrap { width: 100%; }
+    .orders-page .mo-date-form { flex-direction: column; }
+    .orders-page .mo-date-form .mo-btn { height: 44px; }
+}
+@media (max-width: 720px) {
+    .mo-hero { min-height: 220px; }
+    .mo-hero::after { top: 12px; right: 4%; font-size: 14px; letter-spacing: 4px; }
+    .mo-hero .mo-wrap { padding: 34px 16px 26px; }
+}
+@media (max-width: 600px) {
+    .mo-wrap { width: calc(100% - 32px); }
+}
+/* ====================== END RESPONSIVE ====================== */
+
+
+/* ==========================================================================
+   PROOF OF PAYMENT (dating ini-print ng helpers/content_helper.php)
+   Ginagamit ng figurify_render_payment_proofs() / figurify_render_shipping_receipt()
+   ========================================================================== */
+
+.pv-proofs {
+    margin-top: 12px;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.pv-proof-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pv-proof {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pv-proof img {
+    width: 120px;
+    height: 120px;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #f1dbe7;
+    cursor: zoom-in;
+    background: #faf5f8;
+}
+
+.pv-proof figcaption {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8a6878;
+    text-align: center;
+}
+
+/* ==================== END PROOF OF PAYMENT ==================== */
+
+/* ===== MODAL BUKAS: hindi gumagalaw ang page sa likod ===== */
+body.no-scroll { overflow: hidden; }
+
+/* ===== nakatago (hidden) - search, revision box, buttons ===== */
+.orders-page .order-list-item[hidden],
+.orders-page .orders-search-empty[hidden],
+.orders-page .progress-update-revision-box[hidden],
+.orders-page .mo-actions[hidden],
+.orders-page .mo-report-modal[hidden],
+.orders-page .mo-upload-text[hidden],
+.orders-page .mo-upload img[hidden] { display: none; }
+
+/* Report a delivery problem (Report button -> note + photo) */
+/* Report popup: madilim na likod, puting kahon sa gitna */
+.orders-page .mo-report-modal { position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(74, 29, 59, .6); }
+.orders-page .mo-report-form { position: relative; display: flex; flex-direction: column; gap: 8px; width: min(460px, 100%); max-height: 90vh; overflow-y: auto; padding: 26px 24px 22px; border-radius: 20px; background: #fff; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18); }
+.orders-page .mo-report-title { margin-bottom: 4px; padding-right: 40px; font-size: 20px; font-weight: 800; color: #4a1d3b; }
+.orders-page .mo-report-form .mo-actions { justify-content: flex-end; }
+/* close (X): kapareho ng close ng image viewer */
+.orders-page .mo-report-close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: #fff; color: #C2325F; cursor: pointer; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18); }
+.orders-page .mo-report-close::before,
+.orders-page .mo-report-close::after { content: ""; position: absolute; top: 50%; left: 50%; width: 16px; height: 2.5px; border-radius: 2px; background: currentColor; }
+.orders-page .mo-report-close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.orders-page .mo-report-close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.orders-page .mo-report-close:hover { background: #FFF1F6; }
+.orders-page .mo-report-label { font-size: 13px; font-weight: 600; color: #7a5a6c; }
+.orders-page .mo-report-form textarea { padding: 10px 14px; border: 1px solid #f0d3de; border-radius: 12px; background: #fff; font: inherit; font-size: 14.5px; color: #4a1d3b; resize: vertical; }
+.orders-page .mo-report-form textarea:focus { outline: none; border-color: #c2325f; }
+
+/* upload box - kapareho ng Payment page (buong box ang clickable, nasa loob ang larawan) */
+.orders-page .mo-upload {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 130px;
+    padding: 18px;
+    overflow: hidden;
+    background: #fff;
+    border: 2px dashed #e5b8c8;
+    border-radius: 16px;
+    text-align: center;
+    transition: border-color .15s ease;
+}
+.orders-page .mo-upload:hover { border-color: #c2325f; }
+.orders-page .mo-upload-text { display: flex; flex-direction: column; gap: 2px; font-size: 14px; font-weight: 700; color: #c2325f; }
+.orders-page .mo-upload-text small { font-size: 12px; font-weight: 500; color: #7a5a6c; }
+.orders-page .mo-upload img { max-width: 100%; max-height: 240px; border-radius: 10px; object-fit: contain; }
+.orders-page .mo-upload input[type="file"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }

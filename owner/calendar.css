@@ -1,0 +1,528 @@
+/* ==========================================================================
+   FONT AT BACKGROUND - sariling kopya ng page na ito
+   (dating nasa shared file; ngayon ay hindi na shared)
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+/* ----- FONT - Fraunces (heading) + Plus Jakarta Sans (body) ----- */
+/* ----- BACKGROUND - cream #FFF8F6 ----- */
+
+html, body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: #FFF8F6;
+}
+
+body { min-height: 100vh; color: #4a1d3b; }
+
+html { scroll-behavior: smooth; }
+
+/* form controls - hindi sila nagmamana ng font by default */
+
+input,
+select,
+textarea,
+optgroup { font-family: inherit; }
+
+button { font-family: inherit; cursor: pointer; }
+
+/* mga heading ng page na ito */
+
+.notif-panel-header { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+
+body .portal-title { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; line-height: 1.2; }
+
+body .app #dayBookingsTitle { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-size: 21px; }
+
+body .app .calendar-page-controls h3 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    order: -1;
+    flex: 1 1 auto;
+    font-size: 23px;
+    text-align: left;
+}
+
+
+/* ===== katapusan ng sariling kopya ===== */
+/* ======================================================================
+   1. BASE - reset, page shell, topbar, cards, calendar grid (original dashboard styles still used by this page)
+   ====================================================================== */
+/* shared owner/staff dashboard styles - owner.css/staff.css just @import this now */
+/* owner dashboard styles */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* app */
+
+.app { min-height: 100vh; }
+
+/* sidebar */
+/* main */
+/* topbar */
+
+.welcome p { color: #81777d; font-size: 12px; margin-top: 5px; }
+
+#currentDate { color: #765f68; }
+
+#currentTime { color: #a4476d; font-weight: 900; }
+
+.notification-btn { position: relative; border-radius: 999px; font-size: 17px; }
+
+.notification-btn:hover { background: #fff0f9; }
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 0 4px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 50%;
+    font-weight: 900;
+}
+
+/* card header */
+/* calendar */
+
+.day { justify-content: center; }
+
+.day:hover { background: #fff0f9; cursor: pointer; }
+
+/* empty */
+
+.empty-state { padding: 30px 10px; text-align: center; color: #a0959b; font-size: 11px; }
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(10px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+/* full calendar */
+
+.full-calendar-card { display: flex; flex-direction: column; }
+
+.calendar-page-controls button { justify-content: center; transition: .2s; }
+
+.calendar-page-controls button:hover { background: #f78fd4; color: white; }
+
+/* ---------- TOPBAR (pareho sa lahat ng page) ---------- */
+
+body .app > main.main { padding: 0 clamp(14px, 2.2vw, 28px) 22px; }
+
+body .app > main.main > .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    margin: 0 calc(clamp(14px, 2.2vw, 28px) * -1) 16px;
+    padding: 8px clamp(14px, 2.2vw, 28px);
+    min-height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #f3dce3;
+    flex: 0 0 auto;
+}
+
+body .app .top-actions { display: flex; align-items: center; gap: 14px; }
+
+@media (max-width: 800px) {
+    body .portal-title { font-size: 20px; }
+}
+
+/* ---------- CARDS ---------- */
+
+body .app :is(.card:not(.qv-workspace), .st-card) {
+    background: #ffffff;
+    border: 1px solid #f3dce3;
+    border-radius: 22px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* ======================================================================
+   4. TOPBAR DATE / TIME
+   ====================================================================== */
+
+.cs-tb-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.cs-tb-datetime .cs-tb-date { color: #85506b; font-weight: 800; }
+
+.cs-tb-datetime .cs-tb-dot { color: #c7aeb8; }
+
+.cs-tb-datetime .cs-tb-time { color: #43142f; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+    .cs-tb-datetime .cs-tb-date,
+    .cs-tb-datetime .cs-tb-dot { display: none; }
+}
+
+/* ======================================================================
+   5. CALENDAR PAGE LAYOUT - layout, Booked Orders list, legend dots
+   ====================================================================== */
+
+@media (min-width: 901px) {
+    /* Bawal mag-scroll ang buong page dito - naka-fit sa 100vh ang
+                           .app/.main/.calendar-page-layout chain (flexbox, min-height:0),
+                           kaya #dayBookingsList na lang ang mag-i-scroll kapag sobra ang laman. */
+
+    html,
+    body { overflow: hidden; }
+
+    .main { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+}
+
+#dayBookingsCard { display: flex; flex-direction: column; }
+
+.clear-day-filter { white-space: nowrap; }
+
+.clear-day-filter:hover { text-decoration: underline; }
+
+/* ======================================================================
+   6. CALENDAR DESIGN SYSTEM - final calendar look (overrides sections 1 and 5)
+   ====================================================================== */
+
+body .app .calendar-page-layout { display: grid; gap: 22px; align-items: start; flex: 0 0 auto; }
+
+body .app .full-calendar-card, body .app #dayBookingsCard {
+    min-height: 0;
+    padding: 24px 24px 20px;
+    overflow: visible;
+}
+
+/* header: buwan sa kaliwa, maliit na ‹ › sa kanan */
+
+body .app .calendar-page-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    margin: 0 0 14px;
+}
+
+body .app .calendar-page-controls button {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #4a1d3b;
+}
+
+body .app .calendar-page-controls button:hover:not(:disabled) { background: #ffedf2; }
+
+body .app .calendar-page-controls button svg { width: 16px; height: 16px; }
+
+/* araw ng linggo */
+
+body .app .full-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    margin: 0 0 6px;
+}
+
+body .app .full-week > div { text-align: center; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+
+/* mga araw */
+
+body .app .full-calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    transition: opacity .35s ease, transform .35s ease;   /* paglipat ng buwan */
+}
+
+body .app .full-calendar-days .day.empty { background: none; border: 0; }
+
+body .app .full-calendar-days .large-day {
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 2px solid #f0d5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #3b1a2e;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter .12s ease;
+}
+
+/* parehong kulay ng Commission calendar */
+
+body .app .full-calendar-days .large-day.available { border-color: #8fd0a3; background: #e8f7ec; color: #1d6b38; }
+
+body .app .full-calendar-days .large-day.booked { border-color: #e88a8a; background: #fde6e6; color: #b3261e; }
+
+body .app .full-calendar-days .large-day.unavailable { border-color: #dcdcdc; background: #efefef; color: #a0a0a0; cursor: not-allowed; }
+
+body .app .full-calendar-days .large-day.today:not(.day-selected) { border-color: #ffd66b; background: #ffd66b; color: #6b4200; }
+
+body .app .full-calendar-days .large-day.day-selected {
+    border-color: #c2325f;
+    background: #c2325f;
+    color: #ffffff;
+    box-shadow: 0 6px 14px rgba(194, 50, 95, .25);
+}
+
+body .app .full-calendar-days .large-day:hover:not(.unavailable):not(.day-selected) { filter: brightness(.96); }
+
+/* paglipat ng buwan: dahan-dahang nawawala at dumudulas (kagaya ng Commission) */
+
+body .app .full-calendar-days.days-next { opacity: 0; transform: translateX(-28px); }
+
+body .app .full-calendar-days.days-prev { opacity: 0; transform: translateX(28px); }
+
+/* legend - maliit na parisukat */
+
+body .app .full-calendar-card .calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 6px 18px;
+    margin-top: 18px;
+    font-size: 13.5px;
+}
+
+body .app .full-calendar-card .calendar-legend span { display: inline-flex; align-items: center; gap: 5px; }
+
+body .app .full-calendar-card .legend-dot { width: 14px; height: 14px; border: 2px solid #e8cbd9; border-radius: 4px; }
+
+body .app .full-calendar-card .available-dot { border-color: #8fd0a3; background: #e8f7ec; }
+
+body .app .full-calendar-card .today-dot { border-color: #ffd66b; background: #ffd66b; }
+
+body .app .full-calendar-card .selected-dot { border-color: #c2325f; background: #c2325f; }
+
+body .app .full-calendar-card .booked-dot { border-color: #e88a8a; background: #fde6e6; }
+
+body .app .full-calendar-card .unavailable-dot { border-color: #dcdcdc; background: #efefef; }
+
+/* kanan: Booked Orders */
+
+body .app #dayBookingsCard .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 8px;
+}
+
+body .app #dayBookingsCard .clear-day-filter {
+    flex: 0 0 auto;
+    font-size: 14px;
+    font-weight: 500;
+    color: #7c6670;
+    text-decoration: none;
+}
+
+body .app #dayBookingsCard .clear-day-filter:hover { color: #c2325f; }
+
+#dayBookingsList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100vh - 210px);
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 2px 0 0;
+}
+
+/* bawat booking: sariling card (kapareho ng Upcoming Shipment sa dashboard) */
+
+#dayBookingsList .cal-card {
+    padding: 10px 12px;
+    border: 1px solid #f3dce3;
+    border-radius: 14px;
+    background: #fffafb;
+    transition: border-color .15s ease, background .15s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+#dayBookingsList .cal-card:hover { background: #fff5f8; }
+
+#dayBookingsList .cal-card.highlighted { border-color: #e896c4; }
+
+#dayBookingsList .cal-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+#dayBookingsList .cal-card-id { font-size: 13.5px; font-weight: 800; }
+
+#dayBookingsList .cal-card-name {
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12.5px;
+    color: #7c6670;
+}
+
+/* Order Type / Order Method / Ship Out Date / Courier - 2 column */
+
+#dayBookingsList .cal-card-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 12px;
+    margin-top: 8px;
+}
+
+#dayBookingsList .cal-card-field { display: flex; flex-direction: column; min-width: 0; }
+
+#dayBookingsList .cal-card-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #9a7d8b;
+}
+
+#dayBookingsList .cal-card-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+/* mga figure ng order: bawat figure may sariling kahon (Figure Style / Product Type / Size) */
+
+#dayBookingsList .cal-card-figures {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #f0d3de;
+}
+
+#dayBookingsList .cal-figure {
+    padding: 6px 9px;
+    border: 1px solid #f6e1e8;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+}
+
+#dayBookingsList .cal-figure-title { font-size: 11.5px; font-weight: 800; color: #c2325f; }
+
+/* Dress Up: kulay + color code sa ilalim ng Figure Style / Product Type / Size */
+#dayBookingsList .cal-figure-color {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+    color: #4a1d3b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#dayBookingsList .cal-color-dot {
+    flex: 0 0 auto;
+    width: 11px;
+    height: 11px;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: 50%;
+}
+
+#dayBookingsList .cal-figure .cal-card-details {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 2px;
+}
+
+/* status sa kanang taas ng card */
+
+#dayBookingsList .cal-chip {
+    flex: 0 0 auto;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #ffedf2;
+    color: #c2325f;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+}
+
+#dayBookingsList .empty-state {
+    padding: 36px 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #7c6670;
+    background: none;
+    border: 0;
+}
+
+@media (max-width: 1000px) {
+    body .app .calendar-page-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 600px) {
+    body .app .full-calendar-days .large-day { height: 38px; font-size: 13px; }
+
+    body .app .full-week,
+    body .app .full-calendar-days { gap: 4px; }
+}
+
+@media (min-width: 1001px) {
+    /* ======================================================================
+                           7. CALENDAR EQUAL-SIZE PANELS - desktop layout (min-width: 1001px)
+                           ====================================================================== */
+    /* [CALENDAR] pantay ang laki ng kaliwa at kanang container (calendar at Booked Orders):
+                           parehong lapad, parehong taas, at sakop ang buong natitirang taas ng page.
+                           Ang mga araw ng calendar ay pantay-pantay na kahon na pumupuno sa container. */
+
+    body .app .calendar-page-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: stretch;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    body .app .full-calendar-card,
+    body .app #dayBookingsCard { overflow: hidden; }
+
+    body .app .full-calendar-card > * { flex: 0 0 auto; }
+
+    body .app .full-calendar-card .full-calendar-days {
+        flex: 1 1 auto;
+        min-height: 0;
+        grid-auto-rows: minmax(0, 1fr);
+    }
+
+    body .app .full-calendar-card .full-calendar-days .large-day { height: 100%; min-height: 0; }
+
+    body .app #dayBookingsCard > #dayBookingsList { flex: 1 1 auto; }
+}
+
+/* ===== lalabas lang kapag may napiling araw ===== */
+.clear-day-filter[hidden] { display: none; }
+
+/* ===== "previous month" na naka-disable (kasalukuyang buwan na) ===== */
+.calendar-arrow-btn:disabled { opacity: .4; cursor: not-allowed; }
